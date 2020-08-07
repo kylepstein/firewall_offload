@@ -6,6 +6,7 @@
 #include <rte_errno.h>
 #include <rte_malloc.h>
 #include <rte_eal_paging.h>
+#include <rte_ether.h>
 
 #include "mlx5_prm.h"
 #include "mlx5_devx_cmds.h"
@@ -382,6 +383,45 @@ mlx5_devx_cmd_query_nic_vport_context(void *ctx,
 			    nic_vport_context);
 	attr->vport_inline_mode = MLX5_GET(nic_vport_context, vctx,
 					   min_wqe_inline_mode);
+	return 0;
+error:
+	rc = (rc > 0) ? -rc : rc;
+	return rc;
+}
+
+int
+mlx5_devx_cmd_query_nic_vport_mac(void *ctx,
+				  unsigned int vport, u8 *mac_addr)
+{
+	uint32_t in[MLX5_ST_SZ_DW(query_nic_vport_context_in)] = {0};
+	uint32_t out[MLX5_ST_SZ_DW(query_nic_vport_context_out)] = {0};
+        uint8_t *out_addr;
+	int status, syndrome, rc;
+
+	/* Query NIC vport context to determine inline mode. */
+	MLX5_SET(query_nic_vport_context_in, in, opcode,
+		 MLX5_CMD_OP_QUERY_NIC_VPORT_CONTEXT);
+	MLX5_SET(query_nic_vport_context_in, in, vport_number, vport);
+	MLX5_SET(query_nic_vport_context_in, in, other_vport, 1);
+	rc = mlx5_glue->devx_general_cmd(ctx,
+					 in, sizeof(in),
+					 out, sizeof(out));
+	if (rc)
+		goto error;
+	status = MLX5_GET(query_nic_vport_context_out, out, status);
+	syndrome = MLX5_GET(query_nic_vport_context_out, out, syndrome);
+	if (status) {
+		DRV_LOG(DEBUG, "Failed to query NIC vport context, "
+			"status %x, syndrome = %x",
+			status, syndrome);
+		return -1;
+	}
+
+        out_addr = (uint8_t *)MLX5_ADDR_OF(query_nic_vport_context_out, out,
+                                nic_vport_context.permanent_address);
+
+	memcpy(mac_addr, &out_addr[2], RTE_ETHER_ADDR_LEN);
+
 	return 0;
 error:
 	rc = (rc > 0) ? -rc : rc;

@@ -399,6 +399,9 @@ typedef int (*eth_mac_addr_add_t)(struct rte_eth_dev *dev,
 
 typedef int (*eth_mac_addr_set_t)(struct rte_eth_dev *dev,
 				  struct rte_ether_addr *mac_addr);
+typedef int (*eth_mac_addr_get_t)(struct rte_eth_dev *dev,
+				  struct rte_ether_addr *mac_addr);
+
 /**< @internal Set a MAC address into Receive Address Address Register */
 
 typedef int (*eth_uc_hash_table_set_t)(struct rte_eth_dev *dev,
@@ -625,6 +628,7 @@ struct eth_dev_ops {
 	eth_mac_addr_remove_t      mac_addr_remove; /**< Remove MAC address. */
 	eth_mac_addr_add_t         mac_addr_add;  /**< Add a MAC address. */
 	eth_mac_addr_set_t         mac_addr_set;  /**< Set a MAC address. */
+	eth_mac_addr_get_t	   mac_addr_get;
 	eth_set_mc_addr_list_t     set_mc_addr_list; /**< set list of mcast addrs. */
 	mtu_set_t                  mtu_set;       /**< Set MTU. */
 

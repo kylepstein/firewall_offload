@@ -2277,6 +2277,15 @@ mlx5_os_vf_mac_addr_modify(struct mlx5_priv *priv,
 		(priv->nl_socket_route, iface_idx, mac_addr, vf_index);
 }
 
+int
+mlx5_os_vf_mac_addr_get(struct mlx5_priv *priv,
+			struct rte_ether_addr *mac_addr,
+			int vf_index)
+{
+	return mlx5_devx_cmd_query_nic_vport_mac
+		(priv->sh->ctx, vf_index, mac_addr->addr_bytes);
+}
+
 /**
  * Set device promiscuous mode
  *
@@ -2354,6 +2363,7 @@ const struct eth_dev_ops mlx5_os_dev_ops = {
 	.mac_addr_remove = mlx5_mac_addr_remove,
 	.mac_addr_add = mlx5_mac_addr_add,
 	.mac_addr_set = mlx5_mac_addr_set,
+	.mac_addr_get = mlx5_mac_addr_get,
 	.set_mc_addr_list = mlx5_set_mc_addr_list,
 	.mtu_set = mlx5_dev_set_mtu,
 	.vlan_strip_queue_set = mlx5_vlan_strip_queue_set,
@@ -2442,6 +2452,7 @@ const struct eth_dev_ops mlx5_os_dev_ops_isolate = {
 	.mac_addr_remove = mlx5_mac_addr_remove,
 	.mac_addr_add = mlx5_mac_addr_add,
 	.mac_addr_set = mlx5_mac_addr_set,
+	.mac_addr_get = mlx5_mac_addr_get,
 	.set_mc_addr_list = mlx5_set_mc_addr_list,
 	.mtu_set = mlx5_dev_set_mtu,
 	.vlan_strip_queue_set = mlx5_vlan_strip_queue_set,

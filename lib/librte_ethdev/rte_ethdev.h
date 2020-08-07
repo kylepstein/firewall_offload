@@ -3399,6 +3399,8 @@ int rte_eth_dev_priority_flow_ctrl_set(uint16_t port_id,
  */
 int rte_eth_dev_mac_addr_add(uint16_t port_id, struct rte_ether_addr *mac_addr,
 				uint32_t pool);
+int
+rte_eth_dev_mac_addr_get(uint16_t port_id, struct rte_ether_addr *addr);
 
 /**
  * Remove a MAC address from the internal array of addresses.

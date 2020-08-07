@@ -3669,6 +3669,17 @@ get_mac_addr_index(uint16_t port_id, const struct rte_ether_addr *addr)
 static const struct rte_ether_addr null_mac_addr;
 
 int
+rte_eth_dev_mac_addr_get(uint16_t port_id, struct rte_ether_addr *addr)
+{
+	struct rte_eth_dev *dev;
+	dev = &rte_eth_devices[port_id];
+
+	(*dev->dev_ops->mac_addr_get)(dev, addr);
+
+	return 0;
+}
+
+int
 rte_eth_dev_mac_addr_add(uint16_t port_id, struct rte_ether_addr *addr,
 			uint32_t pool)
 {

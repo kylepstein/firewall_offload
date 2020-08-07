@@ -471,4 +471,6 @@ __rte_internal
 int mlx5_devx_cmd_query_virtio_q_counters(struct mlx5_devx_obj *couners_obj,
 				  struct mlx5_devx_virtio_q_couners_attr *attr);
 
+int mlx5_devx_cmd_query_nic_vport_mac(void *ctx, unsigned int vport, u8 *mac_addr);
+
 #endif /* RTE_PMD_MLX5_DEVX_CMDS_H_ */

@@ -856,6 +856,8 @@ int mlx5_mac_addr_set(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr);
 int mlx5_set_mc_addr_list(struct rte_eth_dev *dev,
 			struct rte_ether_addr *mc_addr_set,
 			uint32_t nb_mc_addr);
+int
+mlx5_mac_addr_get(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr);
 
 /* mlx5_rss.c */
 
@@ -1017,6 +1019,11 @@ int mlx5_os_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
 int mlx5_os_vf_mac_addr_modify(struct mlx5_priv *priv, unsigned int iface_idx,
 			       struct rte_ether_addr *mac_addr,
 			       int vf_index);
+int
+mlx5_os_vf_mac_addr_get(struct mlx5_priv *priv,
+			struct rte_ether_addr *mac_addr,
+			int vf_index);
+
 int mlx5_os_set_promisc(struct rte_eth_dev *dev, int enable);
 int mlx5_os_set_allmulti(struct rte_eth_dev *dev, int enable);
 int mlx5_os_set_nonblock_channel_fd(int fd);
