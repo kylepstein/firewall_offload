@@ -168,6 +168,8 @@
  * hairpin queue (logarithm value).
  */
 #define MLX5_HP_BUF_SIZE "hp_buf_log_sz"
+/* Disable hairpin bypass in TX flow */
+#define MLX5_HAIRPIN_TX_FLOW_EN "hairpin_tx_flow_en"
 
 /* Flow memory reclaim mode. */
 #define MLX5_RECLAIM_MEM "reclaim_mem_mode"
@@ -1621,6 +1623,8 @@ mlx5_args_check(const char *key, const char *val, void *opaque)
 		config->sys_mem_en = !!tmp;
 	} else if (strcmp(MLX5_DECAP_EN, key) == 0) {
 		config->decap_en = !!tmp;
+	} else if (strcmp(MLX5_HAIRPIN_TX_FLOW_EN, key) == 0) {
+		config->hairpin_tx_flow_en = !!tmp;
 	} else {
 		DRV_LOG(WARNING, "%s: unknown parameter", key);
 		rte_errno = EINVAL;
@@ -1681,6 +1685,7 @@ mlx5_args(struct mlx5_dev_config *config, struct rte_devargs *devargs)
 		MLX5_RECLAIM_MEM,
 		MLX5_SYS_MEM_EN,
 		MLX5_DECAP_EN,
+		MLX5_HAIRPIN_TX_FLOW_EN,
 		NULL,
 	};
 	struct rte_kvargs *kvlist;
@@ -2019,6 +2024,7 @@ mlx5_pci_remove(struct rte_pci_device *pci_dev)
 		else
 			rte_eth_dev_close(port_id);
 	}
+
 	return 0;
 }
 

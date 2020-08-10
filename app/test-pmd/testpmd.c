@@ -2344,7 +2344,7 @@ port_is_started(portid_t port_id)
 
 /* Configure the Rx and Tx hairpin queues for the selected port. */
 static int
-setup_hairpin_queues(portid_t pi)
+setup_hairpin_queues(portid_t pi, portid_t peer_pi)
 {
 	queueid_t qi;
 	struct rte_eth_hairpin_conf hairpin_conf = {
@@ -2355,7 +2355,7 @@ setup_hairpin_queues(portid_t pi)
 	struct rte_port *port = &ports[pi];
 
 	for (qi = nb_txq, i = 0; qi < nb_hairpinq + nb_txq; qi++) {
-		hairpin_conf.peers[0].port = pi;
+		hairpin_conf.peers[0].port = peer_pi;
 		hairpin_conf.peers[0].queue = i + nb_rxq;
 		diag = rte_eth_tx_hairpin_queue_setup
 			(pi, qi, nb_txd, &hairpin_conf);
@@ -2376,7 +2376,7 @@ setup_hairpin_queues(portid_t pi)
 		return -1;
 	}
 	for (qi = nb_rxq, i = 0; qi < nb_hairpinq + nb_rxq; qi++) {
-		hairpin_conf.peers[0].port = pi;
+		hairpin_conf.peers[0].port = peer_pi;
 		hairpin_conf.peers[0].queue = i + nb_txq;
 		diag = rte_eth_rx_hairpin_queue_setup
 			(pi, qi, nb_rxd, &hairpin_conf);
@@ -2543,7 +2543,9 @@ start_port(portid_t pid)
 				return -1;
 			}
 			/* setup hairpin queues */
-			if (setup_hairpin_queues(pi) != 0)
+			int peer_pi = port_topology == PORT_TOPOLOGY_PAIRED ? fwd_topology_tx_port_get(pi) :
+				pi;
+			if (setup_hairpin_queues(pi, peer_pi) != 0)
 				return -1;
 		}
 		configure_rxtx_dump_callbacks(verbose_level);

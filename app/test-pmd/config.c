@@ -2319,7 +2319,7 @@ setup_fwd_config_of_each_lcore(struct fwd_config *cfg)
 	}
 }
 
-static portid_t
+portid_t
 fwd_topology_tx_port_get(portid_t rxp)
 {
 	static int warning_once = 1;

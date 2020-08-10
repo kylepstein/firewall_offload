@@ -509,8 +509,9 @@ mlx5_tx_hairpin_queue_setup(struct rte_eth_dev *dev, uint16_t idx,
 	res = mlx5_tx_queue_pre_setup(dev, idx, &desc);
 	if (res)
 		return res;
+
+        // hairpin_conf->peers[0].port != dev->data->port_id -- Replace for check all on same system guid
 	if (hairpin_conf->peer_count != 1 ||
-	    hairpin_conf->peers[0].port != dev->data->port_id ||
 	    hairpin_conf->peers[0].queue >= priv->rxqs_n) {
 		DRV_LOG(ERR, "port %u unable to setup hairpin queue index %u "
 			" invalid hairpind configuration", dev->data->port_id,
@@ -1424,6 +1425,23 @@ mlx5_txq_obj_get(struct rte_eth_dev *dev, uint16_t idx)
 	return txq_ctrl->obj;
 }
 
+static void
+mlx5_txq_hairpin_rst(struct mlx5_txq_obj *txq_obj)
+{
+	struct mlx5_devx_modify_rq_attr rq_attr = { 0 };
+	struct mlx5_rxq_obj *rxq_obj = txq_obj->hairpin_rxq;
+
+	if (!rxq_obj)
+		return;
+
+	rq_attr.state = MLX5_RQC_STATE_RST;
+	rq_attr.rq_state = MLX5_RQC_STATE_RDY;
+	mlx5_devx_cmd_modify_rq(rxq_obj->rq, &rq_attr);
+
+	txq_obj->hairpin_rxq = NULL;
+	rxq_obj->hairpin_txq = NULL;
+
+}
 /**
  * Release an Tx verbs queue object.
  *
@@ -1439,6 +1457,7 @@ mlx5_txq_obj_release(struct mlx5_txq_obj *txq_obj)
 	MLX5_ASSERT(txq_obj);
 	if (rte_atomic32_dec_and_test(&txq_obj->refcnt)) {
 		if (txq_obj->type == MLX5_TXQ_OBJ_TYPE_DEVX_HAIRPIN) {
+			mlx5_txq_hairpin_rst(txq_obj);
 			if (txq_obj->tis)
 				claim_zero(mlx5_devx_cmd_destroy(txq_obj->tis));
 		} else if (txq_obj->type == MLX5_TXQ_OBJ_TYPE_DEVX_SQ) {

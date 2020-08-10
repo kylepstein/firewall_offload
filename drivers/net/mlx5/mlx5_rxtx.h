@@ -188,6 +188,7 @@ struct mlx5_rxq_obj {
 			struct mlx5dv_devx_event_channel *devx_channel;
 		};
 	};
+	struct mlx5_txq_obj *hairpin_txq;
 };
 
 /* RX queue control descriptor. */
@@ -372,6 +373,7 @@ struct mlx5_txq_obj {
 			struct mlx5_devx_dbr_page *sq_dbrec_page;
 		};
 	};
+	struct mlx5_rxq_obj *hairpin_rxq;
 };
 
 /* TX queue control descriptor. */

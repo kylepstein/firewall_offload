@@ -785,8 +785,9 @@ mlx5_rx_hairpin_queue_setup(struct rte_eth_dev *dev, uint16_t idx,
 	res = mlx5_rx_queue_pre_setup(dev, idx, &desc);
 	if (res)
 		return res;
+
+    // hairpin_conf->peers[0].port != dev->data->port_id || -- TBD replace for all on same system guid
 	if (hairpin_conf->peer_count != 1 ||
-	    hairpin_conf->peers[0].port != dev->data->port_id ||
 	    hairpin_conf->peers[0].queue >= priv->txqs_n) {
 		DRV_LOG(ERR, "port %u unable to setup hairpin queue index %u "
 			" invalid hairpind configuration", dev->data->port_id,
@@ -906,13 +907,27 @@ rxq_release_devx_cq_resources(struct mlx5_rxq_ctrl *rxq_ctrl)
 static void
 rxq_obj_hairpin_release(struct mlx5_rxq_obj *rxq_obj)
 {
+	struct mlx5_txq_obj *txq_obj;
 	struct mlx5_devx_modify_rq_attr rq_attr = { 0 };
+	struct mlx5_devx_modify_sq_attr sq_attr = { 0 };
 
 	MLX5_ASSERT(rxq_obj);
 	rq_attr.state = MLX5_RQC_STATE_RST;
 	rq_attr.rq_state = MLX5_RQC_STATE_RDY;
 	mlx5_devx_cmd_modify_rq(rxq_obj->rq, &rq_attr);
 	claim_zero(mlx5_devx_cmd_destroy(rxq_obj->rq));
+
+	txq_obj = rxq_obj->hairpin_txq;
+	if(txq_obj) {
+		sq_attr.state = MLX5_SQC_STATE_RST;
+		sq_attr.sq_state = MLX5_SQC_STATE_RDY;
+		mlx5_devx_cmd_modify_sq(txq_obj->sq, &sq_attr);
+
+		txq_obj->hairpin_rxq = NULL;
+		rxq_obj->hairpin_txq = NULL;
+	}
+
+	assert(!rxq_obj->hairpin_txq || txq_obj->hairpin_rxq);
 }
 
 /**

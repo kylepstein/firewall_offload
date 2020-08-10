@@ -815,6 +815,8 @@ void fdir_set_flex_payload(portid_t port_id,
 void port_rss_reta_info(portid_t port_id,
 			struct rte_eth_rss_reta_entry64 *reta_conf,
 			uint16_t nb_entries);
+portid_t fwd_topology_tx_port_get(portid_t rxp);
+
 
 void set_vf_traffic(portid_t port_id, uint8_t is_rx, uint16_t vf, uint8_t on);
 

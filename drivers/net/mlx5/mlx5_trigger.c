@@ -179,15 +179,139 @@ error:
  *   0 on success, a negative errno value otherwise and rte_errno is set.
  */
 static int
-mlx5_hairpin_bind(struct rte_eth_dev *dev)
-{
-	struct mlx5_priv *priv = dev->data->dev_private;
+mlx5_hairpin_txrx_bind(struct mlx5_txq_ctrl *txq_ctrl, struct mlx5_rxq_ctrl *rxq_ctrl) {
 	struct mlx5_devx_modify_sq_attr sq_attr = { 0 };
 	struct mlx5_devx_modify_rq_attr rq_attr = { 0 };
-	struct mlx5_txq_ctrl *txq_ctrl;
-	struct mlx5_rxq_ctrl *rxq_ctrl;
 	struct mlx5_devx_obj *sq;
 	struct mlx5_devx_obj *rq;
+	int ret = 0;
+
+	assert(!(rxq_ctrl->obj->hairpin_txq || txq_ctrl->obj->hairpin_rxq));
+
+	sq = txq_ctrl->obj->sq;
+	if (!sq) {
+		rte_errno = ENOMEM;
+		return -rte_errno;
+	}
+	rq = rxq_ctrl->obj->rq;
+	if (!rq) {
+		rte_errno = ENOMEM;
+		return -rte_errno;
+	}
+	sq_attr.state = MLX5_SQC_STATE_RDY;
+	sq_attr.sq_state = MLX5_SQC_STATE_RST;
+	sq_attr.hairpin_peer_rq = rq->id;
+	sq_attr.hairpin_peer_vhca = rxq_ctrl->priv->config.hca_attr.vhca_id;
+	ret = mlx5_devx_cmd_modify_sq(sq, &sq_attr);
+	if (ret)
+		return ret;
+	rq_attr.state = MLX5_RQC_STATE_RDY;
+	rq_attr.rq_state = MLX5_RQC_STATE_RST;
+	rq_attr.hairpin_peer_sq = sq->id;
+	rq_attr.hairpin_peer_vhca = txq_ctrl->priv->config.hca_attr.vhca_id;
+	ret = mlx5_devx_cmd_modify_rq(rq, &rq_attr);
+	if (ret)
+		return ret;
+
+	rxq_ctrl->obj->hairpin_txq = txq_ctrl->obj;
+	txq_ctrl->obj->hairpin_rxq = rxq_ctrl->obj;
+
+	return 0;
+}
+
+static int
+mlx5_hairpin_rx_bind(struct rte_eth_dev *dev) {
+	struct rte_eth_dev *p_dev;
+	struct mlx5_priv *priv = dev->data->dev_private;
+	struct mlx5_priv *p_priv;
+	struct mlx5_txq_ctrl *txq_ctrl;
+	struct mlx5_rxq_ctrl *rxq_ctrl;
+	uint16_t p_port, p_queue;
+	uint16_t port = dev->data->port_id;
+	unsigned int i;
+	int ret = 0;
+
+	for (i = 0; i != priv->rxqs_n; ++i) {
+		rxq_ctrl = mlx5_rxq_get(dev, i);
+		if (!rxq_ctrl)
+			continue;
+		if (rxq_ctrl->type != MLX5_RXQ_TYPE_HAIRPIN) {
+			mlx5_rxq_release(dev, i);
+			continue;
+		}
+
+		p_port  = rxq_ctrl->hairpin_conf.peers[0].port;
+		if (!rte_eth_dev_is_valid_port(p_port)) {
+			DRV_LOG(ERR, "port %u Rxq %u invalid hairpin peer port",
+					port, i);
+			rte_errno = EINVAL;
+			goto bind_rxrx_error;
+		}
+		p_dev   = &rte_eth_devices[p_port];
+		p_priv  = p_dev->data->dev_private;
+
+		/* same port hairpin done on Tx side */
+		if (p_port == port) {
+			mlx5_rxq_release(dev, i);
+			continue;
+		}
+
+		if (!p_dev->data->dev_started) {
+			mlx5_rxq_release(dev, i);
+			continue;
+		}
+
+		p_queue = rxq_ctrl->hairpin_conf.peers[0].queue;
+		if (p_queue  >= p_priv->txqs_n) {
+			DRV_LOG(ERR, "port %u Rxq %u invalid hairpin Txq index",
+					port, i);
+			rte_errno = EINVAL;
+			goto bind_rxrx_error;
+		}
+
+		txq_ctrl = mlx5_txq_get(p_dev, p_queue);
+		if (!txq_ctrl) {
+			DRV_LOG(ERR, "port %u Rxq %u invalid hairpin Txq object",
+					port, i);
+			rte_errno = EINVAL;
+			goto bind_rxrx_error;
+		}
+		if (txq_ctrl->type != MLX5_TXQ_TYPE_HAIRPIN ||
+				txq_ctrl->hairpin_conf.peers[0].queue != i) {
+			DRV_LOG(ERR, "port %u Rxq %u invalid haipin Txq conf",
+					port, i);
+			rte_errno = ENOMEM;
+			goto bind_rxtx_error;
+		}
+
+		ret = mlx5_hairpin_txrx_bind(txq_ctrl, rxq_ctrl);
+		if (ret)
+			goto bind_rxtx_error;
+
+
+		mlx5_rxq_release(dev, i);
+		mlx5_txq_release(p_dev, p_queue);
+	}
+
+	return 0;
+
+bind_rxtx_error:
+	mlx5_txq_release(p_dev, p_queue);
+bind_rxrx_error:
+	mlx5_rxq_release(dev, i);
+	return -rte_errno;
+}
+
+
+static int
+mlx5_hairpin_tx_bind(struct rte_eth_dev *dev) {
+	struct rte_eth_dev *p_dev;
+	struct mlx5_priv *priv = dev->data->dev_private;
+	struct mlx5_priv *p_priv;
+	struct mlx5_txq_ctrl *txq_ctrl;
+	struct mlx5_rxq_ctrl *rxq_ctrl;
+	uint16_t p_port, p_queue;
+	uint16_t port = dev->data->port_id;
 	unsigned int i;
 	int ret = 0;
 
@@ -199,62 +323,75 @@ mlx5_hairpin_bind(struct rte_eth_dev *dev)
 			mlx5_txq_release(dev, i);
 			continue;
 		}
-		if (!txq_ctrl->obj) {
-			rte_errno = ENOMEM;
-			DRV_LOG(ERR, "port %u no txq object found: %d",
-				dev->data->port_id, i);
-			mlx5_txq_release(dev, i);
-			return -rte_errno;
-		}
-		sq = txq_ctrl->obj->sq;
-		rxq_ctrl = mlx5_rxq_get(dev,
-					txq_ctrl->hairpin_conf.peers[0].queue);
-		if (!rxq_ctrl) {
-			mlx5_txq_release(dev, i);
+
+		p_port  = txq_ctrl->hairpin_conf.peers[0].port;
+		if (!rte_eth_dev_is_valid_port(p_port)) {
+			DRV_LOG(ERR, "port %u Txq %d invalid hairpin peer port",
+					port, i);
 			rte_errno = EINVAL;
-			DRV_LOG(ERR, "port %u no rxq object found: %d",
-				dev->data->port_id,
-				txq_ctrl->hairpin_conf.peers[0].queue);
-			return -rte_errno;
+			goto bind_txtx_error;
+		}
+
+		p_dev  = &rte_eth_devices[p_port];
+		p_priv = p_dev->data->dev_private;
+		if (p_port != port && !p_dev->data->dev_started) {
+			mlx5_txq_release(dev, i);
+			continue;
+		}
+
+		p_queue = txq_ctrl->hairpin_conf.peers[0].queue;
+		if (p_queue >= p_priv->rxqs_n) {
+			DRV_LOG(ERR, "port %u Txq %u invalid hairpin Rxq index",
+					port, i);
+			rte_errno = EINVAL;
+			goto bind_txtx_error;
+		}
+
+		rxq_ctrl = mlx5_rxq_get(p_dev, p_queue);
+		if (!rxq_ctrl) {
+			DRV_LOG(ERR, "port %u Txq %u invalid hairpin Rxq object",
+					port, i);
+			rte_errno = EINVAL;
+			goto bind_txtx_error;
 		}
 		if (rxq_ctrl->type != MLX5_RXQ_TYPE_HAIRPIN ||
-		    rxq_ctrl->hairpin_conf.peers[0].queue != i) {
+				rxq_ctrl->hairpin_conf.peers[0].queue != i) {
+			DRV_LOG(ERR, "port %u Txq %u invalid hairpin Rxq conf",
+					port, i);
 			rte_errno = ENOMEM;
-			DRV_LOG(ERR, "port %u Tx queue %d can't be binded to "
-				"Rx queue %d", dev->data->port_id,
-				i, txq_ctrl->hairpin_conf.peers[0].queue);
-			goto error;
+			goto bind_txrx_error;
 		}
-		rq = rxq_ctrl->obj->rq;
-		if (!rq) {
-			rte_errno = ENOMEM;
-			DRV_LOG(ERR, "port %u hairpin no matching rxq: %d",
-				dev->data->port_id,
-				txq_ctrl->hairpin_conf.peers[0].queue);
-			goto error;
-		}
-		sq_attr.state = MLX5_SQC_STATE_RDY;
-		sq_attr.sq_state = MLX5_SQC_STATE_RST;
-		sq_attr.hairpin_peer_rq = rq->id;
-		sq_attr.hairpin_peer_vhca = priv->config.hca_attr.vhca_id;
-		ret = mlx5_devx_cmd_modify_sq(sq, &sq_attr);
+
+		ret = mlx5_hairpin_txrx_bind(txq_ctrl, rxq_ctrl);
 		if (ret)
-			goto error;
-		rq_attr.state = MLX5_SQC_STATE_RDY;
-		rq_attr.rq_state = MLX5_SQC_STATE_RST;
-		rq_attr.hairpin_peer_sq = sq->id;
-		rq_attr.hairpin_peer_vhca = priv->config.hca_attr.vhca_id;
-		ret = mlx5_devx_cmd_modify_rq(rq, &rq_attr);
-		if (ret)
-			goto error;
+			goto bind_txrx_error;
+
+
 		mlx5_txq_release(dev, i);
-		mlx5_rxq_release(dev, txq_ctrl->hairpin_conf.peers[0].queue);
+		mlx5_rxq_release(p_dev, p_queue);
 	}
+
 	return 0;
-error:
+
+bind_txrx_error:
+	mlx5_rxq_release(p_dev, p_queue);
+bind_txtx_error:
 	mlx5_txq_release(dev, i);
-	mlx5_rxq_release(dev, txq_ctrl->hairpin_conf.peers[0].queue);
 	return -rte_errno;
+}
+
+static int
+mlx5_hairpin_bind(struct rte_eth_dev *dev) {
+	int ret = 0;
+	ret = mlx5_hairpin_tx_bind(dev);
+	if (ret)
+		return ret;
+
+	ret = mlx5_hairpin_rx_bind(dev);
+	if (ret)
+		return ret;
+
+	return 0;
 }
 
 /**
@@ -455,18 +592,21 @@ mlx5_traffic_enable(struct rte_eth_dev *dev)
 	 * isolation mode. Or else all the packets to be sent will be sent
 	 * out directly without the TX flow actions, e.g. encapsulation.
 	 */
-	for (i = 0; i != priv->txqs_n; ++i) {
-		struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
-		if (!txq_ctrl)
-			continue;
-		if (txq_ctrl->type == MLX5_TXQ_TYPE_HAIRPIN) {
-			ret = mlx5_ctrl_flow_source_queue(dev, i);
-			if (ret) {
-				mlx5_txq_release(dev, i);
-				goto error;
+	if (priv->config.hairpin_tx_flow_en) {
+		for (i = 0; i != priv->txqs_n; ++i) {
+			struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
+			if (!txq_ctrl)
+				continue;
+
+			if (txq_ctrl->type == MLX5_TXQ_TYPE_HAIRPIN) {
+				ret = mlx5_ctrl_flow_source_queue(dev, i);
+				if (ret) {
+					mlx5_txq_release(dev, i);
+					goto error;
+				}
 			}
+			mlx5_txq_release(dev, i);
 		}
-		mlx5_txq_release(dev, i);
 	}
 	if (priv->config.dv_esw_en && !priv->config.vf) {
 		if (mlx5_flow_create_esw_table_zero_flow(dev))

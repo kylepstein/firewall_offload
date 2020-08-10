@@ -4353,25 +4353,23 @@ flow_list_create(struct rte_eth_dev *dev, uint32_t *list,
 	const struct rte_flow_action *p_actions_rx = actions;
 	uint32_t i;
 	uint32_t idx = 0;
-	int hairpin_flow;
+	int hairpin_flow = 0;
 	uint32_t hairpin_id = 0;
 	struct rte_flow_attr attr_tx = { .priority = 0 };
 	int ret;
 
-	hairpin_flow = flow_check_hairpin_split(dev, attr, actions);
-	ret = flow_drv_validate(dev, attr, items, p_actions_rx,
-				external, hairpin_flow, error);
-	if (ret < 0)
-		return 0;
-	if (hairpin_flow > 0) {
-		if (hairpin_flow > MLX5_MAX_SPLIT_ACTIONS) {
-			rte_errno = EINVAL;
-			return 0;
+	if (priv->config.hairpin_tx_flow_en)  {
+		hairpin_flow = flow_check_hairpin_split(dev, attr, actions);
+		if (hairpin_flow > 0) {
+			if (hairpin_flow > MLX5_MAX_SPLIT_ACTIONS) {
+				rte_errno = EINVAL;
+				return 0;
+			}
+			flow_hairpin_split(dev, actions, actions_rx.actions,
+					actions_hairpin_tx.actions, items_tx.items,
+					&hairpin_id);
+			p_actions_rx = actions_rx.actions;
 		}
-		flow_hairpin_split(dev, actions, actions_rx.actions,
-				   actions_hairpin_tx.actions, items_tx.items,
-				   &hairpin_id);
-		p_actions_rx = actions_rx.actions;
 	}
 	flow = mlx5_ipool_zmalloc(priv->sh->ipool[MLX5_IPOOL_RTE_FLOW], &idx);
 	if (!flow) {
