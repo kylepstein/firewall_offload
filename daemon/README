@@ -1,0 +1,14 @@
+Introduction
+Application to communicate with firewall via grpc, and do HW offload on Nvidia
+BlueField DPU
+
+Usage
+1. Compile DPDK and daemon
+# cd firewall_offload
+# . build.sh
+
+2. Setup hugepages
+3. Make sure to create 1 VF for each PF on x86 side
+4. Run app
+# cd firewall_offload/daemon
+# ./build/firewall_offload -n 1 -w 0000:03:00.0,representor=[0] -w 0000:03:00.1,representor=[0]  -- -i

@@ -1,0 +1,208 @@
+/* SPDX-License-Identifier: BSD-3-Clause
+ * Copyright 2020 Nvidia
+ */
+#include <stdlib.h>
+
+#include "opof.h"
+#include "opof_error.h"
+#include "opof_serverlib.h"
+#include "opof_test_util.h"
+
+#include "common.h"
+
+static void display_session_response(sessionResponse_t *response)
+{
+	printf("\n\nSession Response\n");
+	printf("Session ID: %ld\n",response->sessionId);
+	printf("In Packets %ld\n",response->inPackets);
+	printf("Out Packets: %ld\n",response->outPackets);
+	printf("In Bytes: %ld\n",response->inBytes);
+	printf("Out Bytes: %ld\n",response->outBytes);
+	printf("Session State: %d\n",response->sessionState);
+	printf("Session Close Code; %d\n",response->sessionCloseCode);
+	printf("Request Status: %d\n",response->requestStatus);
+}
+
+static void display_session_request(sessionRequest_t *request)
+{
+	printf("\n\nSession Response\n");
+	printf("Session ID: %ld\n",request->sessId);
+	printf( "Inlif: %d\n",request->inlif);
+	printf( "Outlif: %d\n",request->outlif);
+	printf( "Source Port: %d\n",request->srcPort);
+	printf( "Source IP: 0x%x\n", request->srcIP);
+	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP));
+	printf( "Destination Port: %d\n",request->dstPort);
+	printf( "Protocol ID: %d\n",request->proto);
+	printf( "IP Version: %d\n",request->ipver);
+	printf( "Action Value: %d\n",request->actType);
+}
+
+int opof_del_flow(struct fw_session *session)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	int ret;
+
+	ret = offload_flow_destroy(session->port_in, session->flow_in);
+
+	if (ret) {
+		ret = FAILURE;
+		goto out;
+	}
+
+	rte_hash_del_key(ht, &session->key);
+
+	rte_free(session);
+
+	ret = SUCCESS;
+
+out:
+	return ret;
+}
+
+int opof_add_session_server(sessionRequest_t *parameters,
+			    addSessionResponse_t *response)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	struct fw_session *session = NULL;
+	struct session_key key;
+	int ret = 0;
+
+	memset(&key, 0, sizeof(key));
+
+	display_session_request(parameters);
+
+	key.sess_id = parameters->sessId;
+
+	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
+	if (session) {
+		response->requestStatus = _REJECTED_SESSION_ALREADY_EXISTS;
+		printf("Session (%d) already exists\n", session->key.sess_id);
+		goto out;
+	}
+
+	session = rte_zmalloc("session",
+			      sizeof(struct fw_session),
+			      RTE_CACHE_LINE_SIZE);
+
+	session->key.sess_id = parameters->sessId;
+
+	session->tuple.src_ip = parameters->srcIP;
+	session->tuple.dst_ip = parameters->dstIP;
+	session->tuple.proto = parameters->proto;
+	session->tuple.src_port = parameters->srcPort;
+	session->tuple.dst_port = parameters->dstPort;
+
+	if (parameters->inlif == 1) {
+		session->port_in = INITIATOR_PORT_ID;
+		session->port_out = RESPONDER_PORT_ID;
+	} else {
+		session->port_in = RESPONDER_PORT_ID;
+		session->port_out = INITIATOR_PORT_ID;
+	}
+
+	ret = offload_flow_add(session->port_in, session,
+			       (enum flow_action)parameters->actType);
+
+	if (!ret) {
+		session->state = _ESTABLISHED;
+		rte_hash_add_key_data(ht, &session->key, (void *)session);
+		printf("Session (%d) added\n", session->key.sess_id);
+	}
+
+	response->requestStatus = ret ? _REJECTED : _ACCEPTED;
+
+out:
+	return ret;
+}
+
+int opof_get_session_server(unsigned long sessionId,
+			    sessionResponse_t *response)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	struct fw_session *session = NULL;
+	struct session_key key;
+	int ret = 0;
+
+	key.sess_id = sessionId;
+
+	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
+	if (!session) {
+		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
+		ret = FAILURE;
+		goto out;
+	}
+
+	offload_flow_query(session->port_in, session->flow_in,
+			   &response->inPackets, &response->inBytes);
+
+	response->sessionId = sessionId;
+	response->sessionState = session->state;
+	response->sessionCloseCode = session->close_code;
+	response->requestStatus = _ACCEPTED;
+
+	display_session_response(response);
+
+	ret = SUCCESS;
+
+out:
+	return ret;
+}
+
+int opof_del_session_server(unsigned long sessionId,
+			    sessionResponse_t *response)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	struct fw_session *session = NULL;
+	struct session_key key;
+	int ret = 0;
+
+	key.sess_id = sessionId;
+
+	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
+
+	if (!session) {
+		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
+		ret = FAILURE;
+		goto out;
+	}
+
+	ret = opof_del_flow(session);
+
+	if (ret) {
+		response->requestStatus = _REJECTED;
+		goto out;
+	}
+
+	response->requestStatus = _ACCEPTED;
+
+out:
+	return ret;
+}
+
+void opof_del_all_session_server(void)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	struct fw_session *session = NULL;
+	const void *next_key = NULL;
+	uint32_t iter = 0;
+
+	while (rte_hash_iterate(ht, &next_key, (void **)&session, &iter) >= 0)
+		opof_del_flow(session);
+}
+
+sessionResponse_t **
+opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
+				int *sessionCount)
+{
+
+	int count = 0;
+	//int nresponses = request->pageSize;
+	sessionResponse_t **responses= NULL;
+	*sessionCount = 0;
+
+	//responses = createSessionResponse(nresponses, &count);
+	*sessionCount = count;
+
+	return responses;
+}
