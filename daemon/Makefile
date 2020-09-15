@@ -4,7 +4,9 @@
 # binary name
 APP = firewall_offload
 
-ROOT_DIR ?= $(HOME)
+GRPC_DIR ?= $(HOME)/local/
+LIBDIR := $(GRPC_DIR)/lib
+LIB64DIR := $(GRPC_DIR)/lib64
 
 ifeq ($(RTE_SDK),)
 $(error "Please define RTE_SDK environment variable")
@@ -12,7 +14,7 @@ endif
 
 include $(RTE_SDK)/mk/rte.vars.mk
 
-INCLUDES += -I $(ROOT_DIR)/local/include \
+INCLUDES += -I $(GRPC_DIR)/include \
 	    -I /usr/include/c++/4.8.5 \
 	    -I /usr/include/c++/4.8.5/aarch64-redhat-linux/ \
 	    -I $(RTE_SDK)/daemon \
@@ -22,8 +24,6 @@ CFLAGS += $(INCLUDES)
 CFLAGS += -DALLOW_EXPERIMENTAL_API
 CFLAGS += -O3 -g
 
-LIBDIR := $(ROOT_DIR)/local/lib
-LIB64DIR := $(ROOT_DIR)/local/lib64
 GPR_LIB := $(LIBDIR)/libgpr.a
 CHANNELZ_LIB := $(LIBDIR)/libgrpcpp_channelz.a
 GRPCPP_LIB := $(LIBDIR)/libgrpc++.a
@@ -79,11 +79,3 @@ LDFLAGS = -lc -lstdc++
 SRCS-y := main.c flow.c thread.c init.c cmd.c opof_server.c
 
 include $(RTE_SDK)/mk/rte.extapp.mk
-
-
-.PHONY: clean
-
-clean:
-	rm -f ./*.o \
-	rm -rf build
-
