@@ -279,7 +279,7 @@ int offload_flow_add(portid_t port_id,
 int offload_flow_query(portid_t port_id, struct rte_flow *flow,
 		       uint64_t *packets, uint64_t *bytes)
 {
-	struct rte_flow_query_count count = {
+	struct rte_flow_query_count flow_count = {
 		.reset = 0,
 		.hits_set = 1,
 		.bytes_set = 1,
@@ -295,17 +295,17 @@ int offload_flow_query(portid_t port_id, struct rte_flow *flow,
 
 	memset(action, 0, sizeof(action));
 	action[0].type = RTE_FLOW_ACTION_TYPE_COUNT;
-	action[0].conf = &count;
+	action[0].conf = &flow_count;
 	action[1].type = RTE_FLOW_ACTION_TYPE_END;
 
 	/* Poisoning to make sure PMDs update it in case of error. */
 	memset(&error, 0x55, sizeof(error));
 
-	if (rte_flow_query(port_id, flow, action, &count, &error))
+	if (rte_flow_query(port_id, flow, action, &flow_count, &error))
 		return port_flow_complain(&error);
 
-	*packets = count.hits;
-	*bytes = count.bytes;
+	*packets = flow_count.hits;
+	*bytes = flow_count.bytes;
 
 	return 0;
 }

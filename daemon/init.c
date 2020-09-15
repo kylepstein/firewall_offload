@@ -132,20 +132,29 @@ static struct rte_flow * create_hairpin_flow(uint16_t port_id)
 static int create_sample_fwd_flow(uint16_t port_id, int proto,
 				  enum flow_action action)
 {
-	struct fw_session session;
+	addSessionResponse_t response;
+	sessionRequest_t request;
 	int ret = 0;
 
-	memset(&session, 0, sizeof(session));
+	memset(&response, 0, sizeof(response));
+	memset(&request, 0, sizeof(request));
 
-	session.tuple.src_ip = 0xc0010102; // 192.1.1.2
-	session.tuple.dst_ip = 0xc0010112; // 192.1.1.18
-	session.tuple.proto = proto;
-	session.tuple.src_port = 5002;
-	session.tuple.dst_port = 5018;
+	request.inlif = 1;
+	request.sessId = (action == ACTION_DROP) ?
+		SAMPLE_SESSION_DROP :
+		SAMPLE_SESSION_FWD;
 
-	ret = offload_flow_add(port_id, &session, action);
+	request.actType = action;
+	request.srcIP = 0xc0010102; // 192.1.1.2
+	request.dstIP = 0xc0010112; // 192.1.1.18
+	request.proto = proto;
+	request.srcPort = 5002;
+	request.dstPort = 5018;
+
+	ret = opof_add_session_server(&request, &response);
 	if (!ret)
-		printf("Warnning: Sample fwd flow created\n");
+		printf("Warnning: Sample flow created for session (%d)\n",
+		       request.sessId);
 
 	return ret;
 }

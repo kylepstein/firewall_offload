@@ -126,6 +126,8 @@ int opof_get_session_server(unsigned long sessionId,
 
 	key.sess_id = sessionId;
 
+	memset(response, 0, sizeof(*response));
+
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (!session) {
 		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
