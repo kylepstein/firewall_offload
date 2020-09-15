@@ -149,6 +149,9 @@ int main(int argc, char *argv[])
 
 	config_init();
 
+	if (argc > 1)
+		args_parse(argc, argv);
+
 	/* Initialize all ports. */
 	RTE_ETH_FOREACH_DEV(portid)
 		if (port_init(portid, mbuf_pool))

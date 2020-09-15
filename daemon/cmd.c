@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <getopt.h>
 #include <termios.h>
 #include <ctype.h>
 #include <sys/queue.h>
@@ -154,4 +155,38 @@ void force_quit(void)
 	clean_up();
 	if (fw_offload_cl != NULL)
 		cmdline_quit(fw_offload_cl);
+}
+
+void args_parse(int argc, char** argv)
+{
+	char *end;
+	int opt;
+
+	static struct option lgopts[] = {
+		{ "help",	0, 0, 'h'},
+		{ "address",	0, 0, 'a'},
+		{ "port",	0, 0, 'p'},
+	};
+
+	while ((opt = getopt_long(argc, argv, "a:p:h",
+				  lgopts, NULL)) != EOF) {
+		switch (opt) {
+		case 'a':
+			strncpy(off_config_g.grpc_addr, optarg, 32);
+			off_config_g.has_grpc_addr = 1;
+			break;
+		case 'p':
+			off_config_g.grpc_port = strtoul(optarg, &end, 10);
+			break;
+		case 'h':
+			printf("\t-p, --port\tgRPC Port \n");
+			printf("\t-a, --address\tAddress of gRPC Server\n");
+			printf("\t-h, --help:\tCommand line help \n\n");
+			rte_exit(EXIT_SUCCESS, "Displayed help\n");
+		default:
+			printf("Invalid option: %s\n", argv[optind]);
+			rte_exit(EXIT_FAILURE,
+				 "Command line is incomplete or incorrect\n");
+		}
+	}
 }

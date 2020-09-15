@@ -158,6 +158,10 @@ struct fw_offload_config {
 	portid_t phy_port[MAX_DPDK_PORT];
 	portid_t peer_port[MAX_DPDK_PORT];
 	portid_t vf_port[MAX_DPDK_PORT];
+
+	uint8_t has_grpc_addr;
+	char grpc_addr[32];
+	uint16_t grpc_port;
 };
 
 int port_init(portid_t pid,

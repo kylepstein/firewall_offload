@@ -29,15 +29,20 @@ static void aging_thread(uint32_t lcore_id)
 
 static void grpc_thread(uint32_t lcore_id)
 {
-	const char *default_address ="localhost";
+	const char *default_address = "localhost";
 	uint16_t port = 3443;
 	long int lwp_id;
 
 	lwp_id = syscall(SYS_gettid);
 	printf("LCORE(%u) (LWP=%ld): grpc thread started at %s\n",
-	       lcore_id, lwp_id, default_address);
+	       lcore_id, lwp_id,
+	       off_config_g.has_grpc_addr ? off_config_g.grpc_addr :
+	       default_address);
 
-	opof_server(default_address, port, NULL, NULL);
+	opof_server(off_config_g.has_grpc_addr ? off_config_g.grpc_addr :
+		    default_address,
+		    off_config_g.grpc_port ? off_config_g.grpc_port : port,
+		    NULL, NULL);
 }
 
 int thread_mux(void *data __rte_unused)
