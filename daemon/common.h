@@ -148,12 +148,18 @@ struct fw_session {
 	uint8_t		close_code;
 };
 
+struct offload_stats {
+	rte_atomic32_t active;
+	rte_atomic32_t aged;
+};
+
 struct fw_offload_config {
 	struct lcore_priv	lcores[MAX_LCORES];
 	struct aging_priv	aging;
 	struct rte_hash		*mac_ht;
 	struct rte_hash		*session_ht;
 	struct rte_port		*ports;
+	struct offload_stats	stats;
 
 	portid_t phy_port[MAX_DPDK_PORT];
 	portid_t peer_port[MAX_DPDK_PORT];

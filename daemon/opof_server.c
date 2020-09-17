@@ -50,9 +50,13 @@ int opof_del_flow(struct fw_session *session)
 		goto out;
 	}
 
+	printf("Session (%d) deleted\n", session->key.sess_id);
+
 	rte_hash_del_key(ht, &session->key);
 
 	rte_free(session);
+
+	rte_atomic32_dec(&off_config_g.stats.active);
 
 	ret = SUCCESS;
 
@@ -107,6 +111,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	if (!ret) {
 		session->state = _ESTABLISHED;
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
+		rte_atomic32_inc(&off_config_g.stats.active);
 		printf("Session (%d) added\n", session->key.sess_id);
 	}
 

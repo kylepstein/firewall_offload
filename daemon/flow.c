@@ -355,14 +355,13 @@ void offload_flow_aged(portid_t port_id)
 		return;
 	}
 
-	total = 0;
 	for (idx = 0; idx < nb_context; idx++) {
 		session = (struct fw_session*)contexts[idx];
 		if (!session)
 			continue;
 		ret = opof_del_flow(session);
 		if (!ret)
-			total++;
+			rte_atomic32_inc(&off_config_g.stats.aged);
 	}
 	free(contexts);
 }

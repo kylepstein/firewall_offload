@@ -131,10 +131,45 @@ cmdline_parse_inst_t cmd_flow_del = {
 	},
 };
 
+/*** stats query ***/
+
+struct cmd_stats_query_result {
+	cmdline_fixed_string_t stats_query;
+};
+
+static void
+cmd_stats_query_parsed(__rte_unused void *parsed_result,
+		__rte_unused struct cmdline *cl,
+		__rte_unused void *data)
+{
+	struct cmd_stats_query_result *res = parsed_result;
+
+	printf("Session stats:\n");
+	printf("\tActive (%d)\n",
+	       rte_atomic32_read(&off_config_g.stats.active));
+	printf("\tAged (%d)\n",
+	       rte_atomic32_read(&off_config_g.stats.aged));
+}
+
+cmdline_parse_token_string_t cmd_stats_query_tok =
+	TOKEN_STRING_INITIALIZER(struct cmd_stats_query_result, stats_query,
+				 "stats query");
+
+cmdline_parse_inst_t cmd_stats_query = {
+	.f = cmd_stats_query_parsed,
+	.data = NULL,
+	.help_str = "stats query",
+	.tokens = {
+		(void *)&cmd_stats_query_tok,
+		NULL,
+	},
+};
+
 cmdline_parse_ctx_t main_ctx[] = {
 	(cmdline_parse_inst_t *)&cmd_quit,
 	(cmdline_parse_inst_t *)&cmd_flow_query,
 	(cmdline_parse_inst_t *)&cmd_flow_del,
+	(cmdline_parse_inst_t *)&cmd_stats_query,
 	NULL,
 };
 
