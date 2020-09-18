@@ -7,7 +7,7 @@ echo "RTE_SDK is $RTE_SDK"
 
 APP_PATH=$RTE_SDK/daemon
 
-#make -j 8 install T=arm64-armv8a-linux-gcc MAKE_PAUSE=n
+make -j 8 install T=arm64-armv8a-linux-gcc MAKE_PAUSE=n
 
 RC=$((RC+$?))
 
