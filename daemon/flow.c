@@ -122,6 +122,7 @@ add_simple_flow(uint16_t port_id,
 	struct rte_flow_error error;
 	int res;
 
+	memset(&error, 0, sizeof(error));
 	res = rte_flow_validate(port_id, attr, pattern, actions, &error);
 	if (!res)
 		flow = rte_flow_create(port_id, attr, pattern,
