@@ -12,6 +12,9 @@
 
 static void display_session_response(sessionResponse_t *response)
 {
+	if (!off_config_g.verbose)
+		return;
+
 	printf("\n\nSession Response\n");
 	printf("Session ID: %ld\n",response->sessionId);
 	printf("In Packets %ld\n",response->inPackets);
@@ -25,6 +28,9 @@ static void display_session_response(sessionResponse_t *response)
 
 static void display_session_request(sessionRequest_t *request)
 {
+	if (!off_config_g.verbose)
+		return;
+
 	printf("\n\nSession Response\n");
 	printf("Session ID: %ld\n",request->sessId);
 	printf( "Inlif: %d\n",request->inlif);
@@ -50,7 +56,7 @@ int opof_del_flow(struct fw_session *session)
 		goto out;
 	}
 
-	printf("Session (%d) deleted\n", session->key.sess_id);
+	offload_dbg("Session (%d) deleted\n", session->key.sess_id);
 
 	rte_hash_del_key(ht, &session->key);
 
@@ -81,7 +87,8 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (session) {
 		response->requestStatus = _REJECTED_SESSION_ALREADY_EXISTS;
-		printf("Session (%d) already exists\n", session->key.sess_id);
+		offload_dbg("Session (%d) already exists\n",
+			    session->key.sess_id);
 		goto out;
 	}
 
@@ -112,7 +119,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 		session->state = _ESTABLISHED;
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
 		rte_atomic32_inc(&off_config_g.stats.active);
-		printf("Session (%d) added\n", session->key.sess_id);
+		offload_dbg("Session (%d) added\n", session->key.sess_id);
 	}
 
 	response->requestStatus = ret ? _REJECTED : _ACCEPTED;

@@ -130,13 +130,14 @@ add_simple_flow(uint16_t port_id,
 		printf("Error: %s flow validation failed\n", flow_name);
 
 	if (!flow) {
-		printf("Error: %s failed %d message: %s\n",
+		printf("Error: %s flow creation failed(0x%x): %s\n",
 		       flow_name, error.type,
 		       error.message ? error.message :
 		       "(no stated reason)");
 		rte_exit(EXIT_FAILURE, "error in creating flow\n");
 	} else {
-		printf("Port(%d): %s flow created\n", port_id, flow_name);
+		offload_dbg("Port(%d): %s flow created\n",
+			    port_id, flow_name);
 	}
 
 	return flow;

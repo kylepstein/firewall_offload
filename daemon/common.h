@@ -168,7 +168,26 @@ struct fw_offload_config {
 	uint8_t has_grpc_addr;
 	char grpc_addr[32];
 	uint16_t grpc_port;
+	uint8_t verbose;
 };
+
+static inline void verrmsg(const char *fmt, va_list ap)
+{
+	if (fmt)
+		vfprintf(stderr, fmt, ap);
+	putc('\n', stderr);
+}
+
+static inline void offload_dbg(const char *fmt, ...)
+{
+	va_list ap;
+	if (!off_config_g.verbose)
+		return;
+
+	va_start(ap, fmt);
+	verrmsg(fmt, ap);
+	va_end(ap);
+}
 
 int port_init(portid_t pid,
 	      struct rte_mempool *mbuf_pool);

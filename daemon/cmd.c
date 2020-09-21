@@ -165,11 +165,47 @@ cmdline_parse_inst_t cmd_stats_query = {
 	},
 };
 
+/*** verbose ***/
+
+struct cmd_verbose_result {
+	cmdline_fixed_string_t verbose_str;
+	uint8_t verbose;
+};
+
+static void
+cmd_verbose_parsed(void *parsed_result,
+		   __rte_unused struct cmdline *cl,
+		   __rte_unused void *data)
+{
+	struct cmd_verbose_result *res = parsed_result;
+
+	off_config_g.verbose = !!res->verbose;
+}
+
+cmdline_parse_token_string_t cmd_verbose_tok =
+	TOKEN_STRING_INITIALIZER(struct cmd_verbose_result, verbose,
+				 "verbose");
+
+cmdline_parse_token_num_t cmd_verbose_set =
+	TOKEN_NUM_INITIALIZER(struct cmd_verbose_result, verbose, UINT8);
+
+cmdline_parse_inst_t cmd_verbose = {
+	.f = cmd_verbose_parsed,
+	.data = NULL,
+	.help_str = "verbose <0|1>",
+	.tokens = {
+		(void *)&cmd_verbose_tok,
+		(void *)&cmd_verbose_set,
+		NULL,
+	},
+};
+
 cmdline_parse_ctx_t main_ctx[] = {
 	(cmdline_parse_inst_t *)&cmd_quit,
 	(cmdline_parse_inst_t *)&cmd_flow_query,
 	(cmdline_parse_inst_t *)&cmd_flow_del,
 	(cmdline_parse_inst_t *)&cmd_stats_query,
+	(cmdline_parse_inst_t *)&cmd_verbose,
 	NULL,
 };
 
