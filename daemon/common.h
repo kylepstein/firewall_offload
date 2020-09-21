@@ -38,7 +38,7 @@
 #define NUM_REGULAR_Q	(1)
 #define NUM_HP_Q	(1)
 
-#define MAX_SESSION		(1000u)
+#define MAX_SESSION		(20000u)
 #define SAMPLE_SESSION_FWD	(MAX_SESSION - 1)
 #define SAMPLE_SESSION_DROP	(MAX_SESSION - 2)
 
