@@ -136,6 +136,9 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 	sessionRequest_t request;
 	int ret = 0;
 
+	//FIXME: with sample flows, num of flows can't up to 5k
+	return 0;
+
 	memset(&response, 0, sizeof(response));
 	memset(&request, 0, sizeof(request));
 
