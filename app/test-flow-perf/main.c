@@ -38,9 +38,9 @@
 #include "config.h"
 #include "flow_gen.h"
 
-#define MAX_ITERATIONS             100
+#define MAX_ITERATIONS             1
 #define DEFAULT_RULES_COUNT    4000000
-#define DEFAULT_ITERATION       100000
+#define DEFAULT_ITERATION       10
 
 struct rte_flow *flow;
 static uint8_t flow_group;
@@ -1105,6 +1105,8 @@ main(int argc, char **argv)
 		init_lcore_info();
 		rte_eal_mp_remote_launch(start_forwarding, NULL, CALL_MASTER);
 	}
+
+	sleep(1000);
 
 	RTE_ETH_FOREACH_DEV(port) {
 		rte_flow_flush(port, &error);
