@@ -46,6 +46,10 @@
 namespace openoffload {
 namespace v1alpha4 {
 
+//
+// The session table was combined with the statistices service
+// in v1alpha4 to simplfy the code.
+//
 class SessionTable final {
  public:
   static constexpr char const* service_full_name() {
@@ -55,6 +59,8 @@ class SessionTable final {
    public:
     virtual ~StubInterface() {}
     // Adds a session
+    // This was changed in v1alpha4 to be a streaming API, for performance
+    // reasons.
     std::unique_ptr< ::grpc::ClientWriterInterface< ::openoffload::v1alpha4::sessionRequest>> addSession(::grpc::ClientContext* context, ::openoffload::v1alpha4::addSessionResponse* response) {
       return std::unique_ptr< ::grpc::ClientWriterInterface< ::openoffload::v1alpha4::sessionRequest>>(addSessionRaw(context, response));
     }
@@ -105,6 +111,8 @@ class SessionTable final {
      public:
       virtual ~experimental_async_interface() {}
       // Adds a session
+      // This was changed in v1alpha4 to be a streaming API, for performance
+      // reasons.
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void addSession(::grpc::ClientContext* context, ::openoffload::v1alpha4::addSessionResponse* response, ::grpc::ClientWriteReactor< ::openoffload::v1alpha4::sessionRequest>* reactor) = 0;
       #else
@@ -295,6 +303,8 @@ class SessionTable final {
     Service();
     virtual ~Service();
     // Adds a session
+    // This was changed in v1alpha4 to be a streaming API, for performance
+    // reasons.
     virtual ::grpc::Status addSession(::grpc::ServerContext* context, ::grpc::ServerReader< ::openoffload::v1alpha4::sessionRequest>* reader, ::openoffload::v1alpha4::addSessionResponse* response);
     // Obtains the session 
     virtual ::grpc::Status getSession(::grpc::ServerContext* context, const ::openoffload::v1alpha4::sessionId* request, ::openoffload::v1alpha4::sessionResponse* response);

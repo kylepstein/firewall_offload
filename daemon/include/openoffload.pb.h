@@ -214,6 +214,33 @@ inline bool SESSION_CLOSE_CODE_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SESSION_CLOSE_CODE>(
     SESSION_CLOSE_CODE_descriptor(), name, value);
 }
+enum ADD_SESSION_STATUS : int {
+  _SESSION_ACCEPTED = 0,
+  _SESSION_REJECTED = 1,
+  _SESSION_TABLE_FULL = 2,
+  _SESSION_TABLE_UNAVAILABLE = 3,
+  ADD_SESSION_STATUS_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  ADD_SESSION_STATUS_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool ADD_SESSION_STATUS_IsValid(int value);
+constexpr ADD_SESSION_STATUS ADD_SESSION_STATUS_MIN = _SESSION_ACCEPTED;
+constexpr ADD_SESSION_STATUS ADD_SESSION_STATUS_MAX = _SESSION_TABLE_UNAVAILABLE;
+constexpr int ADD_SESSION_STATUS_ARRAYSIZE = ADD_SESSION_STATUS_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ADD_SESSION_STATUS_descriptor();
+template<typename T>
+inline const std::string& ADD_SESSION_STATUS_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ADD_SESSION_STATUS>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ADD_SESSION_STATUS_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ADD_SESSION_STATUS_descriptor(), enum_t_value);
+}
+inline bool ADD_SESSION_STATUS_Parse(
+    const std::string& name, ADD_SESSION_STATUS* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ADD_SESSION_STATUS>(
+    ADD_SESSION_STATUS_descriptor(), name, value);
+}
 enum REQUEST_STATUS : int {
   _ACCEPTED = 0,
   _REJECTED = 1,
@@ -599,9 +626,35 @@ class actionParameters PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kActionNextHopV6FieldNumber = 3,
     kActionTypeFieldNumber = 1,
     kActionNextHopFieldNumber = 2,
   };
+  // bytes actionNextHopV6 = 3;
+  void clear_actionnexthopv6();
+  const std::string& actionnexthopv6() const;
+  void set_actionnexthopv6(const std::string& value);
+  void set_actionnexthopv6(std::string&& value);
+  void set_actionnexthopv6(const char* value);
+  void set_actionnexthopv6(const void* value, size_t size);
+  std::string* mutable_actionnexthopv6();
+  std::string* release_actionnexthopv6();
+  void set_allocated_actionnexthopv6(std::string* actionnexthopv6);
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  std::string* unsafe_arena_release_actionnexthopv6();
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  void unsafe_arena_set_allocated_actionnexthopv6(
+      std::string* actionnexthopv6);
+  private:
+  const std::string& _internal_actionnexthopv6() const;
+  void _internal_set_actionnexthopv6(const std::string& value);
+  std::string* _internal_mutable_actionnexthopv6();
+  public:
+
   // .openoffload.v1alpha4.ACTION_TYPE actionType = 1;
   void clear_actiontype();
   ::openoffload::v1alpha4::ACTION_TYPE actiontype() const;
@@ -627,6 +680,7 @@ class actionParameters PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr actionnexthopv6_;
   int actiontype_;
   ::PROTOBUF_NAMESPACE_ID::uint32 actionnexthop_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -747,18 +801,70 @@ class sessionRequest PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kActionFieldNumber = 10,
+    kSourceIpV6FieldNumber = 6,
+    kDestinationIpV6FieldNumber = 9,
+    kActionFieldNumber = 12,
     kSessionIdFieldNumber = 1,
     kInLifFieldNumber = 2,
     kOutLifFieldNumber = 3,
     kIpVersionFieldNumber = 4,
     kSourceIpFieldNumber = 5,
-    kSourcePortFieldNumber = 6,
-    kDestinationIpFieldNumber = 7,
-    kDestinationPortFieldNumber = 8,
-    kProtocolIdFieldNumber = 9,
+    kSourcePortFieldNumber = 7,
+    kDestinationIpFieldNumber = 8,
+    kDestinationPortFieldNumber = 10,
+    kProtocolIdFieldNumber = 11,
   };
-  // .openoffload.v1alpha4.actionParameters action = 10;
+  // bytes sourceIpV6 = 6;
+  void clear_sourceipv6();
+  const std::string& sourceipv6() const;
+  void set_sourceipv6(const std::string& value);
+  void set_sourceipv6(std::string&& value);
+  void set_sourceipv6(const char* value);
+  void set_sourceipv6(const void* value, size_t size);
+  std::string* mutable_sourceipv6();
+  std::string* release_sourceipv6();
+  void set_allocated_sourceipv6(std::string* sourceipv6);
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  std::string* unsafe_arena_release_sourceipv6();
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  void unsafe_arena_set_allocated_sourceipv6(
+      std::string* sourceipv6);
+  private:
+  const std::string& _internal_sourceipv6() const;
+  void _internal_set_sourceipv6(const std::string& value);
+  std::string* _internal_mutable_sourceipv6();
+  public:
+
+  // bytes destinationIpV6 = 9;
+  void clear_destinationipv6();
+  const std::string& destinationipv6() const;
+  void set_destinationipv6(const std::string& value);
+  void set_destinationipv6(std::string&& value);
+  void set_destinationipv6(const char* value);
+  void set_destinationipv6(const void* value, size_t size);
+  std::string* mutable_destinationipv6();
+  std::string* release_destinationipv6();
+  void set_allocated_destinationipv6(std::string* destinationipv6);
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  std::string* unsafe_arena_release_destinationipv6();
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  void unsafe_arena_set_allocated_destinationipv6(
+      std::string* destinationipv6);
+  private:
+  const std::string& _internal_destinationipv6() const;
+  void _internal_set_destinationipv6(const std::string& value);
+  std::string* _internal_mutable_destinationipv6();
+  public:
+
+  // .openoffload.v1alpha4.actionParameters action = 12;
   bool has_action() const;
   private:
   bool _internal_has_action() const;
@@ -821,7 +927,7 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_sourceip(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 sourcePort = 6;
+  // uint32 sourcePort = 7;
   void clear_sourceport();
   ::PROTOBUF_NAMESPACE_ID::uint32 sourceport() const;
   void set_sourceport(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -830,7 +936,7 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_sourceport(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 destinationIp = 7;
+  // uint32 destinationIp = 8;
   void clear_destinationip();
   ::PROTOBUF_NAMESPACE_ID::uint32 destinationip() const;
   void set_destinationip(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -839,7 +945,7 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_destinationip(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 destinationPort = 8;
+  // uint32 destinationPort = 10;
   void clear_destinationport();
   ::PROTOBUF_NAMESPACE_ID::uint32 destinationport() const;
   void set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -848,7 +954,7 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // .openoffload.v1alpha4.PROTOCOL_ID protocolId = 9;
+  // .openoffload.v1alpha4.PROTOCOL_ID protocolId = 11;
   void clear_protocolid();
   ::openoffload::v1alpha4::PROTOCOL_ID protocolid() const;
   void set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID value);
@@ -864,6 +970,8 @@ class sessionRequest PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sourceipv6_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr destinationipv6_;
   ::openoffload::v1alpha4::actionParameters* action_;
   ::PROTOBUF_NAMESPACE_ID::uint64 sessionid_;
   ::PROTOBUF_NAMESPACE_ID::int32 inlif_;
@@ -993,7 +1101,7 @@ class addSessionResponse PROTOBUF_FINAL :
 
   enum : int {
     kStartTimeFieldNumber = 3,
-    kErrorstatusFieldNumber = 2,
+    kErrorStatusFieldNumber = 2,
     kRequestStatusFieldNumber = 1,
   };
   // .google.protobuf.Timestamp startTime = 3;
@@ -1014,7 +1122,7 @@ class addSessionResponse PROTOBUF_FINAL :
       PROTOBUF_NAMESPACE_ID::Timestamp* starttime);
   PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_starttime();
 
-  // uint64 errorstatus = 2;
+  // uint64 errorStatus = 2;
   void clear_errorstatus();
   ::PROTOBUF_NAMESPACE_ID::uint64 errorstatus() const;
   void set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value);
@@ -1023,13 +1131,13 @@ class addSessionResponse PROTOBUF_FINAL :
   void _internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // .openoffload.v1alpha4.REQUEST_STATUS requestStatus = 1;
+  // .openoffload.v1alpha4.ADD_SESSION_STATUS requestStatus = 1;
   void clear_requeststatus();
-  ::openoffload::v1alpha4::REQUEST_STATUS requeststatus() const;
-  void set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value);
+  ::openoffload::v1alpha4::ADD_SESSION_STATUS requeststatus() const;
+  void set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value);
   private:
-  ::openoffload::v1alpha4::REQUEST_STATUS _internal_requeststatus() const;
-  void _internal_set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value);
+  ::openoffload::v1alpha4::ADD_SESSION_STATUS _internal_requeststatus() const;
+  void _internal_set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value);
   public:
 
   // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.addSessionResponse)
@@ -2321,6 +2429,87 @@ inline void actionParameters::set_actionnexthop(::PROTOBUF_NAMESPACE_ID::uint32 
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.actionParameters.actionNextHop)
 }
 
+// bytes actionNextHopV6 = 3;
+inline void actionParameters::clear_actionnexthopv6() {
+  actionnexthopv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& actionParameters::actionnexthopv6() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  return _internal_actionnexthopv6();
+}
+inline void actionParameters::set_actionnexthopv6(const std::string& value) {
+  _internal_set_actionnexthopv6(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+inline std::string* actionParameters::mutable_actionnexthopv6() {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  return _internal_mutable_actionnexthopv6();
+}
+inline const std::string& actionParameters::_internal_actionnexthopv6() const {
+  return actionnexthopv6_.Get();
+}
+inline void actionParameters::_internal_set_actionnexthopv6(const std::string& value) {
+  
+  actionnexthopv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void actionParameters::set_actionnexthopv6(std::string&& value) {
+  
+  actionnexthopv6_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+inline void actionParameters::set_actionnexthopv6(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  actionnexthopv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+inline void actionParameters::set_actionnexthopv6(const void* value,
+    size_t size) {
+  
+  actionnexthopv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+inline std::string* actionParameters::_internal_mutable_actionnexthopv6() {
+  
+  return actionnexthopv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* actionParameters::release_actionnexthopv6() {
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  return actionnexthopv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void actionParameters::set_allocated_actionnexthopv6(std::string* actionnexthopv6) {
+  if (actionnexthopv6 != nullptr) {
+    
+  } else {
+    
+  }
+  actionnexthopv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), actionnexthopv6,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+inline std::string* actionParameters::unsafe_arena_release_actionnexthopv6() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  
+  return actionnexthopv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      GetArena());
+}
+inline void actionParameters::unsafe_arena_set_allocated_actionnexthopv6(
+    std::string* actionnexthopv6) {
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  if (actionnexthopv6 != nullptr) {
+    
+  } else {
+    
+  }
+  actionnexthopv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      actionnexthopv6, GetArena());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+}
+
 // -------------------------------------------------------------------
 
 // sessionRequest
@@ -2425,7 +2614,88 @@ inline void sessionRequest::set_sourceip(::PROTOBUF_NAMESPACE_ID::uint32 value) 
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourceIp)
 }
 
-// uint32 sourcePort = 6;
+// bytes sourceIpV6 = 6;
+inline void sessionRequest::clear_sourceipv6() {
+  sourceipv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& sessionRequest::sourceipv6() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  return _internal_sourceipv6();
+}
+inline void sessionRequest::set_sourceipv6(const std::string& value) {
+  _internal_set_sourceipv6(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+inline std::string* sessionRequest::mutable_sourceipv6() {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  return _internal_mutable_sourceipv6();
+}
+inline const std::string& sessionRequest::_internal_sourceipv6() const {
+  return sourceipv6_.Get();
+}
+inline void sessionRequest::_internal_set_sourceipv6(const std::string& value) {
+  
+  sourceipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void sessionRequest::set_sourceipv6(std::string&& value) {
+  
+  sourceipv6_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+inline void sessionRequest::set_sourceipv6(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  sourceipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+inline void sessionRequest::set_sourceipv6(const void* value,
+    size_t size) {
+  
+  sourceipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+inline std::string* sessionRequest::_internal_mutable_sourceipv6() {
+  
+  return sourceipv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* sessionRequest::release_sourceipv6() {
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  return sourceipv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void sessionRequest::set_allocated_sourceipv6(std::string* sourceipv6) {
+  if (sourceipv6 != nullptr) {
+    
+  } else {
+    
+  }
+  sourceipv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), sourceipv6,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+inline std::string* sessionRequest::unsafe_arena_release_sourceipv6() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  
+  return sourceipv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      GetArena());
+}
+inline void sessionRequest::unsafe_arena_set_allocated_sourceipv6(
+    std::string* sourceipv6) {
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  if (sourceipv6 != nullptr) {
+    
+  } else {
+    
+  }
+  sourceipv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      sourceipv6, GetArena());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+}
+
+// uint32 sourcePort = 7;
 inline void sessionRequest::clear_sourceport() {
   sourceport_ = 0u;
 }
@@ -2445,7 +2715,7 @@ inline void sessionRequest::set_sourceport(::PROTOBUF_NAMESPACE_ID::uint32 value
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourcePort)
 }
 
-// uint32 destinationIp = 7;
+// uint32 destinationIp = 8;
 inline void sessionRequest::clear_destinationip() {
   destinationip_ = 0u;
 }
@@ -2465,7 +2735,88 @@ inline void sessionRequest::set_destinationip(::PROTOBUF_NAMESPACE_ID::uint32 va
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationIp)
 }
 
-// uint32 destinationPort = 8;
+// bytes destinationIpV6 = 9;
+inline void sessionRequest::clear_destinationipv6() {
+  destinationipv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& sessionRequest::destinationipv6() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  return _internal_destinationipv6();
+}
+inline void sessionRequest::set_destinationipv6(const std::string& value) {
+  _internal_set_destinationipv6(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+inline std::string* sessionRequest::mutable_destinationipv6() {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  return _internal_mutable_destinationipv6();
+}
+inline const std::string& sessionRequest::_internal_destinationipv6() const {
+  return destinationipv6_.Get();
+}
+inline void sessionRequest::_internal_set_destinationipv6(const std::string& value) {
+  
+  destinationipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void sessionRequest::set_destinationipv6(std::string&& value) {
+  
+  destinationipv6_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+inline void sessionRequest::set_destinationipv6(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  destinationipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+inline void sessionRequest::set_destinationipv6(const void* value,
+    size_t size) {
+  
+  destinationipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+inline std::string* sessionRequest::_internal_mutable_destinationipv6() {
+  
+  return destinationipv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* sessionRequest::release_destinationipv6() {
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  return destinationipv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void sessionRequest::set_allocated_destinationipv6(std::string* destinationipv6) {
+  if (destinationipv6 != nullptr) {
+    
+  } else {
+    
+  }
+  destinationipv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), destinationipv6,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+inline std::string* sessionRequest::unsafe_arena_release_destinationipv6() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  
+  return destinationipv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      GetArena());
+}
+inline void sessionRequest::unsafe_arena_set_allocated_destinationipv6(
+    std::string* destinationipv6) {
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  if (destinationipv6 != nullptr) {
+    
+  } else {
+    
+  }
+  destinationipv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      destinationipv6, GetArena());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+}
+
+// uint32 destinationPort = 10;
 inline void sessionRequest::clear_destinationport() {
   destinationport_ = 0u;
 }
@@ -2485,7 +2836,7 @@ inline void sessionRequest::set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationPort)
 }
 
-// .openoffload.v1alpha4.PROTOCOL_ID protocolId = 9;
+// .openoffload.v1alpha4.PROTOCOL_ID protocolId = 11;
 inline void sessionRequest::clear_protocolid() {
   protocolid_ = 0;
 }
@@ -2505,7 +2856,7 @@ inline void sessionRequest::set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID 
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.protocolId)
 }
 
-// .openoffload.v1alpha4.actionParameters action = 10;
+// .openoffload.v1alpha4.actionParameters action = 12;
 inline bool sessionRequest::_internal_has_action() const {
   return this != internal_default_instance() && action_ != nullptr;
 }
@@ -2590,27 +2941,27 @@ inline void sessionRequest::set_allocated_action(::openoffload::v1alpha4::action
 
 // addSessionResponse
 
-// .openoffload.v1alpha4.REQUEST_STATUS requestStatus = 1;
+// .openoffload.v1alpha4.ADD_SESSION_STATUS requestStatus = 1;
 inline void addSessionResponse::clear_requeststatus() {
   requeststatus_ = 0;
 }
-inline ::openoffload::v1alpha4::REQUEST_STATUS addSessionResponse::_internal_requeststatus() const {
-  return static_cast< ::openoffload::v1alpha4::REQUEST_STATUS >(requeststatus_);
+inline ::openoffload::v1alpha4::ADD_SESSION_STATUS addSessionResponse::_internal_requeststatus() const {
+  return static_cast< ::openoffload::v1alpha4::ADD_SESSION_STATUS >(requeststatus_);
 }
-inline ::openoffload::v1alpha4::REQUEST_STATUS addSessionResponse::requeststatus() const {
+inline ::openoffload::v1alpha4::ADD_SESSION_STATUS addSessionResponse::requeststatus() const {
   // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.requestStatus)
   return _internal_requeststatus();
 }
-inline void addSessionResponse::_internal_set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value) {
+inline void addSessionResponse::_internal_set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value) {
   
   requeststatus_ = value;
 }
-inline void addSessionResponse::set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value) {
+inline void addSessionResponse::set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value) {
   _internal_set_requeststatus(value);
   // @@protoc_insertion_point(field_set:openoffload.v1alpha4.addSessionResponse.requestStatus)
 }
 
-// uint64 errorstatus = 2;
+// uint64 errorStatus = 2;
 inline void addSessionResponse::clear_errorstatus() {
   errorstatus_ = PROTOBUF_ULONGLONG(0);
 }
@@ -2618,7 +2969,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 addSessionResponse::_internal_errorstatus
   return errorstatus_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 addSessionResponse::errorstatus() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.errorstatus)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.errorStatus)
   return _internal_errorstatus();
 }
 inline void addSessionResponse::_internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -2627,7 +2978,7 @@ inline void addSessionResponse::_internal_set_errorstatus(::PROTOBUF_NAMESPACE_I
 }
 inline void addSessionResponse::set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_errorstatus(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.addSessionResponse.errorstatus)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.addSessionResponse.errorStatus)
 }
 
 // .google.protobuf.Timestamp startTime = 3;
@@ -3555,6 +3906,11 @@ template <> struct is_proto_enum< ::openoffload::v1alpha4::SESSION_CLOSE_CODE> :
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::SESSION_CLOSE_CODE>() {
   return ::openoffload::v1alpha4::SESSION_CLOSE_CODE_descriptor();
+}
+template <> struct is_proto_enum< ::openoffload::v1alpha4::ADD_SESSION_STATUS> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::ADD_SESSION_STATUS>() {
+  return ::openoffload::v1alpha4::ADD_SESSION_STATUS_descriptor();
 }
 template <> struct is_proto_enum< ::openoffload::v1alpha4::REQUEST_STATUS> : ::std::true_type {};
 template <>

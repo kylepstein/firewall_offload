@@ -70,7 +70,7 @@ LIBS ?= \
 	$(ABSL_TIME_ZONE_LIB)
 
 
-LDLIBS += $(RTE_SDK)/daemon/lib/libopof.a
+LDLIBS += $(RTE_SDK)/daemon/lib/libopof_server.a
 LDLIBS += $(LIBS)
 
 LDFLAGS = -lc -lstdc++

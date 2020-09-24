@@ -10,7 +10,7 @@
 
 #include "common.h"
 
-static void display_session_response(sessionResponse_t *response)
+static void display_response(sessionResponse_t *response)
 {
 	if (!off_config_g.verbose)
 		return;
@@ -26,7 +26,7 @@ static void display_session_response(sessionResponse_t *response)
 	printf("Request Status: %d\n",response->requestStatus);
 }
 
-static void display_session_request(sessionRequest_t *request)
+static void display_request(sessionRequest_t *request)
 {
 	if (!off_config_g.verbose)
 		return;
@@ -36,8 +36,8 @@ static void display_session_request(sessionRequest_t *request)
 	printf( "Inlif: %d\n",request->inlif);
 	printf( "Outlif: %d\n",request->outlif);
 	printf( "Source Port: %d\n",request->srcPort);
-	printf( "Source IP: 0x%x\n", request->srcIP);
-	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP));
+	printf( "Source IP: 0x%x\n", request->srcIP.s_addr);
+	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP.s_addr));
 	printf( "Destination Port: %d\n",request->dstPort);
 	printf( "Protocol ID: %d\n",request->proto);
 	printf( "IP Version: %d\n",request->ipver);
@@ -80,7 +80,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	memset(&key, 0, sizeof(key));
 
-	display_session_request(parameters);
+	display_request(parameters);
 
 	key.sess_id = parameters->sessId;
 
@@ -98,8 +98,8 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	session->key.sess_id = parameters->sessId;
 
-	session->tuple.src_ip = parameters->srcIP;
-	session->tuple.dst_ip = parameters->dstIP;
+	session->tuple.src_ip = parameters->srcIP.s_addr;
+	session->tuple.dst_ip = parameters->dstIP.s_addr;
 	session->tuple.proto = parameters->proto;
 	session->tuple.src_port = parameters->srcPort;
 	session->tuple.dst_port = parameters->dstPort;
@@ -155,7 +155,7 @@ int opof_get_session_server(unsigned long sessionId,
 	response->sessionCloseCode = session->close_code;
 	response->requestStatus = _ACCEPTED;
 
-	display_session_response(response);
+	display_response(response);
 
 	ret = SUCCESS;
 
@@ -216,6 +216,21 @@ opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 	*sessionCount = 0;
 
 	//responses = createSessionResponse(nresponses, &count);
+	*sessionCount = count;
+
+	return responses;
+}
+
+sessionResponse_t **
+opof_get_all_sessions_server(statisticsRequestArgs_t *request,
+			     int *sessionCount)
+{
+	int count = 0;
+	int nresponses = request->pageSize;
+	sessionResponse_t **responses;
+	*sessionCount = 0;
+
+	//responses = getAllSessions(nresponses, &count);
 	*sessionCount = count;
 
 	return responses;

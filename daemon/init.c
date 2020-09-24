@@ -148,8 +148,8 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 		SAMPLE_SESSION_FWD;
 
 	request.actType = action;
-	request.srcIP = 0xc0010102; // 192.1.1.2
-	request.dstIP = 0xc0010112; // 192.1.1.18
+	request.srcIP.s_addr = 0xc0010102; // 192.1.1.2
+	request.dstIP.s_addr = 0xc0010112; // 192.1.1.18
 	request.proto = proto;
 	request.srcPort = 5002;
 	request.dstPort = 5018;
