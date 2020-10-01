@@ -101,6 +101,35 @@ static struct rte_flow *create_fdb_miss_flow(uint16_t port_id)
 			       action, "Fdb miss");
 }
 
+static struct rte_flow *create_to_uplink_flow(uint16_t port_id)
+{
+	struct rte_flow_action_port_id dest_port;
+	struct rte_flow_action action[3];
+	struct rte_flow_item pattern[3];
+	struct rte_flow_attr attr;
+
+	memset(pattern, 0, sizeof(pattern));
+	memset(action, 0, sizeof(action));
+
+	memset(&attr, 0, sizeof(struct rte_flow_attr));
+	attr.ingress = 1;
+	attr.transfer = 1;
+	attr.priority = FDB_NO_MATCH_PRIORITY;
+
+	action[0].type = RTE_FLOW_ACTION_TYPE_COUNT;
+	action[1].type = RTE_FLOW_ACTION_TYPE_PORT_ID;
+	memset(&dest_port, 0, sizeof(struct rte_flow_action_port_id));
+	dest_port.id = off_config_g.phy_port[port_id];
+	action[1].conf = &dest_port;
+	action[2].type = RTE_FLOW_ACTION_TYPE_END;
+
+	pattern[0].type = RTE_FLOW_ITEM_TYPE_ETH;
+	pattern[1].type = RTE_FLOW_ITEM_TYPE_END;
+
+	return add_simple_flow(port_id, &attr, pattern,
+			       action, "Fdb miss");
+}
+
 static struct rte_flow * create_hairpin_flow(uint16_t port_id)
 {
 	struct rte_flow_item pattern[MAX_PATTERN_NUM];
@@ -162,11 +191,14 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 	return ret;
 }
 
-static int init_initiator_flow(portid_t pid)
+static int init_flows(portid_t pid)
 {
 	struct rte_port *port = &off_config_g.ports[pid];
 
-	if (!port->is_rep && port->is_initiator) {
+	if (port->is_rep) {
+		if (!create_to_uplink_flow(pid))
+			return -EAGAIN;
+	} else {
 		/* Default RX rule to forward to hairpin queue. */
 		if (!create_hairpin_flow(pid))
 			return -EAGAIN;
@@ -176,23 +208,6 @@ static int init_initiator_flow(portid_t pid)
 
 		create_sample_fwd_flow(pid, IPPROTO_TCP, ACTION_FORWARD);
 		create_sample_fwd_flow(pid, IPPROTO_UDP, ACTION_DROP);
-	}
-
-	return 0;
-}
-
-static int init_responder_flow(portid_t pid)
-{
-	struct rte_port *port = &off_config_g.ports[pid];
-
-	if (!port->is_rep && port->is_responder) {
-		/* Default RX rule to forward to hairpin queue. */
-		if (!create_hairpin_flow(pid))
-			return -EAGAIN;
-
-		/* Default RX rule to forward no match pkt to vport. */
-		if (!create_fdb_miss_flow(pid))
-			return -EAGAIN;
 	}
 
 	return 0;
@@ -273,10 +288,7 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 	if (retval != 0)
 		return retval;
 
-	if (init_initiator_flow(pid))
-		goto err;
-
-	if (init_responder_flow(pid))
+	if (init_flows(pid))
 		goto err;
 
 	return 0;
