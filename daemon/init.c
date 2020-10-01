@@ -189,6 +189,10 @@ static int init_responder_flow(portid_t pid)
 		/* Default RX rule to forward to hairpin queue. */
 		if (!create_hairpin_flow(pid))
 			return -EAGAIN;
+
+		/* Default RX rule to forward no match pkt to vport. */
+		if (!create_fdb_miss_flow(pid))
+			return -EAGAIN;
 	}
 
 	return 0;
