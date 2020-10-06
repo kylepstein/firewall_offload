@@ -166,7 +166,6 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 	int ret = 0;
 
 	//FIXME: with sample flows, num of flows can't up to 5k
-	return 0;
 
 	memset(&response, 0, sizeof(response));
 	memset(&request, 0, sizeof(request));
@@ -178,10 +177,10 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 
 	request.actType = action;
 	request.srcIP.s_addr = 0xc0010102; // 192.1.1.2
-	request.dstIP.s_addr = 0xc0010112; // 192.1.1.18
+	request.dstIP.s_addr = 0xc0010103; // 192.1.1.3
 	request.proto = proto;
 	request.srcPort = 5002;
-	request.dstPort = 5018;
+	request.dstPort = 5003;
 
 	ret = opof_add_session_server(&request, &response);
 	if (!ret)
