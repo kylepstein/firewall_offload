@@ -95,9 +95,9 @@ static void config_init(void)
 	off_config_g.phy_port[portid_pf1_vf0] = portid_pf1;
 
 	off_config_g.peer_port[portid_pf0] = portid_pf1;
-	off_config_g.peer_port[portid_pf0_vf0] = portid_pf0_vf0;
+	off_config_g.peer_port[portid_pf0_vf0] = portid_pf1_vf0;
 	off_config_g.peer_port[portid_pf1] = portid_pf0;
-	off_config_g.peer_port[portid_pf1_vf0] = portid_pf1_vf0;
+	off_config_g.peer_port[portid_pf1_vf0] = portid_pf0_vf0;
 
 	off_config_g.vf_port[portid_pf0] = portid_pf0_vf0;
 	off_config_g.vf_port[portid_pf0_vf0] = portid_pf0_vf0;

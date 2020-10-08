@@ -144,7 +144,7 @@ static struct rte_flow * create_hairpin_flow(uint16_t port_id)
 
 	memset(&attr, 0, sizeof(struct rte_flow_attr));
 	attr.ingress = 1;
-	attr.group = NIC_RX_GROUP;
+	attr.group = 0;
 
 	action[0].type = RTE_FLOW_ACTION_TYPE_COUNT;
 	action[1].type = RTE_FLOW_ACTION_TYPE_QUEUE;
@@ -159,7 +159,8 @@ static struct rte_flow * create_hairpin_flow(uint16_t port_id)
 }
 
 static int create_sample_fwd_flow(uint16_t port_id, int proto,
-				  enum flow_action action)
+				  enum flow_action action,
+				  int dir)
 {
 	addSessionResponse_t response;
 	sessionRequest_t request;
@@ -170,17 +171,27 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 	memset(&response, 0, sizeof(response));
 	memset(&request, 0, sizeof(request));
 
-	request.inlif = 1;
 	request.sessId = (action == ACTION_DROP) ?
 		SAMPLE_SESSION_DROP :
 		SAMPLE_SESSION_FWD;
 
+	request.sessId -= dir;
 	request.actType = action;
-	request.srcIP.s_addr = 0xc0010102; // 192.1.1.2
-	request.dstIP.s_addr = 0xc0010103; // 192.1.1.3
 	request.proto = proto;
-	request.srcPort = 5002;
-	request.dstPort = 5003;
+
+	if (dir) {
+		request.inlif = 2;
+		request.dstIP.s_addr = 0xc0010102; // 192.1.1.2
+		request.srcIP.s_addr = 0xc0010103; // 192.1.1.3
+		request.dstPort = 5002;
+		request.srcPort = 5003;
+	} else {
+		request.inlif = 1;
+		request.srcIP.s_addr = 0xc0010102; // 192.1.1.2
+		request.dstIP.s_addr = 0xc0010103; // 192.1.1.3
+		request.srcPort = 5002;
+		request.dstPort = 5003;
+	}
 
 	ret = opof_add_session_server(&request, &response);
 	if (!ret)
@@ -205,8 +216,9 @@ static int init_flows(portid_t pid)
 		if (!create_fdb_miss_flow(pid))
 			return -EAGAIN;
 
-		create_sample_fwd_flow(pid, IPPROTO_TCP, ACTION_FORWARD);
-		create_sample_fwd_flow(pid, IPPROTO_UDP, ACTION_DROP);
+		create_sample_fwd_flow(pid, IPPROTO_TCP,
+				       ACTION_FORWARD,
+				       !port->is_initiator);
 	}
 
 	return 0;

@@ -23,8 +23,10 @@ static void aging_thread(uint32_t lcore_id)
 	printf("LCORE(%u) (LWP=%ld): aging thread started\n",
 	       lcore_id, lwp_id);
 
-	while (1)
+	while (1) {
 		offload_flow_aged(INITIATOR_PORT_ID);
+		offload_flow_aged(RESPONDER_PORT_ID);
+	}
 }
 
 static void grpc_thread(uint32_t lcore_id)
