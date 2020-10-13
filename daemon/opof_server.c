@@ -22,7 +22,7 @@ static void display_response(sessionResponse_t *response)
 	printf("In Bytes: %ld\n",response->inBytes);
 	printf("Out Bytes: %ld\n",response->outBytes);
 	printf("Session State: %d\n",response->sessionState);
-	printf("Session Close Code; %d\n",response->sessionCloseCode);
+	printf("Session Close Code: %d\n",response->sessionCloseCode);
 	printf("Request Status: %d\n",response->requestStatus);
 }
 
@@ -36,7 +36,7 @@ static void display_request(sessionRequest_t *request)
 	printf( "Inlif: %d\n",request->inlif);
 	printf( "Outlif: %d\n",request->outlif);
 	printf( "Source Port: %d\n",request->srcPort);
-	printf( "Source IP: 0x%x\n", request->srcIP.s_addr);
+	printf( "Source IP: 0x%x\n", ntohl(request->srcIP.s_addr));
 	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP.s_addr));
 	printf( "Destination Port: %d\n",request->dstPort);
 	printf( "Protocol ID: %d\n",request->proto);
