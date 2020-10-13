@@ -221,12 +221,14 @@ int offload_flow_add(portid_t port_id,
 		memset(&tcp_spec, 0, sizeof(tcp_spec));
 		tcp_spec.hdr.src_port = htons(ntuple_filter->src_port);
 		tcp_spec.hdr.dst_port = htons(ntuple_filter->dst_port);
-		tcp_spec.hdr.tcp_flags = RTE_TCP_ACK_FLAG;
+		tcp_spec.hdr.tcp_flags = 0;
 
 		memset(&tcp_mask, 0, sizeof(tcp_mask));
 		tcp_mask.hdr.src_port = ntuple_filter->src_port_mask;
 		tcp_mask.hdr.dst_port = ntuple_filter->dst_port_mask;
-		tcp_mask.hdr.tcp_flags = 0xFF;
+		tcp_mask.hdr.tcp_flags = RTE_TCP_FIN_FLAG |
+					 RTE_TCP_SYN_FLAG |
+					 RTE_TCP_RST_FLAG;
 
 		tcp_item.type = RTE_FLOW_ITEM_TYPE_TCP;
 		tcp_item.spec = &tcp_spec;
