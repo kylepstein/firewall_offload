@@ -97,6 +97,11 @@ enum flow_action {
 	ACTION_FORWARD	= 1
 };
 
+enum flow_dir {
+	DIR_IN	= 0,
+	DIR_OUT	= 1
+};
+
 struct lcore_priv {
 	enum lcore_type	type;
 	uint8_t		id;
@@ -210,7 +215,8 @@ add_simple_flow(uint16_t port_id,
 
 int offload_flow_add(portid_t port_id,
 		     struct fw_session * session,
-		     enum flow_action action);
+		     enum flow_action action,
+		     enum flow_dir dir);
 int offload_flow_query(portid_t port_id,
 		       struct rte_flow *flow,
 		       uint64_t *packets,

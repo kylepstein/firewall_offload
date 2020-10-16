@@ -49,7 +49,15 @@ int opof_del_flow(struct fw_session *session)
 	struct rte_hash *ht = off_config_g.session_ht;
 	int ret;
 
-	ret = offload_flow_destroy(session->port_in, session->flow_in);
+	ret = offload_flow_destroy(session->port_in,session->flow_in);
+
+	if (ret) {
+		ret = FAILURE;
+		goto out;
+	}
+
+	ret = offload_flow_destroy(session->port_out,
+				   session->flow_out);
 
 	if (ret) {
 		ret = FAILURE;
@@ -113,18 +121,33 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	}
 
 	ret = offload_flow_add(session->port_in, session,
-			       (enum flow_action)parameters->actType);
+			       (enum flow_action)parameters->actType,
+			       DIR_IN);
+
+	if (ret)
+		goto out;
+
+	ret = offload_flow_add(session->port_out, session,
+			       (enum flow_action)parameters->actType,
+			       DIR_OUT);
 
 	if (!ret) {
 		session->state = _ESTABLISHED;
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
 		rte_atomic32_inc(&off_config_g.stats.active);
 		offload_dbg("Session (%d) added\n", session->key.sess_id);
+	} else {
+		goto err_flow_out;
 	}
 
-	response->requestStatus = ret ? _REJECTED : _ACCEPTED;
+	response->requestStatus = _ACCEPTED;
 
+	return 0;
+
+err_flow_out:
+	offload_flow_destroy(session->port_in, session->flow_in);
 out:
+	response->requestStatus = _REJECTED;
 	return ret;
 }
 
@@ -149,6 +172,9 @@ int opof_get_session_server(unsigned long sessionId,
 
 	offload_flow_query(session->port_in, session->flow_in,
 			   &response->inPackets, &response->inBytes);
+
+	offload_flow_query(session->port_out, session->flow_out,
+			   &response->outPackets, &response->outBytes);
 
 	response->sessionId = sessionId;
 	response->sessionState = session->state;
