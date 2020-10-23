@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2020 Nvidia
- */
-#include <stdlib.h>
+ */ #include <stdlib.h>
 
 #include "opof.h"
 #include "opof_error.h"
@@ -231,20 +230,10 @@ void opof_del_all_session_server(void)
 		opof_del_flow(session);
 }
 
-sessionResponse_t **
-opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
-				int *sessionCount)
+int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
+				    sessionResponse_t responses[])
 {
-
-	int count = 0;
-	//int nresponses = request->pageSize;
-	sessionResponse_t **responses= NULL;
-	*sessionCount = 0;
-
-	//responses = createSessionResponse(nresponses, &count);
-	*sessionCount = count;
-
-	return responses;
+	return 0;
 }
 
 sessionResponse_t **

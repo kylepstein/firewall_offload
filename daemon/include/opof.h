@@ -17,6 +17,7 @@
 #define SUCCESS 0
 #define FAILURE -1
 
+#define BUFFER_MAX 64
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -113,7 +114,8 @@ typedef struct sessionRequestTuple {
     PROTOCOL_ID_T proto;
     IP_VERSION_T ipver;
     ACTION_VALUE_T actType;
-    unsigned int nextHop;
+    struct in_addr  nextHop;
+    struct in6_addr nextHopV6;
 } sessionRequest_t;
 
 
