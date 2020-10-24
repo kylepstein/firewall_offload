@@ -46,7 +46,10 @@ static void display_request(sessionRequest_t *request)
 int opof_del_flow(struct fw_session *session)
 {
 	struct rte_hash *ht = off_config_g.session_ht;
+	sessionResponse_t session_stat;
 	int ret;
+
+	opof_get_session_server(session->key.sess_id, &session_stat);
 
 	ret = offload_flow_destroy(session->port_in,session->flow_in);
 
@@ -66,6 +69,9 @@ int opof_del_flow(struct fw_session *session)
 	offload_dbg("Session (%d) deleted\n", session->key.sess_id);
 
 	rte_hash_del_key(ht, &session->key);
+
+	if (rte_ring_enqueue(off_config_g.session_fifo, &session_stat))
+		printf("Err: no enough room in session session_fifo\n");
 
 	rte_free(session);
 
@@ -233,7 +239,22 @@ void opof_del_all_session_server(void)
 int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 				    sessionResponse_t responses[])
 {
-	return 0;
+	int size = request->pageSize;
+	int deq, count, ret;
+
+	count = rte_ring_count(off_config_g.session_fifo);
+
+	size = MIN(MIN(size, count), BUFFER_MAX);
+
+	deq = rte_ring_dequeue_bulk(off_config_g.session_fifo,
+				    (void **)&responses,
+				    size, NULL);
+
+	if (deq) {
+		offload_dbg("Dequeue (%d) closed session\n", deq);
+	}
+
+	return deq;
 }
 
 sessionResponse_t **

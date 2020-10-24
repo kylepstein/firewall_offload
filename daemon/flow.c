@@ -389,6 +389,7 @@ void offload_flow_aged(portid_t port_id)
 		session = (struct fw_session*)contexts[idx];
 		if (!session)
 			continue;
+		session->close_code = _TIMEOUT;
 		ret = opof_del_flow(session);
 		if (!ret)
 			rte_atomic32_inc(&off_config_g.stats.aged);

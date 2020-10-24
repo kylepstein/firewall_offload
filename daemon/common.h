@@ -18,6 +18,8 @@
 #include <rte_hash.h>
 #include <rte_jhash.h>
 #include <rte_malloc.h>
+#include <rte_ring.h>
+#include <rte_ring_elem.h>
 
 #include "opof_serverlib.h"
 
@@ -41,6 +43,9 @@
 #define MAX_SESSION		(20000u)
 #define SAMPLE_SESSION_FWD	(MAX_SESSION - 1)
 #define SAMPLE_SESSION_DROP	(MAX_SESSION - 2)
+
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 typedef uint16_t queueid_t;
 typedef uint16_t portid_t;
@@ -164,6 +169,7 @@ struct fw_offload_config {
 	struct lcore_priv	lcores[MAX_LCORES];
 	struct aging_priv	aging;
 	struct rte_hash		*mac_ht;
+	struct rte_ring		*session_fifo;
 	struct rte_hash		*session_ht;
 	struct rte_port		*ports;
 	struct offload_stats	stats;
