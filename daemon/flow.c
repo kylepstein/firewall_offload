@@ -162,7 +162,7 @@ int offload_flow_add(portid_t port_id,
 	struct rte_flow_item tcp_item;
 	struct rte_flow_item pattern_ipv4_5tuple[4];
 	struct rte_flow *flow = NULL;
-	uint8_t ipv4_proto;
+	uint8_t ipv4_proto, i = 0;
 	int ret = -1;
 
 	ntuple_filter = &session->tuple;
@@ -277,17 +277,19 @@ int offload_flow_add(portid_t port_id,
 	{
 	case ACTION_FORWARD:
 		attr.priority = FDB_FWD_PRIORITY;
-		actions[0] = jump_action;
-		actions[1] = age_action;
-		actions[2] = count_action;
-		actions[3] = end_action;
+		actions[i++] = jump_action;
+		if (dir == DIR_IN)
+			actions[i++] = age_action;
+		actions[i++] = count_action;
+		actions[i++] = end_action;
 		break;
 	case ACTION_DROP:
 		attr.priority = FDB_DROP_PRIORITY;
-		actions[0] = drop_action;
-		actions[1] = age_action;
-		actions[2] = count_action;
-		actions[3] = end_action;
+		actions[i++] = drop_action;
+		if (dir == DIR_IN)
+			actions[i++] = age_action;
+		actions[i++] = count_action;
+		actions[i++] = end_action;
 		break;
 	default:
 		printf("Offload flow: invalid action\n");
