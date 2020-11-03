@@ -47,24 +47,20 @@ int opof_del_flow(struct fw_session *session)
 {
 	struct rte_hash *ht = off_config_g.session_ht;
 	sessionResponse_t session_stat;
-	int ret;
+	int ret = 0;
 
 	opof_get_session_server(session->key.sess_id, &session_stat);
 
 	ret = offload_flow_destroy(session->port_in,session->flow_in);
 
-	if (ret) {
-		ret = FAILURE;
+	if (ret)
 		goto out;
-	}
 
 	ret = offload_flow_destroy(session->port_out,
 				   session->flow_out);
 
-	if (ret) {
-		ret = FAILURE;
+	if (ret)
 		goto out;
-	}
 
 	offload_dbg("Session (%d) deleted\n", session->key.sess_id);
 
@@ -76,8 +72,6 @@ int opof_del_flow(struct fw_session *session)
 	rte_free(session);
 
 	rte_atomic32_dec(&off_config_g.stats.active);
-
-	ret = SUCCESS;
 
 out:
 	return ret;
@@ -162,16 +156,16 @@ int opof_get_session_server(unsigned long sessionId,
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
 	struct session_key key;
-	int ret = 0;
+	int ret = SUCCESS;
 
 	key.sess_id = sessionId;
 
 	memset(response, 0, sizeof(*response));
+	response->sessionId = sessionId;
 
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (!session) {
 		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
-		ret = FAILURE;
 		goto out;
 	}
 
@@ -181,14 +175,11 @@ int opof_get_session_server(unsigned long sessionId,
 	offload_flow_query(session->port_out, session->flow_out,
 			   &response->outPackets, &response->outBytes);
 
-	response->sessionId = sessionId;
 	response->sessionState = session->state;
 	response->sessionCloseCode = session->close_code;
 	response->requestStatus = _ACCEPTED;
 
 	display_response(response);
-
-	ret = SUCCESS;
 
 out:
 	return ret;
@@ -200,15 +191,16 @@ int opof_del_session_server(unsigned long sessionId,
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
 	struct session_key key;
-	int ret = 0;
+	int ret = SUCCESS;
 
 	key.sess_id = sessionId;
 
-	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
+	memset(response, 0, sizeof(*response));
+	response->sessionId = sessionId;
 
+	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (!session) {
 		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
-		ret = FAILURE;
 		goto out;
 	}
 
