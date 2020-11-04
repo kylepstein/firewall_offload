@@ -77,6 +77,8 @@ int opof_del_flow(struct fw_session *session)
 
 	rte_atomic32_dec(&off_config_g.stats.active);
 
+	return ret;
+
 out:
 	rte_free(session_stat);
 	return ret;
@@ -237,7 +239,7 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 				    sessionResponse_t responses[])
 {
 	int size = request->pageSize;
-	int deq, count, ret;
+	int deq, count, ret, i;
 	void *session_stats;
 
 	count = rte_ring_count(off_config_g.session_fifo);
@@ -252,8 +254,14 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 				    &session_stats, size, NULL);
 
 	if (deq) {
+		display_response(session_stats);
+		for (i = 0; i < deq; i++)
+			memcpy(responses + i, session_stats + i,
+			       sizeof(sessionResponse_t));
 		offload_dbg("Dequeue (%d) closed session", deq);
 	}
+
+	rte_free(session_stats);
 
 	return deq;
 }
