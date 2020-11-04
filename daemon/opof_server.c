@@ -65,7 +65,7 @@ int opof_del_flow(struct fw_session *session)
 	if (ret)
 		goto out;
 
-	offload_dbg("Session (%d) deleted\n", session->key.sess_id);
+	offload_dbg("Session (%d) deleted", session->key.sess_id);
 
 	rte_hash_del_key(ht, &session->key);
 
@@ -99,7 +99,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (session) {
 		response->requestStatus = _REJECTED_SESSION_ALREADY_EXISTS;
-		offload_dbg("Session (%d) already exists\n",
+		offload_dbg("Session (%d) already exists",
 			    session->key.sess_id);
 		goto out;
 	}
@@ -139,7 +139,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 		session->state = _ESTABLISHED;
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
 		rte_atomic32_inc(&off_config_g.stats.active);
-		offload_dbg("Session (%d) added\n", session->key.sess_id);
+		offload_dbg("Session (%d) added", session->key.sess_id);
 	} else {
 		goto err_flow_out;
 	}
@@ -252,7 +252,7 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 				    &session_stats, size, NULL);
 
 	if (deq) {
-		offload_dbg("Dequeue (%d) closed session\n", deq);
+		offload_dbg("Dequeue (%d) closed session", deq);
 	}
 
 	return deq;
