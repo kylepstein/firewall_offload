@@ -136,9 +136,6 @@ add_simple_flow(uint16_t port_id,
 		       error.message ? error.message :
 		       "(no stated reason)");
 		rte_exit(EXIT_FAILURE, "error in creating flow\n");
-	} else {
-		offload_dbg("Port(%d): %s flow created",
-			    port_id, flow_name);
 	}
 
 	return flow;

@@ -67,8 +67,6 @@ int opof_del_flow(struct fw_session *session)
 	if (ret)
 		goto out;
 
-	offload_dbg("Session (%d) deleted", session->key.sess_id);
-
 	rte_hash_del_key(ht, &session->key);
 
 
@@ -262,7 +260,6 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 
 			display_response(&responses[i], "get closed");
 		}
-		offload_dbg("Dequeue (%d) closed session, size(%d)", deq, size);
 	}
 
 	rte_free(session_stats);
