@@ -88,8 +88,6 @@ enum lcore_type {
 enum {
 	/* unit sec */
 	DEFAULT_TIMEOUT		= 10,
-	TCP_DEFAULT_TIMEOUT	= 60 * 10,
-	UDP_DEFAULT_TIMEOUT	= 60 * 10
 };
 
 enum print_warning {
@@ -182,6 +180,7 @@ struct fw_offload_config {
 	char grpc_addr[32];
 	uint16_t grpc_port;
 	uint8_t verbose;
+	uint32_t timeout;
 };
 
 static inline void verrmsg(const char *fmt, va_list ap)

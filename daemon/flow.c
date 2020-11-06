@@ -189,6 +189,9 @@ int offload_flow_add(portid_t port_id,
 	ipv4_mask.hdr.dst_addr = ntuple_filter->dst_ip_mask;
 	ipv4_mask.hdr.dst_addr = ipv4_mask.hdr.dst_addr;
 
+	age.timeout = off_config_g.timeout ? off_config_g.timeout :
+		DEFAULT_TIMEOUT;
+
 	switch (ipv4_proto) {
 	case IPPROTO_UDP:
 		ipv4_udp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
@@ -218,7 +221,6 @@ int offload_flow_add(portid_t port_id,
 
 		pattern_ipv4_5tuple[1] = ipv4_udp_item;
 		pattern_ipv4_5tuple[2] = udp_item;
-		age.timeout = UDP_DEFAULT_TIMEOUT;
 		break;
 	case IPPROTO_TCP:
 		ipv4_tcp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
@@ -252,7 +254,6 @@ int offload_flow_add(portid_t port_id,
 
 		pattern_ipv4_5tuple[1] = ipv4_tcp_item;
 		pattern_ipv4_5tuple[2] = tcp_item;
-		age.timeout = TCP_DEFAULT_TIMEOUT;
 		break;
 	default:
 		return ret;
