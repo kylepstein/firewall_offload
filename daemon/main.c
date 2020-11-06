@@ -108,9 +108,7 @@ static void config_init(void)
 	off_config_g.mac_ht= create_mac_hash_table();
 	off_config_g.session_ht = create_session_hash_table();
 	off_config_g.session_fifo = rte_ring_create("sess_fifo",
-						    BUFFER_MAX, 0,
-						    RING_F_SP_ENQ |
-						    RING_F_SC_DEQ);
+						    BUFFER_MAX, 0, 0);
 
 	off_config_g.ports = rte_zmalloc("ports",
 					 sizeof(struct rte_port) *
