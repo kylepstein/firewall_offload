@@ -9,12 +9,13 @@
 
 #include "common.h"
 
-static void display_response(sessionResponse_t *response)
+static void display_response(sessionResponse_t *response,
+			     uint8_t *cmd)
 {
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nSession Response\n");
+	printf("\n\nRequest: %s session\n", cmd);
 	printf("Session ID: %ld\n",response->sessionId);
 	printf("In Packets %ld\n",response->inPackets);
 	printf("Out Packets: %ld\n",response->outPackets);
@@ -25,12 +26,13 @@ static void display_response(sessionResponse_t *response)
 	printf("Request Status: %d\n",response->requestStatus);
 }
 
-static void display_request(sessionRequest_t *request)
+static void display_request(sessionRequest_t *request,
+			    uint8_t *cmd)
 {
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nSession Response\n");
+	printf("\n\nRequest: %s session\n", cmd);
 	printf("Session ID: %ld\n",request->sessId);
 	printf( "Inlif: %d\n",request->inlif);
 	printf( "Outlif: %d\n",request->outlif);
@@ -94,7 +96,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	memset(&key, 0, sizeof(key));
 
-	display_request(parameters);
+	display_request(parameters, "add");
 
 	key.sess_id = parameters->sessId;
 
@@ -186,7 +188,7 @@ int opof_get_session_server(unsigned long sessionId,
 	response->sessionCloseCode = session->close_code;
 	response->requestStatus = _ACCEPTED;
 
-	display_response(response);
+	display_response(response, "get");
 
 out:
 	return ret;
@@ -252,9 +254,8 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 
 	deq = rte_ring_dequeue_bulk(off_config_g.session_fifo,
 				    &session_stats, size, NULL);
-
 	if (deq) {
-		display_response(session_stats);
+		display_response(session_stats, "get closed");
 		for (i = 0; i < deq; i++)
 			memcpy(responses + i, session_stats + i,
 			       sizeof(sessionResponse_t));
