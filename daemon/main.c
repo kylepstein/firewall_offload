@@ -9,6 +9,11 @@
 
 struct fw_offload_config off_config_g;
 
+static uint32_t next_pow2(uint32_t x)
+{
+	return x == 1 ? 1 : 1 << (64 - __builtin_clzl(x - 1));
+}
+
 static struct rte_hash* create_mac_hash_table(void)
 {
 	struct rte_hash_parameters params;
@@ -108,7 +113,7 @@ static void config_init(void)
 	off_config_g.mac_ht= create_mac_hash_table();
 	off_config_g.session_ht = create_session_hash_table();
 	off_config_g.session_fifo = rte_ring_create("sess_fifo",
-						    BUFFER_MAX, 0, 0);
+						    next_pow2(MAX_SESSION), 0, 0);
 
 	off_config_g.ports = rte_zmalloc("ports",
 					 sizeof(struct rte_port) *
