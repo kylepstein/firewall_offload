@@ -242,7 +242,7 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 {
 	int size = request->pageSize;
 	int deq, count, ret, i;
-	void *session_stats;
+	sessionResponse_t **session_stats;
 
 	count = rte_ring_count(off_config_g.session_fifo);
 
@@ -253,13 +253,16 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 				    RTE_CACHE_LINE_SIZE);
 
 	deq = rte_ring_dequeue_bulk(off_config_g.session_fifo,
-				    &session_stats, size, NULL);
+				    (void **)session_stats, size,
+				    NULL);
 	if (deq) {
-		display_response(session_stats, "get closed");
-		for (i = 0; i < deq; i++)
-			memcpy(responses + i, session_stats + i,
+		for (i = 0; i < deq; i++) {
+			memcpy(&responses[i], session_stats[i],
 			       sizeof(sessionResponse_t));
-		offload_dbg("Dequeue (%d) closed session", deq);
+
+			display_response(&responses[i], "get closed");
+		}
+		offload_dbg("Dequeue (%d) closed session, size(%d)", deq, size);
 	}
 
 	rte_free(session_stats);
