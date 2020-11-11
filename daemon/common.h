@@ -29,7 +29,7 @@
 #define TX_RING_SIZE	1024
 #define BURST_SIZE	32
 
-#define MAX_LCORES	(8u)
+#define MAX_LCORES	(16u)
 #define MAX_DPDK_PORT	(4u)
 #define NUM_PHY_PORT	(2u)
 #define NUM_VF_PORT	(2u)
