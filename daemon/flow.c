@@ -146,7 +146,10 @@ int offload_flow_add(portid_t port_id,
 		     enum flow_action action,
 		     enum flow_dir dir)
 {
+#define MAX_FLOW_ITEM (6)
 	struct eth_ntuple_filter *ntuple_filter;
+	struct rte_flow_item_vlan vlan_spec;
+	struct rte_flow_item vlan_item;
 	struct rte_flow_item_ipv4 ipv4_spec;
 	struct rte_flow_item_ipv4 ipv4_mask;
 	struct rte_flow_item ipv4_udp_item;
@@ -157,9 +160,10 @@ int offload_flow_add(portid_t port_id,
 	struct rte_flow_item_tcp tcp_spec;
 	struct rte_flow_item_tcp tcp_mask;
 	struct rte_flow_item tcp_item;
-	struct rte_flow_item pattern_ipv4_5tuple[4];
+	struct rte_flow_item pattern_ipv4_5tuple[MAX_FLOW_ITEM];
 	struct rte_flow *flow = NULL;
 	uint8_t ipv4_proto, i = 0;
+	uint8_t flow_index = 0;
 	int ret = -1;
 
 	ntuple_filter = &session->tuple;
@@ -192,6 +196,21 @@ int offload_flow_add(portid_t port_id,
 	age.timeout = off_config_g.timeout ? off_config_g.timeout :
 		session->timeout;
 
+	pattern_ipv4_5tuple[flow_index++] = eth_item;
+
+	if (ntuple_filter->vlan) {
+		memset(&vlan_item, 0, sizeof(vlan_item));
+		vlan_item.type = RTE_FLOW_ITEM_TYPE_VXLAN;
+		vlan_item.spec = &vlan_spec;
+		vlan_item.mask = &rte_flow_item_vlan_mask,
+
+		memset(&vlan_spec, 0, sizeof(vlan_spec));
+		vlan_spec.tci = ntuple_filter->vlan;
+		vlan_spec.inner_type = 0;
+
+		pattern_ipv4_5tuple[flow_index++] = vlan_item;
+	}
+
 	switch (ipv4_proto) {
 	case IPPROTO_UDP:
 		ipv4_udp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
@@ -219,8 +238,8 @@ int offload_flow_add(portid_t port_id,
 		udp_item.mask = &udp_mask;
 		udp_item.last = NULL;
 
-		pattern_ipv4_5tuple[1] = ipv4_udp_item;
-		pattern_ipv4_5tuple[2] = udp_item;
+		pattern_ipv4_5tuple[flow_index++] = ipv4_udp_item;
+		pattern_ipv4_5tuple[flow_index++] = udp_item;
 		break;
 	case IPPROTO_TCP:
 		ipv4_tcp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
@@ -252,8 +271,8 @@ int offload_flow_add(portid_t port_id,
 		tcp_item.mask = &tcp_mask;
 		tcp_item.last = NULL;
 
-		pattern_ipv4_5tuple[1] = ipv4_tcp_item;
-		pattern_ipv4_5tuple[2] = tcp_item;
+		pattern_ipv4_5tuple[flow_index++] = ipv4_tcp_item;
+		pattern_ipv4_5tuple[flow_index++] = tcp_item;
 		break;
 	default:
 		return ret;
@@ -262,8 +281,11 @@ int offload_flow_add(portid_t port_id,
 	attr.ingress = 1;
 	attr.transfer = 1;
 
-	pattern_ipv4_5tuple[0] = eth_item;
-	pattern_ipv4_5tuple[3] = end_item;
+	pattern_ipv4_5tuple[flow_index] = end_item;
+	if (flow_index >= MAX_FLOW_ITEM) {
+		printf("Offload flow: flow item overflow\n");
+		return -EINVAL;
+	}
 
 	/* Aging is only done based on DIR_IN */
 	if (dir == DIR_IN)

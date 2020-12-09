@@ -34,8 +34,8 @@ static void display_request(sessionRequest_t *request,
 
 	printf("\n\nRequest: %s session\n", cmd);
 	printf("Session ID: %ld\n",request->sessId);
-	printf( "Inlif: %d\n",request->inlif);
-	printf( "Outlif: %d\n",request->outlif);
+	printf( "Inlif: %d\n",request->inlif & 0xFFFF);
+	printf( "Outlif: %d\n",request->outlif & 0xFFFF);
 	printf( "Source Port: %d\n",request->srcPort);
 	printf( "Source IP: 0x%x\n", ntohl(request->srcIP.s_addr));
 	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP.s_addr));
@@ -116,10 +116,11 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	session->tuple.proto = parameters->proto;
 	session->tuple.src_port = parameters->srcPort;
 	session->tuple.dst_port = parameters->dstPort;
+	session->tuple.vlan = parameters->inlif >> 16;
 
 	session->timeout = parameters->cacheTimeout;
 
-	if (parameters->inlif == 1) {
+	if ((parameters->inlif & 0xFFFF) == 1) {
 		session->port_in = INITIATOR_PORT_ID;
 		session->port_out = RESPONDER_PORT_ID;
 	} else {

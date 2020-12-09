@@ -139,6 +139,7 @@ struct eth_ntuple_filter {
 	uint8_t proto;           /**< L4 protocol. */
 	uint8_t proto_mask;      /**< Mask of L4 protocol. */
 	uint8_t tcp_flags;
+	uint8_t vlan;
 };
 
 struct session_key {
