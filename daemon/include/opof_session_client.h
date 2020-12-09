@@ -17,6 +17,13 @@
 #ifndef __OPOF_SESSION_CLIENT_H
 #define __OPOF_SESSION_CLIENT_H
 
+/**
+* \defgroup clientlibrary  C++ Client Interfaces
+*
+* \brief Internal C++ Client Interfaces called by the external C Interfaces
+*
+*/
+
 extern "C" {
 #include "opof.h"
 #include "opof_error.h"
@@ -27,11 +34,11 @@ class SessionTableClient {
 public: 
     SessionTableClient(std::shared_ptr<Channel> channel)
     : stub_(SessionTable::NewStub(channel)) {};
-    Status addSessionClient(int size, sessionRequest_t **s, addSessionResponse_t *resp);
-    std::string getSessionClient(int session, sessionResponse_t *resp);
-    std::string deleteSessionClient(int session, sessionResponse_t *resp);
-    void getAllSessions();
-    unsigned long getClosedSessions(statisticsRequestArgs_t *args);
+    int addSessionClient(int size, sessionRequest_t **s, addSessionResponse_t *resp);
+    int getSessionClient(int session, sessionResponse_t *resp);
+    int deleteSessionClient(int session, sessionResponse_t *resp);
+    int getAllSessions(int pageSize, uint64_t *start_session, uint64_t *sessions, sessionResponse_t responses[],unsigned long *sessionCount);
+    int getClosedSessions(statisticsRequestArgs_t *args, sessionResponse_t responses[], unsigned long *sessionCount);
 private:
     std::unique_ptr<SessionTable::Stub> stub_;
 };

@@ -17,8 +17,15 @@
 #ifndef __OPOF_SESSION_SERVER_H
 #define __OPOF_SESSION_SERVER_H
 
-
+/**
+* \defgroup serverlibrary  C++ Server Interfaces
+*
+* \brief Internal C++ Server Interfaces called by the external C Interfaces
+*
+*/
+extern "C" {
 #include "opof.h"
+}
 #include "opof_grpc.h"
 
 
@@ -27,7 +34,7 @@ public:
     Status addSession(ServerContext* context, ServerReader<sessionRequest>* reader, addSessionResponse* response) override;
     Status getSession(ServerContext* context, const sessionId* sid, sessionResponse* response) override;
     Status deleteSession(ServerContext* context, const sessionId* sid, sessionResponse* response) override;
-    Status getAllSessions(ServerContext* context, const statisticsRequestArgs* response, ServerWriter<sessionResponse>* writer);
+    Status getAllSessions(ServerContext* context, const statisticsRequestArgs* request, sessionResponseArray *responseArray) override;
     Status getClosedSessions(ServerContext* context,  const statisticsRequestArgs* response,ServerWriter<sessionResponse>* writer) override;
 };
 

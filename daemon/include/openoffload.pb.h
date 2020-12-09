@@ -49,7 +49,7 @@ struct TableStruct_openoffload_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -57,7 +57,7 @@ struct TableStruct_openoffload_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_openoffload_2eproto;
 namespace openoffload {
-namespace v1alpha4 {
+namespace v1alpha5 {
 class Empty;
 class EmptyDefaultTypeInternal;
 extern EmptyDefaultTypeInternal _Empty_default_instance_;
@@ -88,26 +88,34 @@ extern sessionRequestDefaultTypeInternal _sessionRequest_default_instance_;
 class sessionResponse;
 class sessionResponseDefaultTypeInternal;
 extern sessionResponseDefaultTypeInternal _sessionResponse_default_instance_;
+class sessionResponseArray;
+class sessionResponseArrayDefaultTypeInternal;
+extern sessionResponseArrayDefaultTypeInternal _sessionResponseArray_default_instance_;
+class sessionResponseError;
+class sessionResponseErrorDefaultTypeInternal;
+extern sessionResponseErrorDefaultTypeInternal _sessionResponseError_default_instance_;
 class statisticsRequestArgs;
 class statisticsRequestArgsDefaultTypeInternal;
 extern statisticsRequestArgsDefaultTypeInternal _statisticsRequestArgs_default_instance_;
-}  // namespace v1alpha4
+}  // namespace v1alpha5
 }  // namespace openoffload
 PROTOBUF_NAMESPACE_OPEN
-template<> ::openoffload::v1alpha4::Empty* Arena::CreateMaybeMessage<::openoffload::v1alpha4::Empty>(Arena*);
-template<> ::openoffload::v1alpha4::actionParameters* Arena::CreateMaybeMessage<::openoffload::v1alpha4::actionParameters>(Arena*);
-template<> ::openoffload::v1alpha4::activationStatus* Arena::CreateMaybeMessage<::openoffload::v1alpha4::activationStatus>(Arena*);
-template<> ::openoffload::v1alpha4::addSessionResponse* Arena::CreateMaybeMessage<::openoffload::v1alpha4::addSessionResponse>(Arena*);
-template<> ::openoffload::v1alpha4::deviceDescription* Arena::CreateMaybeMessage<::openoffload::v1alpha4::deviceDescription>(Arena*);
-template<> ::openoffload::v1alpha4::deviceList* Arena::CreateMaybeMessage<::openoffload::v1alpha4::deviceList>(Arena*);
-template<> ::openoffload::v1alpha4::registrationStatus* Arena::CreateMaybeMessage<::openoffload::v1alpha4::registrationStatus>(Arena*);
-template<> ::openoffload::v1alpha4::sessionId* Arena::CreateMaybeMessage<::openoffload::v1alpha4::sessionId>(Arena*);
-template<> ::openoffload::v1alpha4::sessionRequest* Arena::CreateMaybeMessage<::openoffload::v1alpha4::sessionRequest>(Arena*);
-template<> ::openoffload::v1alpha4::sessionResponse* Arena::CreateMaybeMessage<::openoffload::v1alpha4::sessionResponse>(Arena*);
-template<> ::openoffload::v1alpha4::statisticsRequestArgs* Arena::CreateMaybeMessage<::openoffload::v1alpha4::statisticsRequestArgs>(Arena*);
+template<> ::openoffload::v1alpha5::Empty* Arena::CreateMaybeMessage<::openoffload::v1alpha5::Empty>(Arena*);
+template<> ::openoffload::v1alpha5::actionParameters* Arena::CreateMaybeMessage<::openoffload::v1alpha5::actionParameters>(Arena*);
+template<> ::openoffload::v1alpha5::activationStatus* Arena::CreateMaybeMessage<::openoffload::v1alpha5::activationStatus>(Arena*);
+template<> ::openoffload::v1alpha5::addSessionResponse* Arena::CreateMaybeMessage<::openoffload::v1alpha5::addSessionResponse>(Arena*);
+template<> ::openoffload::v1alpha5::deviceDescription* Arena::CreateMaybeMessage<::openoffload::v1alpha5::deviceDescription>(Arena*);
+template<> ::openoffload::v1alpha5::deviceList* Arena::CreateMaybeMessage<::openoffload::v1alpha5::deviceList>(Arena*);
+template<> ::openoffload::v1alpha5::registrationStatus* Arena::CreateMaybeMessage<::openoffload::v1alpha5::registrationStatus>(Arena*);
+template<> ::openoffload::v1alpha5::sessionId* Arena::CreateMaybeMessage<::openoffload::v1alpha5::sessionId>(Arena*);
+template<> ::openoffload::v1alpha5::sessionRequest* Arena::CreateMaybeMessage<::openoffload::v1alpha5::sessionRequest>(Arena*);
+template<> ::openoffload::v1alpha5::sessionResponse* Arena::CreateMaybeMessage<::openoffload::v1alpha5::sessionResponse>(Arena*);
+template<> ::openoffload::v1alpha5::sessionResponseArray* Arena::CreateMaybeMessage<::openoffload::v1alpha5::sessionResponseArray>(Arena*);
+template<> ::openoffload::v1alpha5::sessionResponseError* Arena::CreateMaybeMessage<::openoffload::v1alpha5::sessionResponseError>(Arena*);
+template<> ::openoffload::v1alpha5::statisticsRequestArgs* Arena::CreateMaybeMessage<::openoffload::v1alpha5::statisticsRequestArgs>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace openoffload {
-namespace v1alpha4 {
+namespace v1alpha5 {
 
 enum IP_VERSION : int {
   _IPV4 = 0,
@@ -165,12 +173,13 @@ enum SESSION_STATE : int {
   _CLOSING_1 = 1,
   _CLOSING_2 = 2,
   _CLOSED = 3,
+  _UNKNOWN_STATE = 4,
   SESSION_STATE_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   SESSION_STATE_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool SESSION_STATE_IsValid(int value);
 constexpr SESSION_STATE SESSION_STATE_MIN = _ESTABLISHED;
-constexpr SESSION_STATE SESSION_STATE_MAX = _CLOSED;
+constexpr SESSION_STATE SESSION_STATE_MAX = _UNKNOWN_STATE;
 constexpr int SESSION_STATE_ARRAYSIZE = SESSION_STATE_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SESSION_STATE_descriptor();
@@ -192,12 +201,13 @@ enum SESSION_CLOSE_CODE : int {
   _FINACK = 1,
   _RST = 2,
   _TIMEOUT = 3,
+  _UNKNOWN_CLOSE_CODE = 4,
   SESSION_CLOSE_CODE_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   SESSION_CLOSE_CODE_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool SESSION_CLOSE_CODE_IsValid(int value);
 constexpr SESSION_CLOSE_CODE SESSION_CLOSE_CODE_MIN = _NOT_CLOSED;
-constexpr SESSION_CLOSE_CODE SESSION_CLOSE_CODE_MAX = _TIMEOUT;
+constexpr SESSION_CLOSE_CODE SESSION_CLOSE_CODE_MAX = _UNKNOWN_CLOSE_CODE;
 constexpr int SESSION_CLOSE_CODE_ARRAYSIZE = SESSION_CLOSE_CODE_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SESSION_CLOSE_CODE_descriptor();
@@ -219,12 +229,13 @@ enum ADD_SESSION_STATUS : int {
   _SESSION_REJECTED = 1,
   _SESSION_TABLE_FULL = 2,
   _SESSION_TABLE_UNAVAILABLE = 3,
+  _SESSION_ALREADY_EXISTS = 4,
   ADD_SESSION_STATUS_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ADD_SESSION_STATUS_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ADD_SESSION_STATUS_IsValid(int value);
 constexpr ADD_SESSION_STATUS ADD_SESSION_STATUS_MIN = _SESSION_ACCEPTED;
-constexpr ADD_SESSION_STATUS ADD_SESSION_STATUS_MAX = _SESSION_TABLE_UNAVAILABLE;
+constexpr ADD_SESSION_STATUS ADD_SESSION_STATUS_MAX = _SESSION_ALREADY_EXISTS;
 constexpr int ADD_SESSION_STATUS_ARRAYSIZE = ADD_SESSION_STATUS_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ADD_SESSION_STATUS_descriptor();
@@ -245,15 +256,16 @@ enum REQUEST_STATUS : int {
   _ACCEPTED = 0,
   _REJECTED = 1,
   _REJECTED_SESSION_NONEXISTENT = 2,
-  _REJECTED_SESSION_TABLE_FULL = 3,
-  _REJECTED_SESSION_ALREADY_EXISTS = 4,
-  _NO_CLOSED_SESSIONS = 5,
+  _REJECTED_SESSION_TABLE_FULL PROTOBUF_DEPRECATED_ENUM = 3,
+  _REJECTED_SESSION_ALREADY_EXISTS PROTOBUF_DEPRECATED_ENUM = 4,
+  _NO_CLOSED_SESSIONS PROTOBUF_DEPRECATED_ENUM = 5,
+  _REJECTED_INTERNAL_ERROR = 6,
   REQUEST_STATUS_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   REQUEST_STATUS_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool REQUEST_STATUS_IsValid(int value);
 constexpr REQUEST_STATUS REQUEST_STATUS_MIN = _ACCEPTED;
-constexpr REQUEST_STATUS REQUEST_STATUS_MAX = _NO_CLOSED_SESSIONS;
+constexpr REQUEST_STATUS REQUEST_STATUS_MAX = _REJECTED_INTERNAL_ERROR;
 constexpr int REQUEST_STATUS_ARRAYSIZE = REQUEST_STATUS_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* REQUEST_STATUS_descriptor();
@@ -377,7 +389,7 @@ inline bool REGISTRATION_STATUS_TYPE_Parse(
 // ===================================================================
 
 class sessionId PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.sessionId) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.sessionId) */ {
  public:
   inline sessionId() : sessionId(nullptr) {};
   virtual ~sessionId();
@@ -466,7 +478,7 @@ class sessionId PROTOBUF_FINAL :
   void InternalSwap(sessionId* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.sessionId";
+    return "openoffload.v1alpha5.sessionId";
   }
   protected:
   explicit sessionId(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -500,7 +512,7 @@ class sessionId PROTOBUF_FINAL :
   void _internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.sessionId)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.sessionId)
  private:
   class _Internal;
 
@@ -514,7 +526,7 @@ class sessionId PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class actionParameters PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.actionParameters) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.actionParameters) */ {
  public:
   inline actionParameters() : actionParameters(nullptr) {};
   virtual ~actionParameters();
@@ -603,7 +615,7 @@ class actionParameters PROTOBUF_FINAL :
   void InternalSwap(actionParameters* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.actionParameters";
+    return "openoffload.v1alpha5.actionParameters";
   }
   protected:
   explicit actionParameters(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -655,13 +667,13 @@ class actionParameters PROTOBUF_FINAL :
   std::string* _internal_mutable_actionnexthopv6();
   public:
 
-  // .openoffload.v1alpha4.ACTION_TYPE actionType = 1;
+  // .openoffload.v1alpha5.ACTION_TYPE actionType = 1;
   void clear_actiontype();
-  ::openoffload::v1alpha4::ACTION_TYPE actiontype() const;
-  void set_actiontype(::openoffload::v1alpha4::ACTION_TYPE value);
+  ::openoffload::v1alpha5::ACTION_TYPE actiontype() const;
+  void set_actiontype(::openoffload::v1alpha5::ACTION_TYPE value);
   private:
-  ::openoffload::v1alpha4::ACTION_TYPE _internal_actiontype() const;
-  void _internal_set_actiontype(::openoffload::v1alpha4::ACTION_TYPE value);
+  ::openoffload::v1alpha5::ACTION_TYPE _internal_actiontype() const;
+  void _internal_set_actiontype(::openoffload::v1alpha5::ACTION_TYPE value);
   public:
 
   // uint32 actionNextHop = 2;
@@ -673,7 +685,7 @@ class actionParameters PROTOBUF_FINAL :
   void _internal_set_actionnexthop(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.actionParameters)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.actionParameters)
  private:
   class _Internal;
 
@@ -689,7 +701,7 @@ class actionParameters PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class sessionRequest PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.sessionRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.sessionRequest) */ {
  public:
   inline sessionRequest() : sessionRequest(nullptr) {};
   virtual ~sessionRequest();
@@ -778,7 +790,7 @@ class sessionRequest PROTOBUF_FINAL :
   void InternalSwap(sessionRequest* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.sessionRequest";
+    return "openoffload.v1alpha5.sessionRequest";
   }
   protected:
   explicit sessionRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -813,6 +825,7 @@ class sessionRequest PROTOBUF_FINAL :
     kDestinationIpFieldNumber = 8,
     kDestinationPortFieldNumber = 10,
     kProtocolIdFieldNumber = 11,
+    kCacheTimeoutFieldNumber = 13,
   };
   // bytes sourceIpV6 = 6;
   void clear_sourceipv6();
@@ -864,23 +877,23 @@ class sessionRequest PROTOBUF_FINAL :
   std::string* _internal_mutable_destinationipv6();
   public:
 
-  // .openoffload.v1alpha4.actionParameters action = 12;
+  // .openoffload.v1alpha5.actionParameters action = 12;
   bool has_action() const;
   private:
   bool _internal_has_action() const;
   public:
   void clear_action();
-  const ::openoffload::v1alpha4::actionParameters& action() const;
-  ::openoffload::v1alpha4::actionParameters* release_action();
-  ::openoffload::v1alpha4::actionParameters* mutable_action();
-  void set_allocated_action(::openoffload::v1alpha4::actionParameters* action);
+  const ::openoffload::v1alpha5::actionParameters& action() const;
+  ::openoffload::v1alpha5::actionParameters* release_action();
+  ::openoffload::v1alpha5::actionParameters* mutable_action();
+  void set_allocated_action(::openoffload::v1alpha5::actionParameters* action);
   private:
-  const ::openoffload::v1alpha4::actionParameters& _internal_action() const;
-  ::openoffload::v1alpha4::actionParameters* _internal_mutable_action();
+  const ::openoffload::v1alpha5::actionParameters& _internal_action() const;
+  ::openoffload::v1alpha5::actionParameters* _internal_mutable_action();
   public:
   void unsafe_arena_set_allocated_action(
-      ::openoffload::v1alpha4::actionParameters* action);
-  ::openoffload::v1alpha4::actionParameters* unsafe_arena_release_action();
+      ::openoffload::v1alpha5::actionParameters* action);
+  ::openoffload::v1alpha5::actionParameters* unsafe_arena_release_action();
 
   // uint64 sessionId = 1;
   void clear_sessionid();
@@ -909,13 +922,13 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_outlif(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // .openoffload.v1alpha4.IP_VERSION ipVersion = 4;
+  // .openoffload.v1alpha5.IP_VERSION ipVersion = 4;
   void clear_ipversion();
-  ::openoffload::v1alpha4::IP_VERSION ipversion() const;
-  void set_ipversion(::openoffload::v1alpha4::IP_VERSION value);
+  ::openoffload::v1alpha5::IP_VERSION ipversion() const;
+  void set_ipversion(::openoffload::v1alpha5::IP_VERSION value);
   private:
-  ::openoffload::v1alpha4::IP_VERSION _internal_ipversion() const;
-  void _internal_set_ipversion(::openoffload::v1alpha4::IP_VERSION value);
+  ::openoffload::v1alpha5::IP_VERSION _internal_ipversion() const;
+  void _internal_set_ipversion(::openoffload::v1alpha5::IP_VERSION value);
   public:
 
   // uint32 sourceIp = 5;
@@ -954,16 +967,25 @@ class sessionRequest PROTOBUF_FINAL :
   void _internal_set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // .openoffload.v1alpha4.PROTOCOL_ID protocolId = 11;
+  // .openoffload.v1alpha5.PROTOCOL_ID protocolId = 11;
   void clear_protocolid();
-  ::openoffload::v1alpha4::PROTOCOL_ID protocolid() const;
-  void set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID value);
+  ::openoffload::v1alpha5::PROTOCOL_ID protocolid() const;
+  void set_protocolid(::openoffload::v1alpha5::PROTOCOL_ID value);
   private:
-  ::openoffload::v1alpha4::PROTOCOL_ID _internal_protocolid() const;
-  void _internal_set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID value);
+  ::openoffload::v1alpha5::PROTOCOL_ID _internal_protocolid() const;
+  void _internal_set_protocolid(::openoffload::v1alpha5::PROTOCOL_ID value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.sessionRequest)
+  // uint32 cacheTimeout = 13;
+  void clear_cachetimeout();
+  ::PROTOBUF_NAMESPACE_ID::uint32 cachetimeout() const;
+  void set_cachetimeout(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_cachetimeout() const;
+  void _internal_set_cachetimeout(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.sessionRequest)
  private:
   class _Internal;
 
@@ -972,7 +994,7 @@ class sessionRequest PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sourceipv6_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr destinationipv6_;
-  ::openoffload::v1alpha4::actionParameters* action_;
+  ::openoffload::v1alpha5::actionParameters* action_;
   ::PROTOBUF_NAMESPACE_ID::uint64 sessionid_;
   ::PROTOBUF_NAMESPACE_ID::int32 inlif_;
   ::PROTOBUF_NAMESPACE_ID::int32 outlif_;
@@ -982,13 +1004,319 @@ class sessionRequest PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::uint32 destinationip_;
   ::PROTOBUF_NAMESPACE_ID::uint32 destinationport_;
   int protocolid_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cachetimeout_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_openoffload_2eproto;
+};
+// -------------------------------------------------------------------
+
+class sessionResponseError PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.sessionResponseError) */ {
+ public:
+  inline sessionResponseError() : sessionResponseError(nullptr) {};
+  virtual ~sessionResponseError();
+
+  sessionResponseError(const sessionResponseError& from);
+  sessionResponseError(sessionResponseError&& from) noexcept
+    : sessionResponseError() {
+    *this = ::std::move(from);
+  }
+
+  inline sessionResponseError& operator=(const sessionResponseError& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline sessionResponseError& operator=(sessionResponseError&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const sessionResponseError& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const sessionResponseError* internal_default_instance() {
+    return reinterpret_cast<const sessionResponseError*>(
+               &_sessionResponseError_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(sessionResponseError& a, sessionResponseError& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(sessionResponseError* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(sessionResponseError* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline sessionResponseError* New() const final {
+    return CreateMaybeMessage<sessionResponseError>(nullptr);
+  }
+
+  sessionResponseError* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<sessionResponseError>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const sessionResponseError& from);
+  void MergeFrom(const sessionResponseError& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(sessionResponseError* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "openoffload.v1alpha5.sessionResponseError";
+  }
+  protected:
+  explicit sessionResponseError(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_openoffload_2eproto);
+    return ::descriptor_table_openoffload_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSessionIdFieldNumber = 1,
+    kErrorStatusFieldNumber = 2,
+  };
+  // uint64 sessionId = 1;
+  void clear_sessionid();
+  ::PROTOBUF_NAMESPACE_ID::uint64 sessionid() const;
+  void set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_sessionid() const;
+  void _internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // int32 errorStatus = 2;
+  void clear_errorstatus();
+  ::PROTOBUF_NAMESPACE_ID::int32 errorstatus() const;
+  void set_errorstatus(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_errorstatus() const;
+  void _internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.sessionResponseError)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 sessionid_;
+  ::PROTOBUF_NAMESPACE_ID::int32 errorstatus_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_openoffload_2eproto;
+};
+// -------------------------------------------------------------------
+
+class sessionResponseArray PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.sessionResponseArray) */ {
+ public:
+  inline sessionResponseArray() : sessionResponseArray(nullptr) {};
+  virtual ~sessionResponseArray();
+
+  sessionResponseArray(const sessionResponseArray& from);
+  sessionResponseArray(sessionResponseArray&& from) noexcept
+    : sessionResponseArray() {
+    *this = ::std::move(from);
+  }
+
+  inline sessionResponseArray& operator=(const sessionResponseArray& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline sessionResponseArray& operator=(sessionResponseArray&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const sessionResponseArray& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const sessionResponseArray* internal_default_instance() {
+    return reinterpret_cast<const sessionResponseArray*>(
+               &_sessionResponseArray_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(sessionResponseArray& a, sessionResponseArray& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(sessionResponseArray* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(sessionResponseArray* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline sessionResponseArray* New() const final {
+    return CreateMaybeMessage<sessionResponseArray>(nullptr);
+  }
+
+  sessionResponseArray* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<sessionResponseArray>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const sessionResponseArray& from);
+  void MergeFrom(const sessionResponseArray& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(sessionResponseArray* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "openoffload.v1alpha5.sessionResponseArray";
+  }
+  protected:
+  explicit sessionResponseArray(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_openoffload_2eproto);
+    return ::descriptor_table_openoffload_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kResponseArrayFieldNumber = 1,
+    kNextkeyFieldNumber = 2,
+  };
+  // repeated .openoffload.v1alpha5.sessionResponse responseArray = 1;
+  int responsearray_size() const;
+  private:
+  int _internal_responsearray_size() const;
+  public:
+  void clear_responsearray();
+  ::openoffload::v1alpha5::sessionResponse* mutable_responsearray(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponse >*
+      mutable_responsearray();
+  private:
+  const ::openoffload::v1alpha5::sessionResponse& _internal_responsearray(int index) const;
+  ::openoffload::v1alpha5::sessionResponse* _internal_add_responsearray();
+  public:
+  const ::openoffload::v1alpha5::sessionResponse& responsearray(int index) const;
+  ::openoffload::v1alpha5::sessionResponse* add_responsearray();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponse >&
+      responsearray() const;
+
+  // uint64 nextkey = 2;
+  void clear_nextkey();
+  ::PROTOBUF_NAMESPACE_ID::uint64 nextkey() const;
+  void set_nextkey(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_nextkey() const;
+  void _internal_set_nextkey(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.sessionResponseArray)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponse > responsearray_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 nextkey_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_openoffload_2eproto;
 };
 // -------------------------------------------------------------------
 
 class addSessionResponse PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.addSessionResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.addSessionResponse) */ {
  public:
   inline addSessionResponse() : addSessionResponse(nullptr) {};
   virtual ~addSessionResponse();
@@ -1029,7 +1357,7 @@ class addSessionResponse PROTOBUF_FINAL :
                &_addSessionResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(addSessionResponse& a, addSessionResponse& b) {
     a.Swap(&b);
@@ -1077,7 +1405,7 @@ class addSessionResponse PROTOBUF_FINAL :
   void InternalSwap(addSessionResponse* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.addSessionResponse";
+    return "openoffload.v1alpha5.addSessionResponse";
   }
   protected:
   explicit addSessionResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1100,10 +1428,29 @@ class addSessionResponse PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kResponseErrorFieldNumber = 4,
     kStartTimeFieldNumber = 3,
     kErrorStatusFieldNumber = 2,
     kRequestStatusFieldNumber = 1,
   };
+  // repeated .openoffload.v1alpha5.sessionResponseError responseError = 4;
+  int responseerror_size() const;
+  private:
+  int _internal_responseerror_size() const;
+  public:
+  void clear_responseerror();
+  ::openoffload::v1alpha5::sessionResponseError* mutable_responseerror(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponseError >*
+      mutable_responseerror();
+  private:
+  const ::openoffload::v1alpha5::sessionResponseError& _internal_responseerror(int index) const;
+  ::openoffload::v1alpha5::sessionResponseError* _internal_add_responseerror();
+  public:
+  const ::openoffload::v1alpha5::sessionResponseError& responseerror(int index) const;
+  ::openoffload::v1alpha5::sessionResponseError* add_responseerror();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponseError >&
+      responseerror() const;
+
   // .google.protobuf.Timestamp startTime = 3;
   bool has_starttime() const;
   private:
@@ -1122,31 +1469,32 @@ class addSessionResponse PROTOBUF_FINAL :
       PROTOBUF_NAMESPACE_ID::Timestamp* starttime);
   PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_starttime();
 
-  // uint64 errorStatus = 2;
-  void clear_errorstatus();
-  ::PROTOBUF_NAMESPACE_ID::uint64 errorstatus() const;
-  void set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  // uint64 errorStatus = 2 [deprecated = true];
+  PROTOBUF_DEPRECATED void clear_errorstatus();
+  PROTOBUF_DEPRECATED ::PROTOBUF_NAMESPACE_ID::uint64 errorstatus() const;
+  PROTOBUF_DEPRECATED void set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
   ::PROTOBUF_NAMESPACE_ID::uint64 _internal_errorstatus() const;
   void _internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // .openoffload.v1alpha4.ADD_SESSION_STATUS requestStatus = 1;
-  void clear_requeststatus();
-  ::openoffload::v1alpha4::ADD_SESSION_STATUS requeststatus() const;
-  void set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value);
+  // .openoffload.v1alpha5.ADD_SESSION_STATUS requestStatus = 1 [deprecated = true];
+  PROTOBUF_DEPRECATED void clear_requeststatus();
+  PROTOBUF_DEPRECATED ::openoffload::v1alpha5::ADD_SESSION_STATUS requeststatus() const;
+  PROTOBUF_DEPRECATED void set_requeststatus(::openoffload::v1alpha5::ADD_SESSION_STATUS value);
   private:
-  ::openoffload::v1alpha4::ADD_SESSION_STATUS _internal_requeststatus() const;
-  void _internal_set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value);
+  ::openoffload::v1alpha5::ADD_SESSION_STATUS _internal_requeststatus() const;
+  void _internal_set_requeststatus(::openoffload::v1alpha5::ADD_SESSION_STATUS value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.addSessionResponse)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.addSessionResponse)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponseError > responseerror_;
   PROTOBUF_NAMESPACE_ID::Timestamp* starttime_;
   ::PROTOBUF_NAMESPACE_ID::uint64 errorstatus_;
   int requeststatus_;
@@ -1156,7 +1504,7 @@ class addSessionResponse PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class sessionResponse PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.sessionResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.sessionResponse) */ {
  public:
   inline sessionResponse() : sessionResponse(nullptr) {};
   virtual ~sessionResponse();
@@ -1197,7 +1545,7 @@ class sessionResponse PROTOBUF_FINAL :
                &_sessionResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(sessionResponse& a, sessionResponse& b) {
     a.Swap(&b);
@@ -1245,7 +1593,7 @@ class sessionResponse PROTOBUF_FINAL :
   void InternalSwap(sessionResponse* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.sessionResponse";
+    return "openoffload.v1alpha5.sessionResponse";
   }
   protected:
   explicit sessionResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1360,34 +1708,34 @@ class sessionResponse PROTOBUF_FINAL :
   void _internal_set_outbytes(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // .openoffload.v1alpha4.SESSION_STATE sessionState = 6;
+  // .openoffload.v1alpha5.SESSION_STATE sessionState = 6;
   void clear_sessionstate();
-  ::openoffload::v1alpha4::SESSION_STATE sessionstate() const;
-  void set_sessionstate(::openoffload::v1alpha4::SESSION_STATE value);
+  ::openoffload::v1alpha5::SESSION_STATE sessionstate() const;
+  void set_sessionstate(::openoffload::v1alpha5::SESSION_STATE value);
   private:
-  ::openoffload::v1alpha4::SESSION_STATE _internal_sessionstate() const;
-  void _internal_set_sessionstate(::openoffload::v1alpha4::SESSION_STATE value);
+  ::openoffload::v1alpha5::SESSION_STATE _internal_sessionstate() const;
+  void _internal_set_sessionstate(::openoffload::v1alpha5::SESSION_STATE value);
   public:
 
-  // .openoffload.v1alpha4.SESSION_CLOSE_CODE sessionCloseCode = 7;
+  // .openoffload.v1alpha5.SESSION_CLOSE_CODE sessionCloseCode = 7;
   void clear_sessionclosecode();
-  ::openoffload::v1alpha4::SESSION_CLOSE_CODE sessionclosecode() const;
-  void set_sessionclosecode(::openoffload::v1alpha4::SESSION_CLOSE_CODE value);
+  ::openoffload::v1alpha5::SESSION_CLOSE_CODE sessionclosecode() const;
+  void set_sessionclosecode(::openoffload::v1alpha5::SESSION_CLOSE_CODE value);
   private:
-  ::openoffload::v1alpha4::SESSION_CLOSE_CODE _internal_sessionclosecode() const;
-  void _internal_set_sessionclosecode(::openoffload::v1alpha4::SESSION_CLOSE_CODE value);
+  ::openoffload::v1alpha5::SESSION_CLOSE_CODE _internal_sessionclosecode() const;
+  void _internal_set_sessionclosecode(::openoffload::v1alpha5::SESSION_CLOSE_CODE value);
   public:
 
-  // .openoffload.v1alpha4.REQUEST_STATUS requestStatus = 8;
-  void clear_requeststatus();
-  ::openoffload::v1alpha4::REQUEST_STATUS requeststatus() const;
-  void set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value);
+  // .openoffload.v1alpha5.REQUEST_STATUS requestStatus = 8 [deprecated = true];
+  PROTOBUF_DEPRECATED void clear_requeststatus();
+  PROTOBUF_DEPRECATED ::openoffload::v1alpha5::REQUEST_STATUS requeststatus() const;
+  PROTOBUF_DEPRECATED void set_requeststatus(::openoffload::v1alpha5::REQUEST_STATUS value);
   private:
-  ::openoffload::v1alpha4::REQUEST_STATUS _internal_requeststatus() const;
-  void _internal_set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value);
+  ::openoffload::v1alpha5::REQUEST_STATUS _internal_requeststatus() const;
+  void _internal_set_requeststatus(::openoffload::v1alpha5::REQUEST_STATUS value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.sessionResponse)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.sessionResponse)
  private:
   class _Internal;
 
@@ -1410,7 +1758,7 @@ class sessionResponse PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class statisticsRequestArgs PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.statisticsRequestArgs) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.statisticsRequestArgs) */ {
  public:
   inline statisticsRequestArgs() : statisticsRequestArgs(nullptr) {};
   virtual ~statisticsRequestArgs();
@@ -1451,7 +1799,7 @@ class statisticsRequestArgs PROTOBUF_FINAL :
                &_statisticsRequestArgs_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(statisticsRequestArgs& a, statisticsRequestArgs& b) {
     a.Swap(&b);
@@ -1499,7 +1847,7 @@ class statisticsRequestArgs PROTOBUF_FINAL :
   void InternalSwap(statisticsRequestArgs* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.statisticsRequestArgs";
+    return "openoffload.v1alpha5.statisticsRequestArgs";
   }
   protected:
   explicit statisticsRequestArgs(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1524,6 +1872,7 @@ class statisticsRequestArgs PROTOBUF_FINAL :
   enum : int {
     kPageSizeFieldNumber = 1,
     kPageFieldNumber = 2,
+    kStartSessionFieldNumber = 3,
   };
   // uint32 pageSize = 1;
   void clear_pagesize();
@@ -1543,7 +1892,16 @@ class statisticsRequestArgs PROTOBUF_FINAL :
   void _internal_set_page(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.statisticsRequestArgs)
+  // uint64 startSession = 3;
+  void clear_startsession();
+  ::PROTOBUF_NAMESPACE_ID::uint64 startsession() const;
+  void set_startsession(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_startsession() const;
+  void _internal_set_startsession(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.statisticsRequestArgs)
  private:
   class _Internal;
 
@@ -1552,13 +1910,14 @@ class statisticsRequestArgs PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::uint32 pagesize_;
   ::PROTOBUF_NAMESPACE_ID::uint32 page_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 startsession_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_openoffload_2eproto;
 };
 // -------------------------------------------------------------------
 
 class Empty PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.Empty) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.Empty) */ {
  public:
   inline Empty() : Empty(nullptr) {};
   virtual ~Empty();
@@ -1599,7 +1958,7 @@ class Empty PROTOBUF_FINAL :
                &_Empty_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(Empty& a, Empty& b) {
     a.Swap(&b);
@@ -1647,7 +2006,7 @@ class Empty PROTOBUF_FINAL :
   void InternalSwap(Empty* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.Empty";
+    return "openoffload.v1alpha5.Empty";
   }
   protected:
   explicit Empty(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1669,7 +2028,7 @@ class Empty PROTOBUF_FINAL :
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.Empty)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.Empty)
  private:
   class _Internal;
 
@@ -1682,7 +2041,7 @@ class Empty PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class deviceDescription PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.deviceDescription) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.deviceDescription) */ {
  public:
   inline deviceDescription() : deviceDescription(nullptr) {};
   virtual ~deviceDescription();
@@ -1723,7 +2082,7 @@ class deviceDescription PROTOBUF_FINAL :
                &_deviceDescription_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(deviceDescription& a, deviceDescription& b) {
     a.Swap(&b);
@@ -1771,7 +2130,7 @@ class deviceDescription PROTOBUF_FINAL :
   void InternalSwap(deviceDescription* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.deviceDescription";
+    return "openoffload.v1alpha5.deviceDescription";
   }
   protected:
   explicit deviceDescription(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1852,13 +2211,13 @@ class deviceDescription PROTOBUF_FINAL :
   std::string* _internal_mutable_description();
   public:
 
-  // .openoffload.v1alpha4.INTERFACE_TYPE type = 2;
+  // .openoffload.v1alpha5.INTERFACE_TYPE type = 2;
   void clear_type();
-  ::openoffload::v1alpha4::INTERFACE_TYPE type() const;
-  void set_type(::openoffload::v1alpha4::INTERFACE_TYPE value);
+  ::openoffload::v1alpha5::INTERFACE_TYPE type() const;
+  void set_type(::openoffload::v1alpha5::INTERFACE_TYPE value);
   private:
-  ::openoffload::v1alpha4::INTERFACE_TYPE _internal_type() const;
-  void _internal_set_type(::openoffload::v1alpha4::INTERFACE_TYPE value);
+  ::openoffload::v1alpha5::INTERFACE_TYPE _internal_type() const;
+  void _internal_set_type(::openoffload::v1alpha5::INTERFACE_TYPE value);
   public:
 
   // int32 sessionCapacity = 4;
@@ -1897,7 +2256,7 @@ class deviceDescription PROTOBUF_FINAL :
   void _internal_set_udpsessiontimeout(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.deviceDescription)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.deviceDescription)
  private:
   class _Internal;
 
@@ -1917,7 +2276,7 @@ class deviceDescription PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class deviceList PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.deviceList) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.deviceList) */ {
  public:
   inline deviceList() : deviceList(nullptr) {};
   virtual ~deviceList();
@@ -1958,7 +2317,7 @@ class deviceList PROTOBUF_FINAL :
                &_deviceList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(deviceList& a, deviceList& b) {
     a.Swap(&b);
@@ -2006,7 +2365,7 @@ class deviceList PROTOBUF_FINAL :
   void InternalSwap(deviceList* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.deviceList";
+    return "openoffload.v1alpha5.deviceList";
   }
   protected:
   explicit deviceList(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -2031,39 +2390,39 @@ class deviceList PROTOBUF_FINAL :
   enum : int {
     kDevicesFieldNumber = 1,
   };
-  // repeated .openoffload.v1alpha4.deviceDescription devices = 1;
+  // repeated .openoffload.v1alpha5.deviceDescription devices = 1;
   int devices_size() const;
   private:
   int _internal_devices_size() const;
   public:
   void clear_devices();
-  ::openoffload::v1alpha4::deviceDescription* mutable_devices(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha4::deviceDescription >*
+  ::openoffload::v1alpha5::deviceDescription* mutable_devices(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::deviceDescription >*
       mutable_devices();
   private:
-  const ::openoffload::v1alpha4::deviceDescription& _internal_devices(int index) const;
-  ::openoffload::v1alpha4::deviceDescription* _internal_add_devices();
+  const ::openoffload::v1alpha5::deviceDescription& _internal_devices(int index) const;
+  ::openoffload::v1alpha5::deviceDescription* _internal_add_devices();
   public:
-  const ::openoffload::v1alpha4::deviceDescription& devices(int index) const;
-  ::openoffload::v1alpha4::deviceDescription* add_devices();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha4::deviceDescription >&
+  const ::openoffload::v1alpha5::deviceDescription& devices(int index) const;
+  ::openoffload::v1alpha5::deviceDescription* add_devices();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::deviceDescription >&
       devices() const;
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.deviceList)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.deviceList)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha4::deviceDescription > devices_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::deviceDescription > devices_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_openoffload_2eproto;
 };
 // -------------------------------------------------------------------
 
 class registrationStatus PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.registrationStatus) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.registrationStatus) */ {
  public:
   inline registrationStatus() : registrationStatus(nullptr) {};
   virtual ~registrationStatus();
@@ -2104,7 +2463,7 @@ class registrationStatus PROTOBUF_FINAL :
                &_registrationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(registrationStatus& a, registrationStatus& b) {
     a.Swap(&b);
@@ -2152,7 +2511,7 @@ class registrationStatus PROTOBUF_FINAL :
   void InternalSwap(registrationStatus* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.registrationStatus";
+    return "openoffload.v1alpha5.registrationStatus";
   }
   protected:
   explicit registrationStatus(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -2177,16 +2536,16 @@ class registrationStatus PROTOBUF_FINAL :
   enum : int {
     kStatusFieldNumber = 1,
   };
-  // .openoffload.v1alpha4.REGISTRATION_STATUS_TYPE status = 1;
+  // .openoffload.v1alpha5.REGISTRATION_STATUS_TYPE status = 1;
   void clear_status();
-  ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE status() const;
-  void set_status(::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE value);
+  ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE status() const;
+  void set_status(::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE value);
   private:
-  ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE _internal_status() const;
-  void _internal_set_status(::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE value);
+  ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE _internal_status() const;
+  void _internal_set_status(::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.registrationStatus)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.registrationStatus)
  private:
   class _Internal;
 
@@ -2200,7 +2559,7 @@ class registrationStatus PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class activationStatus PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha4.activationStatus) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:openoffload.v1alpha5.activationStatus) */ {
  public:
   inline activationStatus() : activationStatus(nullptr) {};
   virtual ~activationStatus();
@@ -2241,7 +2600,7 @@ class activationStatus PROTOBUF_FINAL :
                &_activationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(activationStatus& a, activationStatus& b) {
     a.Swap(&b);
@@ -2289,7 +2648,7 @@ class activationStatus PROTOBUF_FINAL :
   void InternalSwap(activationStatus* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "openoffload.v1alpha4.activationStatus";
+    return "openoffload.v1alpha5.activationStatus";
   }
   protected:
   explicit activationStatus(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -2315,41 +2674,41 @@ class activationStatus PROTOBUF_FINAL :
     kDeviceFieldNumber = 2,
     kStatusFieldNumber = 1,
   };
-  // .openoffload.v1alpha4.deviceDescription device = 2;
+  // .openoffload.v1alpha5.deviceDescription device = 2;
   bool has_device() const;
   private:
   bool _internal_has_device() const;
   public:
   void clear_device();
-  const ::openoffload::v1alpha4::deviceDescription& device() const;
-  ::openoffload::v1alpha4::deviceDescription* release_device();
-  ::openoffload::v1alpha4::deviceDescription* mutable_device();
-  void set_allocated_device(::openoffload::v1alpha4::deviceDescription* device);
+  const ::openoffload::v1alpha5::deviceDescription& device() const;
+  ::openoffload::v1alpha5::deviceDescription* release_device();
+  ::openoffload::v1alpha5::deviceDescription* mutable_device();
+  void set_allocated_device(::openoffload::v1alpha5::deviceDescription* device);
   private:
-  const ::openoffload::v1alpha4::deviceDescription& _internal_device() const;
-  ::openoffload::v1alpha4::deviceDescription* _internal_mutable_device();
+  const ::openoffload::v1alpha5::deviceDescription& _internal_device() const;
+  ::openoffload::v1alpha5::deviceDescription* _internal_mutable_device();
   public:
   void unsafe_arena_set_allocated_device(
-      ::openoffload::v1alpha4::deviceDescription* device);
-  ::openoffload::v1alpha4::deviceDescription* unsafe_arena_release_device();
+      ::openoffload::v1alpha5::deviceDescription* device);
+  ::openoffload::v1alpha5::deviceDescription* unsafe_arena_release_device();
 
-  // .openoffload.v1alpha4.ACTIVATION_STATUS_TYPE status = 1;
+  // .openoffload.v1alpha5.ACTIVATION_STATUS_TYPE status = 1;
   void clear_status();
-  ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE status() const;
-  void set_status(::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE value);
+  ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE status() const;
+  void set_status(::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE value);
   private:
-  ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE _internal_status() const;
-  void _internal_set_status(::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE value);
+  ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE _internal_status() const;
+  void _internal_set_status(::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE value);
   public:
 
-  // @@protoc_insertion_point(class_scope:openoffload.v1alpha4.activationStatus)
+  // @@protoc_insertion_point(class_scope:openoffload.v1alpha5.activationStatus)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::openoffload::v1alpha4::deviceDescription* device_;
+  ::openoffload::v1alpha5::deviceDescription* device_;
   int status_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_openoffload_2eproto;
@@ -2373,7 +2732,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionId::_internal_sessionid() const {
   return sessionid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionId::sessionid() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionId.sessionId)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionId.sessionId)
   return _internal_sessionid();
 }
 inline void sessionId::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -2382,31 +2741,31 @@ inline void sessionId::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 v
 }
 inline void sessionId::set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_sessionid(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionId.sessionId)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionId.sessionId)
 }
 
 // -------------------------------------------------------------------
 
 // actionParameters
 
-// .openoffload.v1alpha4.ACTION_TYPE actionType = 1;
+// .openoffload.v1alpha5.ACTION_TYPE actionType = 1;
 inline void actionParameters::clear_actiontype() {
   actiontype_ = 0;
 }
-inline ::openoffload::v1alpha4::ACTION_TYPE actionParameters::_internal_actiontype() const {
-  return static_cast< ::openoffload::v1alpha4::ACTION_TYPE >(actiontype_);
+inline ::openoffload::v1alpha5::ACTION_TYPE actionParameters::_internal_actiontype() const {
+  return static_cast< ::openoffload::v1alpha5::ACTION_TYPE >(actiontype_);
 }
-inline ::openoffload::v1alpha4::ACTION_TYPE actionParameters::actiontype() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.actionParameters.actionType)
+inline ::openoffload::v1alpha5::ACTION_TYPE actionParameters::actiontype() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.actionParameters.actionType)
   return _internal_actiontype();
 }
-inline void actionParameters::_internal_set_actiontype(::openoffload::v1alpha4::ACTION_TYPE value) {
+inline void actionParameters::_internal_set_actiontype(::openoffload::v1alpha5::ACTION_TYPE value) {
   
   actiontype_ = value;
 }
-inline void actionParameters::set_actiontype(::openoffload::v1alpha4::ACTION_TYPE value) {
+inline void actionParameters::set_actiontype(::openoffload::v1alpha5::ACTION_TYPE value) {
   _internal_set_actiontype(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.actionParameters.actionType)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.actionParameters.actionType)
 }
 
 // uint32 actionNextHop = 2;
@@ -2417,7 +2776,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 actionParameters::_internal_actionnexthop
   return actionnexthop_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 actionParameters::actionnexthop() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.actionParameters.actionNextHop)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.actionParameters.actionNextHop)
   return _internal_actionnexthop();
 }
 inline void actionParameters::_internal_set_actionnexthop(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -2426,7 +2785,7 @@ inline void actionParameters::_internal_set_actionnexthop(::PROTOBUF_NAMESPACE_I
 }
 inline void actionParameters::set_actionnexthop(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_actionnexthop(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.actionParameters.actionNextHop)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.actionParameters.actionNextHop)
 }
 
 // bytes actionNextHopV6 = 3;
@@ -2434,15 +2793,15 @@ inline void actionParameters::clear_actionnexthopv6() {
   actionnexthopv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& actionParameters::actionnexthopv6() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.actionParameters.actionNextHopV6)
   return _internal_actionnexthopv6();
 }
 inline void actionParameters::set_actionnexthopv6(const std::string& value) {
   _internal_set_actionnexthopv6(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 inline std::string* actionParameters::mutable_actionnexthopv6() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.actionParameters.actionNextHopV6)
   return _internal_mutable_actionnexthopv6();
 }
 inline const std::string& actionParameters::_internal_actionnexthopv6() const {
@@ -2456,28 +2815,28 @@ inline void actionParameters::set_actionnexthopv6(std::string&& value) {
   
   actionnexthopv6_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 inline void actionParameters::set_actionnexthopv6(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   actionnexthopv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 inline void actionParameters::set_actionnexthopv6(const void* value,
     size_t size) {
   
   actionnexthopv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 inline std::string* actionParameters::_internal_mutable_actionnexthopv6() {
   
   return actionnexthopv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* actionParameters::release_actionnexthopv6() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.actionParameters.actionNextHopV6)
   return actionnexthopv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void actionParameters::set_allocated_actionnexthopv6(std::string* actionnexthopv6) {
@@ -2488,10 +2847,10 @@ inline void actionParameters::set_allocated_actionnexthopv6(std::string* actionn
   }
   actionnexthopv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), actionnexthopv6,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 inline std::string* actionParameters::unsafe_arena_release_actionnexthopv6() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha5.actionParameters.actionNextHopV6)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return actionnexthopv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -2507,7 +2866,7 @@ inline void actionParameters::unsafe_arena_set_allocated_actionnexthopv6(
   }
   actionnexthopv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       actionnexthopv6, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.actionParameters.actionNextHopV6)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.actionParameters.actionNextHopV6)
 }
 
 // -------------------------------------------------------------------
@@ -2522,7 +2881,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionRequest::_internal_sessionid() con
   return sessionid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionRequest::sessionid() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.sessionId)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.sessionId)
   return _internal_sessionid();
 }
 inline void sessionRequest::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -2531,7 +2890,7 @@ inline void sessionRequest::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uin
 }
 inline void sessionRequest::set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_sessionid(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sessionId)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.sessionId)
 }
 
 // int32 inLif = 2;
@@ -2542,7 +2901,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 sessionRequest::_internal_inlif() const {
   return inlif_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 sessionRequest::inlif() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.inLif)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.inLif)
   return _internal_inlif();
 }
 inline void sessionRequest::_internal_set_inlif(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -2551,7 +2910,7 @@ inline void sessionRequest::_internal_set_inlif(::PROTOBUF_NAMESPACE_ID::int32 v
 }
 inline void sessionRequest::set_inlif(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_inlif(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.inLif)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.inLif)
 }
 
 // int32 outLif = 3;
@@ -2562,7 +2921,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 sessionRequest::_internal_outlif() const {
   return outlif_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 sessionRequest::outlif() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.outLif)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.outLif)
   return _internal_outlif();
 }
 inline void sessionRequest::_internal_set_outlif(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -2571,27 +2930,27 @@ inline void sessionRequest::_internal_set_outlif(::PROTOBUF_NAMESPACE_ID::int32 
 }
 inline void sessionRequest::set_outlif(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_outlif(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.outLif)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.outLif)
 }
 
-// .openoffload.v1alpha4.IP_VERSION ipVersion = 4;
+// .openoffload.v1alpha5.IP_VERSION ipVersion = 4;
 inline void sessionRequest::clear_ipversion() {
   ipversion_ = 0;
 }
-inline ::openoffload::v1alpha4::IP_VERSION sessionRequest::_internal_ipversion() const {
-  return static_cast< ::openoffload::v1alpha4::IP_VERSION >(ipversion_);
+inline ::openoffload::v1alpha5::IP_VERSION sessionRequest::_internal_ipversion() const {
+  return static_cast< ::openoffload::v1alpha5::IP_VERSION >(ipversion_);
 }
-inline ::openoffload::v1alpha4::IP_VERSION sessionRequest::ipversion() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.ipVersion)
+inline ::openoffload::v1alpha5::IP_VERSION sessionRequest::ipversion() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.ipVersion)
   return _internal_ipversion();
 }
-inline void sessionRequest::_internal_set_ipversion(::openoffload::v1alpha4::IP_VERSION value) {
+inline void sessionRequest::_internal_set_ipversion(::openoffload::v1alpha5::IP_VERSION value) {
   
   ipversion_ = value;
 }
-inline void sessionRequest::set_ipversion(::openoffload::v1alpha4::IP_VERSION value) {
+inline void sessionRequest::set_ipversion(::openoffload::v1alpha5::IP_VERSION value) {
   _internal_set_ipversion(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.ipVersion)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.ipVersion)
 }
 
 // uint32 sourceIp = 5;
@@ -2602,7 +2961,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::_internal_sourceip() cons
   return sourceip_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::sourceip() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.sourceIp)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.sourceIp)
   return _internal_sourceip();
 }
 inline void sessionRequest::_internal_set_sourceip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -2611,7 +2970,7 @@ inline void sessionRequest::_internal_set_sourceip(::PROTOBUF_NAMESPACE_ID::uint
 }
 inline void sessionRequest::set_sourceip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_sourceip(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourceIp)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.sourceIp)
 }
 
 // bytes sourceIpV6 = 6;
@@ -2619,15 +2978,15 @@ inline void sessionRequest::clear_sourceipv6() {
   sourceipv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& sessionRequest::sourceipv6() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.sourceIpV6)
   return _internal_sourceipv6();
 }
 inline void sessionRequest::set_sourceipv6(const std::string& value) {
   _internal_set_sourceipv6(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 inline std::string* sessionRequest::mutable_sourceipv6() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionRequest.sourceIpV6)
   return _internal_mutable_sourceipv6();
 }
 inline const std::string& sessionRequest::_internal_sourceipv6() const {
@@ -2641,28 +3000,28 @@ inline void sessionRequest::set_sourceipv6(std::string&& value) {
   
   sourceipv6_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 inline void sessionRequest::set_sourceipv6(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   sourceipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 inline void sessionRequest::set_sourceipv6(const void* value,
     size_t size) {
   
   sourceipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 inline std::string* sessionRequest::_internal_mutable_sourceipv6() {
   
   return sourceipv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* sessionRequest::release_sourceipv6() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.sessionRequest.sourceIpV6)
   return sourceipv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void sessionRequest::set_allocated_sourceipv6(std::string* sourceipv6) {
@@ -2673,10 +3032,10 @@ inline void sessionRequest::set_allocated_sourceipv6(std::string* sourceipv6) {
   }
   sourceipv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), sourceipv6,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 inline std::string* sessionRequest::unsafe_arena_release_sourceipv6() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha5.sessionRequest.sourceIpV6)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return sourceipv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -2692,7 +3051,7 @@ inline void sessionRequest::unsafe_arena_set_allocated_sourceipv6(
   }
   sourceipv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       sourceipv6, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionRequest.sourceIpV6)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.sessionRequest.sourceIpV6)
 }
 
 // uint32 sourcePort = 7;
@@ -2703,7 +3062,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::_internal_sourceport() co
   return sourceport_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::sourceport() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.sourcePort)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.sourcePort)
   return _internal_sourceport();
 }
 inline void sessionRequest::_internal_set_sourceport(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -2712,7 +3071,7 @@ inline void sessionRequest::_internal_set_sourceport(::PROTOBUF_NAMESPACE_ID::ui
 }
 inline void sessionRequest::set_sourceport(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_sourceport(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.sourcePort)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.sourcePort)
 }
 
 // uint32 destinationIp = 8;
@@ -2723,7 +3082,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::_internal_destinationip()
   return destinationip_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::destinationip() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.destinationIp)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.destinationIp)
   return _internal_destinationip();
 }
 inline void sessionRequest::_internal_set_destinationip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -2732,7 +3091,7 @@ inline void sessionRequest::_internal_set_destinationip(::PROTOBUF_NAMESPACE_ID:
 }
 inline void sessionRequest::set_destinationip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_destinationip(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationIp)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.destinationIp)
 }
 
 // bytes destinationIpV6 = 9;
@@ -2740,15 +3099,15 @@ inline void sessionRequest::clear_destinationipv6() {
   destinationipv6_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& sessionRequest::destinationipv6() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.destinationIpV6)
   return _internal_destinationipv6();
 }
 inline void sessionRequest::set_destinationipv6(const std::string& value) {
   _internal_set_destinationipv6(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 inline std::string* sessionRequest::mutable_destinationipv6() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionRequest.destinationIpV6)
   return _internal_mutable_destinationipv6();
 }
 inline const std::string& sessionRequest::_internal_destinationipv6() const {
@@ -2762,28 +3121,28 @@ inline void sessionRequest::set_destinationipv6(std::string&& value) {
   
   destinationipv6_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 inline void sessionRequest::set_destinationipv6(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   destinationipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 inline void sessionRequest::set_destinationipv6(const void* value,
     size_t size) {
   
   destinationipv6_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 inline std::string* sessionRequest::_internal_mutable_destinationipv6() {
   
   return destinationipv6_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* sessionRequest::release_destinationipv6() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.sessionRequest.destinationIpV6)
   return destinationipv6_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void sessionRequest::set_allocated_destinationipv6(std::string* destinationipv6) {
@@ -2794,10 +3153,10 @@ inline void sessionRequest::set_allocated_destinationipv6(std::string* destinati
   }
   destinationipv6_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), destinationipv6,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 inline std::string* sessionRequest::unsafe_arena_release_destinationipv6() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha5.sessionRequest.destinationIpV6)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return destinationipv6_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -2813,7 +3172,7 @@ inline void sessionRequest::unsafe_arena_set_allocated_destinationipv6(
   }
   destinationipv6_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       destinationipv6, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionRequest.destinationIpV6)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.sessionRequest.destinationIpV6)
 }
 
 // uint32 destinationPort = 10;
@@ -2824,7 +3183,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::_internal_destinationport
   return destinationport_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::destinationport() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.destinationPort)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.destinationPort)
   return _internal_destinationport();
 }
 inline void sessionRequest::_internal_set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -2833,30 +3192,30 @@ inline void sessionRequest::_internal_set_destinationport(::PROTOBUF_NAMESPACE_I
 }
 inline void sessionRequest::set_destinationport(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_destinationport(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.destinationPort)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.destinationPort)
 }
 
-// .openoffload.v1alpha4.PROTOCOL_ID protocolId = 11;
+// .openoffload.v1alpha5.PROTOCOL_ID protocolId = 11;
 inline void sessionRequest::clear_protocolid() {
   protocolid_ = 0;
 }
-inline ::openoffload::v1alpha4::PROTOCOL_ID sessionRequest::_internal_protocolid() const {
-  return static_cast< ::openoffload::v1alpha4::PROTOCOL_ID >(protocolid_);
+inline ::openoffload::v1alpha5::PROTOCOL_ID sessionRequest::_internal_protocolid() const {
+  return static_cast< ::openoffload::v1alpha5::PROTOCOL_ID >(protocolid_);
 }
-inline ::openoffload::v1alpha4::PROTOCOL_ID sessionRequest::protocolid() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.protocolId)
+inline ::openoffload::v1alpha5::PROTOCOL_ID sessionRequest::protocolid() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.protocolId)
   return _internal_protocolid();
 }
-inline void sessionRequest::_internal_set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID value) {
+inline void sessionRequest::_internal_set_protocolid(::openoffload::v1alpha5::PROTOCOL_ID value) {
   
   protocolid_ = value;
 }
-inline void sessionRequest::set_protocolid(::openoffload::v1alpha4::PROTOCOL_ID value) {
+inline void sessionRequest::set_protocolid(::openoffload::v1alpha5::PROTOCOL_ID value) {
   _internal_set_protocolid(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionRequest.protocolId)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.protocolId)
 }
 
-// .openoffload.v1alpha4.actionParameters action = 12;
+// .openoffload.v1alpha5.actionParameters action = 12;
 inline bool sessionRequest::_internal_has_action() const {
   return this != internal_default_instance() && action_ != nullptr;
 }
@@ -2869,17 +3228,17 @@ inline void sessionRequest::clear_action() {
   }
   action_ = nullptr;
 }
-inline const ::openoffload::v1alpha4::actionParameters& sessionRequest::_internal_action() const {
-  const ::openoffload::v1alpha4::actionParameters* p = action_;
-  return p != nullptr ? *p : *reinterpret_cast<const ::openoffload::v1alpha4::actionParameters*>(
-      &::openoffload::v1alpha4::_actionParameters_default_instance_);
+inline const ::openoffload::v1alpha5::actionParameters& sessionRequest::_internal_action() const {
+  const ::openoffload::v1alpha5::actionParameters* p = action_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::openoffload::v1alpha5::actionParameters*>(
+      &::openoffload::v1alpha5::_actionParameters_default_instance_);
 }
-inline const ::openoffload::v1alpha4::actionParameters& sessionRequest::action() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionRequest.action)
+inline const ::openoffload::v1alpha5::actionParameters& sessionRequest::action() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.action)
   return _internal_action();
 }
 inline void sessionRequest::unsafe_arena_set_allocated_action(
-    ::openoffload::v1alpha4::actionParameters* action) {
+    ::openoffload::v1alpha5::actionParameters* action) {
   if (GetArena() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(action_);
   }
@@ -2889,35 +3248,35 @@ inline void sessionRequest::unsafe_arena_set_allocated_action(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionRequest.action)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.sessionRequest.action)
 }
-inline ::openoffload::v1alpha4::actionParameters* sessionRequest::release_action() {
+inline ::openoffload::v1alpha5::actionParameters* sessionRequest::release_action() {
   auto temp = unsafe_arena_release_action();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::openoffload::v1alpha4::actionParameters* sessionRequest::unsafe_arena_release_action() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionRequest.action)
+inline ::openoffload::v1alpha5::actionParameters* sessionRequest::unsafe_arena_release_action() {
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.sessionRequest.action)
   
-  ::openoffload::v1alpha4::actionParameters* temp = action_;
+  ::openoffload::v1alpha5::actionParameters* temp = action_;
   action_ = nullptr;
   return temp;
 }
-inline ::openoffload::v1alpha4::actionParameters* sessionRequest::_internal_mutable_action() {
+inline ::openoffload::v1alpha5::actionParameters* sessionRequest::_internal_mutable_action() {
   
   if (action_ == nullptr) {
-    auto* p = CreateMaybeMessage<::openoffload::v1alpha4::actionParameters>(GetArena());
+    auto* p = CreateMaybeMessage<::openoffload::v1alpha5::actionParameters>(GetArena());
     action_ = p;
   }
   return action_;
 }
-inline ::openoffload::v1alpha4::actionParameters* sessionRequest::mutable_action() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionRequest.action)
+inline ::openoffload::v1alpha5::actionParameters* sessionRequest::mutable_action() {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionRequest.action)
   return _internal_mutable_action();
 }
-inline void sessionRequest::set_allocated_action(::openoffload::v1alpha4::actionParameters* action) {
+inline void sessionRequest::set_allocated_action(::openoffload::v1alpha5::actionParameters* action) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
     delete action_;
@@ -2934,34 +3293,161 @@ inline void sessionRequest::set_allocated_action(::openoffload::v1alpha4::action
     
   }
   action_ = action;
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionRequest.action)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.sessionRequest.action)
+}
+
+// uint32 cacheTimeout = 13;
+inline void sessionRequest::clear_cachetimeout() {
+  cachetimeout_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::_internal_cachetimeout() const {
+  return cachetimeout_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 sessionRequest::cachetimeout() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionRequest.cacheTimeout)
+  return _internal_cachetimeout();
+}
+inline void sessionRequest::_internal_set_cachetimeout(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  cachetimeout_ = value;
+}
+inline void sessionRequest::set_cachetimeout(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_cachetimeout(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionRequest.cacheTimeout)
+}
+
+// -------------------------------------------------------------------
+
+// sessionResponseError
+
+// uint64 sessionId = 1;
+inline void sessionResponseError::clear_sessionid() {
+  sessionid_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponseError::_internal_sessionid() const {
+  return sessionid_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponseError::sessionid() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponseError.sessionId)
+  return _internal_sessionid();
+}
+inline void sessionResponseError::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  sessionid_ = value;
+}
+inline void sessionResponseError::set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_sessionid(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponseError.sessionId)
+}
+
+// int32 errorStatus = 2;
+inline void sessionResponseError::clear_errorstatus() {
+  errorstatus_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 sessionResponseError::_internal_errorstatus() const {
+  return errorstatus_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 sessionResponseError::errorstatus() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponseError.errorStatus)
+  return _internal_errorstatus();
+}
+inline void sessionResponseError::_internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  errorstatus_ = value;
+}
+inline void sessionResponseError::set_errorstatus(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_errorstatus(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponseError.errorStatus)
+}
+
+// -------------------------------------------------------------------
+
+// sessionResponseArray
+
+// repeated .openoffload.v1alpha5.sessionResponse responseArray = 1;
+inline int sessionResponseArray::_internal_responsearray_size() const {
+  return responsearray_.size();
+}
+inline int sessionResponseArray::responsearray_size() const {
+  return _internal_responsearray_size();
+}
+inline void sessionResponseArray::clear_responsearray() {
+  responsearray_.Clear();
+}
+inline ::openoffload::v1alpha5::sessionResponse* sessionResponseArray::mutable_responsearray(int index) {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionResponseArray.responseArray)
+  return responsearray_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponse >*
+sessionResponseArray::mutable_responsearray() {
+  // @@protoc_insertion_point(field_mutable_list:openoffload.v1alpha5.sessionResponseArray.responseArray)
+  return &responsearray_;
+}
+inline const ::openoffload::v1alpha5::sessionResponse& sessionResponseArray::_internal_responsearray(int index) const {
+  return responsearray_.Get(index);
+}
+inline const ::openoffload::v1alpha5::sessionResponse& sessionResponseArray::responsearray(int index) const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponseArray.responseArray)
+  return _internal_responsearray(index);
+}
+inline ::openoffload::v1alpha5::sessionResponse* sessionResponseArray::_internal_add_responsearray() {
+  return responsearray_.Add();
+}
+inline ::openoffload::v1alpha5::sessionResponse* sessionResponseArray::add_responsearray() {
+  // @@protoc_insertion_point(field_add:openoffload.v1alpha5.sessionResponseArray.responseArray)
+  return _internal_add_responsearray();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponse >&
+sessionResponseArray::responsearray() const {
+  // @@protoc_insertion_point(field_list:openoffload.v1alpha5.sessionResponseArray.responseArray)
+  return responsearray_;
+}
+
+// uint64 nextkey = 2;
+inline void sessionResponseArray::clear_nextkey() {
+  nextkey_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponseArray::_internal_nextkey() const {
+  return nextkey_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponseArray::nextkey() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponseArray.nextkey)
+  return _internal_nextkey();
+}
+inline void sessionResponseArray::_internal_set_nextkey(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  nextkey_ = value;
+}
+inline void sessionResponseArray::set_nextkey(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_nextkey(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponseArray.nextkey)
 }
 
 // -------------------------------------------------------------------
 
 // addSessionResponse
 
-// .openoffload.v1alpha4.ADD_SESSION_STATUS requestStatus = 1;
+// .openoffload.v1alpha5.ADD_SESSION_STATUS requestStatus = 1 [deprecated = true];
 inline void addSessionResponse::clear_requeststatus() {
   requeststatus_ = 0;
 }
-inline ::openoffload::v1alpha4::ADD_SESSION_STATUS addSessionResponse::_internal_requeststatus() const {
-  return static_cast< ::openoffload::v1alpha4::ADD_SESSION_STATUS >(requeststatus_);
+inline ::openoffload::v1alpha5::ADD_SESSION_STATUS addSessionResponse::_internal_requeststatus() const {
+  return static_cast< ::openoffload::v1alpha5::ADD_SESSION_STATUS >(requeststatus_);
 }
-inline ::openoffload::v1alpha4::ADD_SESSION_STATUS addSessionResponse::requeststatus() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.requestStatus)
+inline ::openoffload::v1alpha5::ADD_SESSION_STATUS addSessionResponse::requeststatus() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.addSessionResponse.requestStatus)
   return _internal_requeststatus();
 }
-inline void addSessionResponse::_internal_set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value) {
+inline void addSessionResponse::_internal_set_requeststatus(::openoffload::v1alpha5::ADD_SESSION_STATUS value) {
   
   requeststatus_ = value;
 }
-inline void addSessionResponse::set_requeststatus(::openoffload::v1alpha4::ADD_SESSION_STATUS value) {
+inline void addSessionResponse::set_requeststatus(::openoffload::v1alpha5::ADD_SESSION_STATUS value) {
   _internal_set_requeststatus(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.addSessionResponse.requestStatus)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.addSessionResponse.requestStatus)
 }
 
-// uint64 errorStatus = 2;
+// uint64 errorStatus = 2 [deprecated = true];
 inline void addSessionResponse::clear_errorstatus() {
   errorstatus_ = PROTOBUF_ULONGLONG(0);
 }
@@ -2969,7 +3455,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 addSessionResponse::_internal_errorstatus
   return errorstatus_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 addSessionResponse::errorstatus() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.errorStatus)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.addSessionResponse.errorStatus)
   return _internal_errorstatus();
 }
 inline void addSessionResponse::_internal_set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -2978,7 +3464,7 @@ inline void addSessionResponse::_internal_set_errorstatus(::PROTOBUF_NAMESPACE_I
 }
 inline void addSessionResponse::set_errorstatus(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_errorstatus(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.addSessionResponse.errorStatus)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.addSessionResponse.errorStatus)
 }
 
 // .google.protobuf.Timestamp startTime = 3;
@@ -2994,7 +3480,7 @@ inline const PROTOBUF_NAMESPACE_ID::Timestamp& addSessionResponse::_internal_sta
       &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
 }
 inline const PROTOBUF_NAMESPACE_ID::Timestamp& addSessionResponse::starttime() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.addSessionResponse.startTime)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.addSessionResponse.startTime)
   return _internal_starttime();
 }
 inline void addSessionResponse::unsafe_arena_set_allocated_starttime(
@@ -3008,7 +3494,7 @@ inline void addSessionResponse::unsafe_arena_set_allocated_starttime(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.addSessionResponse.startTime)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.addSessionResponse.startTime)
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* addSessionResponse::release_starttime() {
   auto temp = unsafe_arena_release_starttime();
@@ -3018,7 +3504,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* addSessionResponse::release_starttime()
   return temp;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* addSessionResponse::unsafe_arena_release_starttime() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.addSessionResponse.startTime)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.addSessionResponse.startTime)
   
   PROTOBUF_NAMESPACE_ID::Timestamp* temp = starttime_;
   starttime_ = nullptr;
@@ -3033,7 +3519,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* addSessionResponse::_internal_mutable_s
   return starttime_;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* addSessionResponse::mutable_starttime() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.addSessionResponse.startTime)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.addSessionResponse.startTime)
   return _internal_mutable_starttime();
 }
 inline void addSessionResponse::set_allocated_starttime(PROTOBUF_NAMESPACE_ID::Timestamp* starttime) {
@@ -3053,7 +3539,46 @@ inline void addSessionResponse::set_allocated_starttime(PROTOBUF_NAMESPACE_ID::T
     
   }
   starttime_ = starttime;
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.addSessionResponse.startTime)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.addSessionResponse.startTime)
+}
+
+// repeated .openoffload.v1alpha5.sessionResponseError responseError = 4;
+inline int addSessionResponse::_internal_responseerror_size() const {
+  return responseerror_.size();
+}
+inline int addSessionResponse::responseerror_size() const {
+  return _internal_responseerror_size();
+}
+inline void addSessionResponse::clear_responseerror() {
+  responseerror_.Clear();
+}
+inline ::openoffload::v1alpha5::sessionResponseError* addSessionResponse::mutable_responseerror(int index) {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.addSessionResponse.responseError)
+  return responseerror_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponseError >*
+addSessionResponse::mutable_responseerror() {
+  // @@protoc_insertion_point(field_mutable_list:openoffload.v1alpha5.addSessionResponse.responseError)
+  return &responseerror_;
+}
+inline const ::openoffload::v1alpha5::sessionResponseError& addSessionResponse::_internal_responseerror(int index) const {
+  return responseerror_.Get(index);
+}
+inline const ::openoffload::v1alpha5::sessionResponseError& addSessionResponse::responseerror(int index) const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.addSessionResponse.responseError)
+  return _internal_responseerror(index);
+}
+inline ::openoffload::v1alpha5::sessionResponseError* addSessionResponse::_internal_add_responseerror() {
+  return responseerror_.Add();
+}
+inline ::openoffload::v1alpha5::sessionResponseError* addSessionResponse::add_responseerror() {
+  // @@protoc_insertion_point(field_add:openoffload.v1alpha5.addSessionResponse.responseError)
+  return _internal_add_responseerror();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::sessionResponseError >&
+addSessionResponse::responseerror() const {
+  // @@protoc_insertion_point(field_list:openoffload.v1alpha5.addSessionResponse.responseError)
+  return responseerror_;
 }
 
 // -------------------------------------------------------------------
@@ -3068,7 +3593,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::_internal_sessionid() co
   return sessionid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::sessionid() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.sessionId)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.sessionId)
   return _internal_sessionid();
 }
 inline void sessionResponse::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -3077,7 +3602,7 @@ inline void sessionResponse::_internal_set_sessionid(::PROTOBUF_NAMESPACE_ID::ui
 }
 inline void sessionResponse::set_sessionid(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_sessionid(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.sessionId)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.sessionId)
 }
 
 // uint64 inPackets = 2;
@@ -3088,7 +3613,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::_internal_inpackets() co
   return inpackets_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::inpackets() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.inPackets)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.inPackets)
   return _internal_inpackets();
 }
 inline void sessionResponse::_internal_set_inpackets(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -3097,7 +3622,7 @@ inline void sessionResponse::_internal_set_inpackets(::PROTOBUF_NAMESPACE_ID::ui
 }
 inline void sessionResponse::set_inpackets(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_inpackets(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.inPackets)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.inPackets)
 }
 
 // uint64 outPackets = 3;
@@ -3108,7 +3633,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::_internal_outpackets() c
   return outpackets_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::outpackets() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.outPackets)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.outPackets)
   return _internal_outpackets();
 }
 inline void sessionResponse::_internal_set_outpackets(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -3117,7 +3642,7 @@ inline void sessionResponse::_internal_set_outpackets(::PROTOBUF_NAMESPACE_ID::u
 }
 inline void sessionResponse::set_outpackets(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_outpackets(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.outPackets)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.outPackets)
 }
 
 // uint64 inBytes = 4;
@@ -3128,7 +3653,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::_internal_inbytes() cons
   return inbytes_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::inbytes() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.inBytes)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.inBytes)
   return _internal_inbytes();
 }
 inline void sessionResponse::_internal_set_inbytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -3137,7 +3662,7 @@ inline void sessionResponse::_internal_set_inbytes(::PROTOBUF_NAMESPACE_ID::uint
 }
 inline void sessionResponse::set_inbytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_inbytes(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.inBytes)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.inBytes)
 }
 
 // uint64 outBytes = 5;
@@ -3148,7 +3673,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::_internal_outbytes() con
   return outbytes_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 sessionResponse::outbytes() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.outBytes)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.outBytes)
   return _internal_outbytes();
 }
 inline void sessionResponse::_internal_set_outbytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -3157,67 +3682,67 @@ inline void sessionResponse::_internal_set_outbytes(::PROTOBUF_NAMESPACE_ID::uin
 }
 inline void sessionResponse::set_outbytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_outbytes(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.outBytes)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.outBytes)
 }
 
-// .openoffload.v1alpha4.SESSION_STATE sessionState = 6;
+// .openoffload.v1alpha5.SESSION_STATE sessionState = 6;
 inline void sessionResponse::clear_sessionstate() {
   sessionstate_ = 0;
 }
-inline ::openoffload::v1alpha4::SESSION_STATE sessionResponse::_internal_sessionstate() const {
-  return static_cast< ::openoffload::v1alpha4::SESSION_STATE >(sessionstate_);
+inline ::openoffload::v1alpha5::SESSION_STATE sessionResponse::_internal_sessionstate() const {
+  return static_cast< ::openoffload::v1alpha5::SESSION_STATE >(sessionstate_);
 }
-inline ::openoffload::v1alpha4::SESSION_STATE sessionResponse::sessionstate() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.sessionState)
+inline ::openoffload::v1alpha5::SESSION_STATE sessionResponse::sessionstate() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.sessionState)
   return _internal_sessionstate();
 }
-inline void sessionResponse::_internal_set_sessionstate(::openoffload::v1alpha4::SESSION_STATE value) {
+inline void sessionResponse::_internal_set_sessionstate(::openoffload::v1alpha5::SESSION_STATE value) {
   
   sessionstate_ = value;
 }
-inline void sessionResponse::set_sessionstate(::openoffload::v1alpha4::SESSION_STATE value) {
+inline void sessionResponse::set_sessionstate(::openoffload::v1alpha5::SESSION_STATE value) {
   _internal_set_sessionstate(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.sessionState)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.sessionState)
 }
 
-// .openoffload.v1alpha4.SESSION_CLOSE_CODE sessionCloseCode = 7;
+// .openoffload.v1alpha5.SESSION_CLOSE_CODE sessionCloseCode = 7;
 inline void sessionResponse::clear_sessionclosecode() {
   sessionclosecode_ = 0;
 }
-inline ::openoffload::v1alpha4::SESSION_CLOSE_CODE sessionResponse::_internal_sessionclosecode() const {
-  return static_cast< ::openoffload::v1alpha4::SESSION_CLOSE_CODE >(sessionclosecode_);
+inline ::openoffload::v1alpha5::SESSION_CLOSE_CODE sessionResponse::_internal_sessionclosecode() const {
+  return static_cast< ::openoffload::v1alpha5::SESSION_CLOSE_CODE >(sessionclosecode_);
 }
-inline ::openoffload::v1alpha4::SESSION_CLOSE_CODE sessionResponse::sessionclosecode() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.sessionCloseCode)
+inline ::openoffload::v1alpha5::SESSION_CLOSE_CODE sessionResponse::sessionclosecode() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.sessionCloseCode)
   return _internal_sessionclosecode();
 }
-inline void sessionResponse::_internal_set_sessionclosecode(::openoffload::v1alpha4::SESSION_CLOSE_CODE value) {
+inline void sessionResponse::_internal_set_sessionclosecode(::openoffload::v1alpha5::SESSION_CLOSE_CODE value) {
   
   sessionclosecode_ = value;
 }
-inline void sessionResponse::set_sessionclosecode(::openoffload::v1alpha4::SESSION_CLOSE_CODE value) {
+inline void sessionResponse::set_sessionclosecode(::openoffload::v1alpha5::SESSION_CLOSE_CODE value) {
   _internal_set_sessionclosecode(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.sessionCloseCode)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.sessionCloseCode)
 }
 
-// .openoffload.v1alpha4.REQUEST_STATUS requestStatus = 8;
+// .openoffload.v1alpha5.REQUEST_STATUS requestStatus = 8 [deprecated = true];
 inline void sessionResponse::clear_requeststatus() {
   requeststatus_ = 0;
 }
-inline ::openoffload::v1alpha4::REQUEST_STATUS sessionResponse::_internal_requeststatus() const {
-  return static_cast< ::openoffload::v1alpha4::REQUEST_STATUS >(requeststatus_);
+inline ::openoffload::v1alpha5::REQUEST_STATUS sessionResponse::_internal_requeststatus() const {
+  return static_cast< ::openoffload::v1alpha5::REQUEST_STATUS >(requeststatus_);
 }
-inline ::openoffload::v1alpha4::REQUEST_STATUS sessionResponse::requeststatus() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.requestStatus)
+inline ::openoffload::v1alpha5::REQUEST_STATUS sessionResponse::requeststatus() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.requestStatus)
   return _internal_requeststatus();
 }
-inline void sessionResponse::_internal_set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value) {
+inline void sessionResponse::_internal_set_requeststatus(::openoffload::v1alpha5::REQUEST_STATUS value) {
   
   requeststatus_ = value;
 }
-inline void sessionResponse::set_requeststatus(::openoffload::v1alpha4::REQUEST_STATUS value) {
+inline void sessionResponse::set_requeststatus(::openoffload::v1alpha5::REQUEST_STATUS value) {
   _internal_set_requeststatus(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.sessionResponse.requestStatus)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.sessionResponse.requestStatus)
 }
 
 // .google.protobuf.Timestamp startTime = 9;
@@ -3233,7 +3758,7 @@ inline const PROTOBUF_NAMESPACE_ID::Timestamp& sessionResponse::_internal_startt
       &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
 }
 inline const PROTOBUF_NAMESPACE_ID::Timestamp& sessionResponse::starttime() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.startTime)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.startTime)
   return _internal_starttime();
 }
 inline void sessionResponse::unsafe_arena_set_allocated_starttime(
@@ -3247,7 +3772,7 @@ inline void sessionResponse::unsafe_arena_set_allocated_starttime(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionResponse.startTime)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.sessionResponse.startTime)
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::release_starttime() {
   auto temp = unsafe_arena_release_starttime();
@@ -3257,7 +3782,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::release_starttime() {
   return temp;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::unsafe_arena_release_starttime() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionResponse.startTime)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.sessionResponse.startTime)
   
   PROTOBUF_NAMESPACE_ID::Timestamp* temp = starttime_;
   starttime_ = nullptr;
@@ -3272,7 +3797,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::_internal_mutable_star
   return starttime_;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::mutable_starttime() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionResponse.startTime)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionResponse.startTime)
   return _internal_mutable_starttime();
 }
 inline void sessionResponse::set_allocated_starttime(PROTOBUF_NAMESPACE_ID::Timestamp* starttime) {
@@ -3292,7 +3817,7 @@ inline void sessionResponse::set_allocated_starttime(PROTOBUF_NAMESPACE_ID::Time
     
   }
   starttime_ = starttime;
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionResponse.startTime)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.sessionResponse.startTime)
 }
 
 // .google.protobuf.Timestamp endTime = 10;
@@ -3308,7 +3833,7 @@ inline const PROTOBUF_NAMESPACE_ID::Timestamp& sessionResponse::_internal_endtim
       &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
 }
 inline const PROTOBUF_NAMESPACE_ID::Timestamp& sessionResponse::endtime() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.sessionResponse.endTime)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.sessionResponse.endTime)
   return _internal_endtime();
 }
 inline void sessionResponse::unsafe_arena_set_allocated_endtime(
@@ -3322,7 +3847,7 @@ inline void sessionResponse::unsafe_arena_set_allocated_endtime(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.sessionResponse.endTime)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.sessionResponse.endTime)
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::release_endtime() {
   auto temp = unsafe_arena_release_endtime();
@@ -3332,7 +3857,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::release_endtime() {
   return temp;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::unsafe_arena_release_endtime() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.sessionResponse.endTime)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.sessionResponse.endTime)
   
   PROTOBUF_NAMESPACE_ID::Timestamp* temp = endtime_;
   endtime_ = nullptr;
@@ -3347,7 +3872,7 @@ inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::_internal_mutable_endt
   return endtime_;
 }
 inline PROTOBUF_NAMESPACE_ID::Timestamp* sessionResponse::mutable_endtime() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.sessionResponse.endTime)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.sessionResponse.endTime)
   return _internal_mutable_endtime();
 }
 inline void sessionResponse::set_allocated_endtime(PROTOBUF_NAMESPACE_ID::Timestamp* endtime) {
@@ -3367,7 +3892,7 @@ inline void sessionResponse::set_allocated_endtime(PROTOBUF_NAMESPACE_ID::Timest
     
   }
   endtime_ = endtime;
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.sessionResponse.endTime)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.sessionResponse.endTime)
 }
 
 // -------------------------------------------------------------------
@@ -3382,7 +3907,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 statisticsRequestArgs::_internal_pagesize
   return pagesize_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 statisticsRequestArgs::pagesize() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.statisticsRequestArgs.pageSize)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.statisticsRequestArgs.pageSize)
   return _internal_pagesize();
 }
 inline void statisticsRequestArgs::_internal_set_pagesize(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -3391,7 +3916,7 @@ inline void statisticsRequestArgs::_internal_set_pagesize(::PROTOBUF_NAMESPACE_I
 }
 inline void statisticsRequestArgs::set_pagesize(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_pagesize(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.statisticsRequestArgs.pageSize)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.statisticsRequestArgs.pageSize)
 }
 
 // uint32 page = 2;
@@ -3402,7 +3927,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 statisticsRequestArgs::_internal_page() c
   return page_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 statisticsRequestArgs::page() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.statisticsRequestArgs.page)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.statisticsRequestArgs.page)
   return _internal_page();
 }
 inline void statisticsRequestArgs::_internal_set_page(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -3411,7 +3936,27 @@ inline void statisticsRequestArgs::_internal_set_page(::PROTOBUF_NAMESPACE_ID::u
 }
 inline void statisticsRequestArgs::set_page(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_page(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.statisticsRequestArgs.page)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.statisticsRequestArgs.page)
+}
+
+// uint64 startSession = 3;
+inline void statisticsRequestArgs::clear_startsession() {
+  startsession_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 statisticsRequestArgs::_internal_startsession() const {
+  return startsession_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 statisticsRequestArgs::startsession() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.statisticsRequestArgs.startSession)
+  return _internal_startsession();
+}
+inline void statisticsRequestArgs::_internal_set_startsession(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  startsession_ = value;
+}
+inline void statisticsRequestArgs::set_startsession(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_startsession(value);
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.statisticsRequestArgs.startSession)
 }
 
 // -------------------------------------------------------------------
@@ -3427,15 +3972,15 @@ inline void deviceDescription::clear_name() {
   name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& deviceDescription::name() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.name)
   return _internal_name();
 }
 inline void deviceDescription::set_name(const std::string& value) {
   _internal_set_name(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.name)
 }
 inline std::string* deviceDescription::mutable_name() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.deviceDescription.name)
   return _internal_mutable_name();
 }
 inline const std::string& deviceDescription::_internal_name() const {
@@ -3449,28 +3994,28 @@ inline void deviceDescription::set_name(std::string&& value) {
   
   name_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha5.deviceDescription.name)
 }
 inline void deviceDescription::set_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha5.deviceDescription.name)
 }
 inline void deviceDescription::set_name(const char* value,
     size_t size) {
   
   name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha5.deviceDescription.name)
 }
 inline std::string* deviceDescription::_internal_mutable_name() {
   
   return name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* deviceDescription::release_name() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.deviceDescription.name)
   return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void deviceDescription::set_allocated_name(std::string* name) {
@@ -3481,10 +4026,10 @@ inline void deviceDescription::set_allocated_name(std::string* name) {
   }
   name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.deviceDescription.name)
 }
 inline std::string* deviceDescription::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha5.deviceDescription.name)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return name_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -3500,27 +4045,27 @@ inline void deviceDescription::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       name, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.deviceDescription.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.deviceDescription.name)
 }
 
-// .openoffload.v1alpha4.INTERFACE_TYPE type = 2;
+// .openoffload.v1alpha5.INTERFACE_TYPE type = 2;
 inline void deviceDescription::clear_type() {
   type_ = 0;
 }
-inline ::openoffload::v1alpha4::INTERFACE_TYPE deviceDescription::_internal_type() const {
-  return static_cast< ::openoffload::v1alpha4::INTERFACE_TYPE >(type_);
+inline ::openoffload::v1alpha5::INTERFACE_TYPE deviceDescription::_internal_type() const {
+  return static_cast< ::openoffload::v1alpha5::INTERFACE_TYPE >(type_);
 }
-inline ::openoffload::v1alpha4::INTERFACE_TYPE deviceDescription::type() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.type)
+inline ::openoffload::v1alpha5::INTERFACE_TYPE deviceDescription::type() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.type)
   return _internal_type();
 }
-inline void deviceDescription::_internal_set_type(::openoffload::v1alpha4::INTERFACE_TYPE value) {
+inline void deviceDescription::_internal_set_type(::openoffload::v1alpha5::INTERFACE_TYPE value) {
   
   type_ = value;
 }
-inline void deviceDescription::set_type(::openoffload::v1alpha4::INTERFACE_TYPE value) {
+inline void deviceDescription::set_type(::openoffload::v1alpha5::INTERFACE_TYPE value) {
   _internal_set_type(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.type)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.type)
 }
 
 // string description = 3;
@@ -3528,15 +4073,15 @@ inline void deviceDescription::clear_description() {
   description_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& deviceDescription::description() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.description)
   return _internal_description();
 }
 inline void deviceDescription::set_description(const std::string& value) {
   _internal_set_description(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.description)
 }
 inline std::string* deviceDescription::mutable_description() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.deviceDescription.description)
   return _internal_mutable_description();
 }
 inline const std::string& deviceDescription::_internal_description() const {
@@ -3550,28 +4095,28 @@ inline void deviceDescription::set_description(std::string&& value) {
   
   description_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_set_rvalue:openoffload.v1alpha5.deviceDescription.description)
 }
 inline void deviceDescription::set_description(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   description_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_set_char:openoffload.v1alpha5.deviceDescription.description)
 }
 inline void deviceDescription::set_description(const char* value,
     size_t size) {
   
   description_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_set_pointer:openoffload.v1alpha5.deviceDescription.description)
 }
 inline std::string* deviceDescription::_internal_mutable_description() {
   
   return description_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* deviceDescription::release_description() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.deviceDescription.description)
   return description_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void deviceDescription::set_allocated_description(std::string* description) {
@@ -3582,10 +4127,10 @@ inline void deviceDescription::set_allocated_description(std::string* descriptio
   }
   description_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.deviceDescription.description)
 }
 inline std::string* deviceDescription::unsafe_arena_release_description() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_unsafe_arena_release:openoffload.v1alpha5.deviceDescription.description)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return description_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -3601,7 +4146,7 @@ inline void deviceDescription::unsafe_arena_set_allocated_description(
   }
   description_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       description, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.deviceDescription.description)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.deviceDescription.description)
 }
 
 // int32 sessionCapacity = 4;
@@ -3612,7 +4157,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::_internal_sessioncapaci
   return sessioncapacity_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::sessioncapacity() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.sessionCapacity)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.sessionCapacity)
   return _internal_sessioncapacity();
 }
 inline void deviceDescription::_internal_set_sessioncapacity(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -3621,7 +4166,7 @@ inline void deviceDescription::_internal_set_sessioncapacity(::PROTOBUF_NAMESPAC
 }
 inline void deviceDescription::set_sessioncapacity(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_sessioncapacity(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.sessionCapacity)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.sessionCapacity)
 }
 
 // int32 sessionRate = 5;
@@ -3632,7 +4177,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::_internal_sessionrate()
   return sessionrate_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::sessionrate() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.sessionRate)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.sessionRate)
   return _internal_sessionrate();
 }
 inline void deviceDescription::_internal_set_sessionrate(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -3641,7 +4186,7 @@ inline void deviceDescription::_internal_set_sessionrate(::PROTOBUF_NAMESPACE_ID
 }
 inline void deviceDescription::set_sessionrate(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_sessionrate(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.sessionRate)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.sessionRate)
 }
 
 // int32 tcpSessionTimeout = 6;
@@ -3652,7 +4197,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::_internal_tcpsessiontim
   return tcpsessiontimeout_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::tcpsessiontimeout() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.tcpSessionTimeout)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.tcpSessionTimeout)
   return _internal_tcpsessiontimeout();
 }
 inline void deviceDescription::_internal_set_tcpsessiontimeout(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -3661,7 +4206,7 @@ inline void deviceDescription::_internal_set_tcpsessiontimeout(::PROTOBUF_NAMESP
 }
 inline void deviceDescription::set_tcpsessiontimeout(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_tcpsessiontimeout(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.tcpSessionTimeout)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.tcpSessionTimeout)
 }
 
 // int32 udpSessionTimeout = 7;
@@ -3672,7 +4217,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::_internal_udpsessiontim
   return udpsessiontimeout_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 deviceDescription::udpsessiontimeout() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceDescription.udpSessionTimeout)
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceDescription.udpSessionTimeout)
   return _internal_udpsessiontimeout();
 }
 inline void deviceDescription::_internal_set_udpsessiontimeout(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -3681,14 +4226,14 @@ inline void deviceDescription::_internal_set_udpsessiontimeout(::PROTOBUF_NAMESP
 }
 inline void deviceDescription::set_udpsessiontimeout(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_udpsessiontimeout(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.deviceDescription.udpSessionTimeout)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.deviceDescription.udpSessionTimeout)
 }
 
 // -------------------------------------------------------------------
 
 // deviceList
 
-// repeated .openoffload.v1alpha4.deviceDescription devices = 1;
+// repeated .openoffload.v1alpha5.deviceDescription devices = 1;
 inline int deviceList::_internal_devices_size() const {
   return devices_.size();
 }
@@ -3698,32 +4243,32 @@ inline int deviceList::devices_size() const {
 inline void deviceList::clear_devices() {
   devices_.Clear();
 }
-inline ::openoffload::v1alpha4::deviceDescription* deviceList::mutable_devices(int index) {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.deviceList.devices)
+inline ::openoffload::v1alpha5::deviceDescription* deviceList::mutable_devices(int index) {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.deviceList.devices)
   return devices_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha4::deviceDescription >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::deviceDescription >*
 deviceList::mutable_devices() {
-  // @@protoc_insertion_point(field_mutable_list:openoffload.v1alpha4.deviceList.devices)
+  // @@protoc_insertion_point(field_mutable_list:openoffload.v1alpha5.deviceList.devices)
   return &devices_;
 }
-inline const ::openoffload::v1alpha4::deviceDescription& deviceList::_internal_devices(int index) const {
+inline const ::openoffload::v1alpha5::deviceDescription& deviceList::_internal_devices(int index) const {
   return devices_.Get(index);
 }
-inline const ::openoffload::v1alpha4::deviceDescription& deviceList::devices(int index) const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.deviceList.devices)
+inline const ::openoffload::v1alpha5::deviceDescription& deviceList::devices(int index) const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.deviceList.devices)
   return _internal_devices(index);
 }
-inline ::openoffload::v1alpha4::deviceDescription* deviceList::_internal_add_devices() {
+inline ::openoffload::v1alpha5::deviceDescription* deviceList::_internal_add_devices() {
   return devices_.Add();
 }
-inline ::openoffload::v1alpha4::deviceDescription* deviceList::add_devices() {
-  // @@protoc_insertion_point(field_add:openoffload.v1alpha4.deviceList.devices)
+inline ::openoffload::v1alpha5::deviceDescription* deviceList::add_devices() {
+  // @@protoc_insertion_point(field_add:openoffload.v1alpha5.deviceList.devices)
   return _internal_add_devices();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha4::deviceDescription >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::openoffload::v1alpha5::deviceDescription >&
 deviceList::devices() const {
-  // @@protoc_insertion_point(field_list:openoffload.v1alpha4.deviceList.devices)
+  // @@protoc_insertion_point(field_list:openoffload.v1alpha5.deviceList.devices)
   return devices_;
 }
 
@@ -3731,51 +4276,51 @@ deviceList::devices() const {
 
 // registrationStatus
 
-// .openoffload.v1alpha4.REGISTRATION_STATUS_TYPE status = 1;
+// .openoffload.v1alpha5.REGISTRATION_STATUS_TYPE status = 1;
 inline void registrationStatus::clear_status() {
   status_ = 0;
 }
-inline ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE registrationStatus::_internal_status() const {
-  return static_cast< ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE >(status_);
+inline ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE registrationStatus::_internal_status() const {
+  return static_cast< ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE >(status_);
 }
-inline ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE registrationStatus::status() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.registrationStatus.status)
+inline ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE registrationStatus::status() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.registrationStatus.status)
   return _internal_status();
 }
-inline void registrationStatus::_internal_set_status(::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE value) {
+inline void registrationStatus::_internal_set_status(::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE value) {
   
   status_ = value;
 }
-inline void registrationStatus::set_status(::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE value) {
+inline void registrationStatus::set_status(::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE value) {
   _internal_set_status(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.registrationStatus.status)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.registrationStatus.status)
 }
 
 // -------------------------------------------------------------------
 
 // activationStatus
 
-// .openoffload.v1alpha4.ACTIVATION_STATUS_TYPE status = 1;
+// .openoffload.v1alpha5.ACTIVATION_STATUS_TYPE status = 1;
 inline void activationStatus::clear_status() {
   status_ = 0;
 }
-inline ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE activationStatus::_internal_status() const {
-  return static_cast< ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE >(status_);
+inline ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE activationStatus::_internal_status() const {
+  return static_cast< ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE >(status_);
 }
-inline ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE activationStatus::status() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.activationStatus.status)
+inline ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE activationStatus::status() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.activationStatus.status)
   return _internal_status();
 }
-inline void activationStatus::_internal_set_status(::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE value) {
+inline void activationStatus::_internal_set_status(::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE value) {
   
   status_ = value;
 }
-inline void activationStatus::set_status(::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE value) {
+inline void activationStatus::set_status(::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE value) {
   _internal_set_status(value);
-  // @@protoc_insertion_point(field_set:openoffload.v1alpha4.activationStatus.status)
+  // @@protoc_insertion_point(field_set:openoffload.v1alpha5.activationStatus.status)
 }
 
-// .openoffload.v1alpha4.deviceDescription device = 2;
+// .openoffload.v1alpha5.deviceDescription device = 2;
 inline bool activationStatus::_internal_has_device() const {
   return this != internal_default_instance() && device_ != nullptr;
 }
@@ -3788,17 +4333,17 @@ inline void activationStatus::clear_device() {
   }
   device_ = nullptr;
 }
-inline const ::openoffload::v1alpha4::deviceDescription& activationStatus::_internal_device() const {
-  const ::openoffload::v1alpha4::deviceDescription* p = device_;
-  return p != nullptr ? *p : *reinterpret_cast<const ::openoffload::v1alpha4::deviceDescription*>(
-      &::openoffload::v1alpha4::_deviceDescription_default_instance_);
+inline const ::openoffload::v1alpha5::deviceDescription& activationStatus::_internal_device() const {
+  const ::openoffload::v1alpha5::deviceDescription* p = device_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::openoffload::v1alpha5::deviceDescription*>(
+      &::openoffload::v1alpha5::_deviceDescription_default_instance_);
 }
-inline const ::openoffload::v1alpha4::deviceDescription& activationStatus::device() const {
-  // @@protoc_insertion_point(field_get:openoffload.v1alpha4.activationStatus.device)
+inline const ::openoffload::v1alpha5::deviceDescription& activationStatus::device() const {
+  // @@protoc_insertion_point(field_get:openoffload.v1alpha5.activationStatus.device)
   return _internal_device();
 }
 inline void activationStatus::unsafe_arena_set_allocated_device(
-    ::openoffload::v1alpha4::deviceDescription* device) {
+    ::openoffload::v1alpha5::deviceDescription* device) {
   if (GetArena() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(device_);
   }
@@ -3808,35 +4353,35 @@ inline void activationStatus::unsafe_arena_set_allocated_device(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha4.activationStatus.device)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:openoffload.v1alpha5.activationStatus.device)
 }
-inline ::openoffload::v1alpha4::deviceDescription* activationStatus::release_device() {
+inline ::openoffload::v1alpha5::deviceDescription* activationStatus::release_device() {
   auto temp = unsafe_arena_release_device();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::openoffload::v1alpha4::deviceDescription* activationStatus::unsafe_arena_release_device() {
-  // @@protoc_insertion_point(field_release:openoffload.v1alpha4.activationStatus.device)
+inline ::openoffload::v1alpha5::deviceDescription* activationStatus::unsafe_arena_release_device() {
+  // @@protoc_insertion_point(field_release:openoffload.v1alpha5.activationStatus.device)
   
-  ::openoffload::v1alpha4::deviceDescription* temp = device_;
+  ::openoffload::v1alpha5::deviceDescription* temp = device_;
   device_ = nullptr;
   return temp;
 }
-inline ::openoffload::v1alpha4::deviceDescription* activationStatus::_internal_mutable_device() {
+inline ::openoffload::v1alpha5::deviceDescription* activationStatus::_internal_mutable_device() {
   
   if (device_ == nullptr) {
-    auto* p = CreateMaybeMessage<::openoffload::v1alpha4::deviceDescription>(GetArena());
+    auto* p = CreateMaybeMessage<::openoffload::v1alpha5::deviceDescription>(GetArena());
     device_ = p;
   }
   return device_;
 }
-inline ::openoffload::v1alpha4::deviceDescription* activationStatus::mutable_device() {
-  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha4.activationStatus.device)
+inline ::openoffload::v1alpha5::deviceDescription* activationStatus::mutable_device() {
+  // @@protoc_insertion_point(field_mutable:openoffload.v1alpha5.activationStatus.device)
   return _internal_mutable_device();
 }
-inline void activationStatus::set_allocated_device(::openoffload::v1alpha4::deviceDescription* device) {
+inline void activationStatus::set_allocated_device(::openoffload::v1alpha5::deviceDescription* device) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
     delete device_;
@@ -3853,7 +4398,7 @@ inline void activationStatus::set_allocated_device(::openoffload::v1alpha4::devi
     
   }
   device_ = device;
-  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha4.activationStatus.device)
+  // @@protoc_insertion_point(field_set_allocated:openoffload.v1alpha5.activationStatus.device)
 }
 
 #ifdef __GNUC__
@@ -3879,63 +4424,67 @@ inline void activationStatus::set_allocated_device(::openoffload::v1alpha4::devi
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace v1alpha4
+}  // namespace v1alpha5
 }  // namespace openoffload
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::openoffload::v1alpha4::IP_VERSION> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::IP_VERSION> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::IP_VERSION>() {
-  return ::openoffload::v1alpha4::IP_VERSION_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::IP_VERSION>() {
+  return ::openoffload::v1alpha5::IP_VERSION_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::PROTOCOL_ID> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::PROTOCOL_ID> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::PROTOCOL_ID>() {
-  return ::openoffload::v1alpha4::PROTOCOL_ID_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::PROTOCOL_ID>() {
+  return ::openoffload::v1alpha5::PROTOCOL_ID_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::SESSION_STATE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::SESSION_STATE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::SESSION_STATE>() {
-  return ::openoffload::v1alpha4::SESSION_STATE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::SESSION_STATE>() {
+  return ::openoffload::v1alpha5::SESSION_STATE_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::SESSION_CLOSE_CODE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::SESSION_CLOSE_CODE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::SESSION_CLOSE_CODE>() {
-  return ::openoffload::v1alpha4::SESSION_CLOSE_CODE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::SESSION_CLOSE_CODE>() {
+  return ::openoffload::v1alpha5::SESSION_CLOSE_CODE_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::ADD_SESSION_STATUS> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::ADD_SESSION_STATUS> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::ADD_SESSION_STATUS>() {
-  return ::openoffload::v1alpha4::ADD_SESSION_STATUS_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::ADD_SESSION_STATUS>() {
+  return ::openoffload::v1alpha5::ADD_SESSION_STATUS_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::REQUEST_STATUS> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::REQUEST_STATUS> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::REQUEST_STATUS>() {
-  return ::openoffload::v1alpha4::REQUEST_STATUS_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::REQUEST_STATUS>() {
+  return ::openoffload::v1alpha5::REQUEST_STATUS_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::ACTION_TYPE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::ACTION_TYPE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::ACTION_TYPE>() {
-  return ::openoffload::v1alpha4::ACTION_TYPE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::ACTION_TYPE>() {
+  return ::openoffload::v1alpha5::ACTION_TYPE_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::INTERFACE_TYPE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::INTERFACE_TYPE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::INTERFACE_TYPE>() {
-  return ::openoffload::v1alpha4::INTERFACE_TYPE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::INTERFACE_TYPE>() {
+  return ::openoffload::v1alpha5::INTERFACE_TYPE_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE>() {
-  return ::openoffload::v1alpha4::ACTIVATION_STATUS_TYPE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE>() {
+  return ::openoffload::v1alpha5::ACTIVATION_STATUS_TYPE_descriptor();
 }
-template <> struct is_proto_enum< ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE> : ::std::true_type {};
+template <> struct is_proto_enum< ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE>() {
-  return ::openoffload::v1alpha4::REGISTRATION_STATUS_TYPE_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE>() {
+  return ::openoffload::v1alpha5::REGISTRATION_STATUS_TYPE_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
