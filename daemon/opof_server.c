@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2020 Nvidia
- */ #include <stdlib.h>
+ */
+#include <stdlib.h>
 
 #include "opof.h"
 #include "opof_error.h"
@@ -23,7 +24,6 @@ static void display_response(sessionResponse_t *response,
 	printf("Out Bytes: %ld\n",response->outBytes);
 	printf("Session State: %d\n",response->sessionState);
 	printf("Session Close Code: %d\n",response->sessionCloseCode);
-	printf("Request Status: %d\n",response->requestStatus);
 }
 
 static void display_request(sessionRequest_t *request,
@@ -90,7 +90,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
 	struct session_key key;
-	int ret = 0;
+	int ret;
 
 	memset(&key, 0, sizeof(key));
 
@@ -100,10 +100,9 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (session) {
-		response->requestStatus = _REJECTED_SESSION_ALREADY_EXISTS;
 		offload_dbg("Session (%d) already exists",
 			    session->key.sess_id);
-		goto out;
+		return _ALREADY_EXISTS;
 	}
 
 	session = rte_zmalloc("session",
@@ -131,7 +130,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 			       DIR_IN);
 
 	if (ret)
-		goto out;
+		return _INTERNAL;
 
 	ret = offload_flow_add(session->port_out, session,
 			       (enum flow_action)parameters->actType,
@@ -143,18 +142,11 @@ int opof_add_session_server(sessionRequest_t *parameters,
 		rte_atomic32_inc(&off_config_g.stats.active);
 		offload_dbg("Session (%d) added", session->key.sess_id);
 	} else {
-		goto err_flow_out;
+		offload_flow_destroy(session->port_in, session->flow_in);
+		return _INTERNAL;
 	}
 
-	response->requestStatus = _ACCEPTED;
-
-	return 0;
-
-err_flow_out:
-	offload_flow_destroy(session->port_in, session->flow_in);
-out:
-	response->requestStatus = _REJECTED;
-	return ret;
+	return _OK;
 }
 
 int opof_get_session_server(unsigned long sessionId,
@@ -163,7 +155,7 @@ int opof_get_session_server(unsigned long sessionId,
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
 	struct session_key key;
-	int ret = SUCCESS;
+	int ret;
 
 	key.sess_id = sessionId;
 
@@ -171,10 +163,8 @@ int opof_get_session_server(unsigned long sessionId,
 	response->sessionId = sessionId;
 
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
-	if (!session) {
-		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
-		goto out;
-	}
+	if (!session)
+		return _NOT_FOUND;
 
 	offload_flow_query(session->port_in, session->flow_in,
 			   &response->inPackets, &response->inBytes);
@@ -184,12 +174,9 @@ int opof_get_session_server(unsigned long sessionId,
 
 	response->sessionState = session->state;
 	response->sessionCloseCode = session->close_code;
-	response->requestStatus = _ACCEPTED;
 
 	display_response(response, "get");
-
-out:
-	return ret;
+	return _OK;
 }
 
 int opof_del_session_server(unsigned long sessionId,
@@ -198,7 +185,7 @@ int opof_del_session_server(unsigned long sessionId,
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
 	struct session_key key;
-	int ret = SUCCESS;
+	int ret;
 
 	key.sess_id = sessionId;
 
@@ -206,22 +193,12 @@ int opof_del_session_server(unsigned long sessionId,
 	response->sessionId = sessionId;
 
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
-	if (!session) {
-		response->requestStatus = _REJECTED_SESSION_NONEXISTENT;
-		goto out;
-	}
+	if (!session)
+		return _NOT_FOUND;
 
 	ret = opof_del_flow(session);
 
-	if (ret) {
-		response->requestStatus = _REJECTED;
-		goto out;
-	}
-
-	response->requestStatus = _ACCEPTED;
-
-out:
-	return ret;
+	return ret ? _INTERNAL : _OK;
 }
 
 void opof_del_all_session_server(void)
@@ -267,17 +244,8 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 	return deq;
 }
 
-sessionResponse_t **
-opof_get_all_sessions_server(statisticsRequestArgs_t *request,
-			     int *sessionCount)
+int opof_get_all_sessions_server(int pageSize, uint64_t *startSession,int
+				 pageCount, sessionResponse_t **responses)
 {
-	int count = 0;
-	int nresponses = request->pageSize;
-	sessionResponse_t **responses;
-	*sessionCount = 0;
-
-	//responses = getAllSessions(nresponses, &count);
-	*sessionCount = count;
-
-	return responses;
+	return _OK;
 }
