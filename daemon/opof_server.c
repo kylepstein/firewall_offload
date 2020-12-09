@@ -117,6 +117,8 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	session->tuple.src_port = parameters->srcPort;
 	session->tuple.dst_port = parameters->dstPort;
 
+	session->timeout = parameters->cacheTimeout;
+
 	if (parameters->inlif == 1) {
 		session->port_in = INITIATOR_PORT_ID;
 		session->port_out = RESPONDER_PORT_ID;

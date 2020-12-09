@@ -156,6 +156,7 @@ struct fw_session {
 
 	uint8_t		state;
 	uint8_t		close_code;
+	uint32_t	timeout;
 };
 
 struct offload_stats {

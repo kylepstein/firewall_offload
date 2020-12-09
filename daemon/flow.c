@@ -190,7 +190,7 @@ int offload_flow_add(portid_t port_id,
 	ipv4_mask.hdr.dst_addr = ipv4_mask.hdr.dst_addr;
 
 	age.timeout = off_config_g.timeout ? off_config_g.timeout :
-		DEFAULT_TIMEOUT;
+		session->timeout;
 
 	switch (ipv4_proto) {
 	case IPPROTO_UDP:
