@@ -193,8 +193,12 @@ int offload_flow_add(portid_t port_id,
 	ipv4_mask.hdr.dst_addr = ntuple_filter->dst_ip_mask;
 	ipv4_mask.hdr.dst_addr = ipv4_mask.hdr.dst_addr;
 
-	age.timeout = off_config_g.timeout ? off_config_g.timeout :
-		session->timeout;
+	if (session->timeout)
+		age.timeout = session->timeout;
+	else if (off_config_g.timeout)
+		age.timeout = off_config_g.timeout;
+	else
+		age.timeout = DEFAULT_TIMEOUT;
 
 	pattern_ipv4_5tuple[flow_index++] = eth_item;
 
