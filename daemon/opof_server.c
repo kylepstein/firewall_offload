@@ -45,6 +45,39 @@ static void display_request(sessionRequest_t *request,
 	printf( "Action Value: %d\n",request->actType);
 }
 
+static int __opof_get_session_server(unsigned long sessionId,
+				     sessionResponse_t *response,
+				     bool display)
+{
+	struct rte_hash *ht = off_config_g.session_ht;
+	struct fw_session *session = NULL;
+	struct session_key key;
+	int ret;
+
+	key.sess_id = sessionId;
+
+	memset(response, 0, sizeof(*response));
+	response->sessionId = sessionId;
+
+	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
+	if (!session)
+		return _NOT_FOUND;
+
+	offload_flow_query(session->port_in, session->flow_in,
+			   &response->inPackets, &response->inBytes);
+
+	offload_flow_query(session->port_out, session->flow_out,
+			   &response->outPackets, &response->outBytes);
+
+	response->sessionState = session->state;
+	response->sessionCloseCode = session->close_code;
+
+	if (display)
+		display_response(response, "get");
+
+	return _OK;
+}
+
 int opof_del_flow(struct fw_session *session)
 {
 	struct rte_hash *ht = off_config_g.session_ht;
@@ -54,7 +87,8 @@ int opof_del_flow(struct fw_session *session)
 	session_stat = rte_zmalloc("stats",
 				   sizeof(sessionResponse_t),
 				   RTE_CACHE_LINE_SIZE);
-	opof_get_session_server(session->key.sess_id, session_stat);
+	__opof_get_session_server(session->key.sess_id,
+				  session_stat, false);
 
 	ret = offload_flow_destroy(session->port_in,session->flow_in);
 
@@ -155,31 +189,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 int opof_get_session_server(unsigned long sessionId,
 			    sessionResponse_t *response)
 {
-	struct rte_hash *ht = off_config_g.session_ht;
-	struct fw_session *session = NULL;
-	struct session_key key;
-	int ret;
-
-	key.sess_id = sessionId;
-
-	memset(response, 0, sizeof(*response));
-	response->sessionId = sessionId;
-
-	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
-	if (!session)
-		return _NOT_FOUND;
-
-	offload_flow_query(session->port_in, session->flow_in,
-			   &response->inPackets, &response->inBytes);
-
-	offload_flow_query(session->port_out, session->flow_out,
-			   &response->outPackets, &response->outBytes);
-
-	response->sessionState = session->state;
-	response->sessionCloseCode = session->close_code;
-
-	display_response(response, "get");
-	return _OK;
+	return __opof_get_session_server(sessionId, response, true);
 }
 
 int opof_del_session_server(unsigned long sessionId,
