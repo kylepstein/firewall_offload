@@ -166,6 +166,9 @@ int offload_flow_add(portid_t port_id,
 	uint8_t flow_index = 0;
 	int ret = -1;
 
+	memset(&actions, 0, sizeof(actions));
+	memset(&pattern_ipv4_5tuple, 0, sizeof(pattern_ipv4_5tuple));
+
 	ntuple_filter = &session->tuple;
 
 	ntuple_filter->dst_ip_mask = 0xffffffff;
@@ -277,7 +280,7 @@ int offload_flow_add(portid_t port_id,
 		pattern_ipv4_5tuple[flow_index++] = tcp_item;
 		break;
 	default:
-		return ret;
+		return -EPROTONOSUPPORT;
 	}
 
 	attr.ingress = 1;
@@ -315,7 +318,7 @@ int offload_flow_add(portid_t port_id,
 		break;
 	default:
 		printf("Offload flow: invalid action\n");
-		return -EINVAL;
+		return -EOPNOTSUPP;
 	}
 
 	flow = add_simple_flow(port_id, &attr, pattern_ipv4_5tuple,
