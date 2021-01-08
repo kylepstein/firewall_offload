@@ -2,6 +2,7 @@
  * Copyright 2020 Nvidia
  */
 #include <stdlib.h>
+#include <time.h>
 
 #include "opof.h"
 #include "opof_error.h"
@@ -13,36 +14,46 @@
 static void display_response(sessionResponse_t *response,
 			     uint8_t *cmd)
 {
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nRequest: %s session\n", cmd);
-	printf("Session ID: %ld\n",response->sessionId);
-	printf("In Packets %ld\n",response->inPackets);
-	printf("Out Packets: %ld\n",response->outPackets);
-	printf("In Bytes: %ld\n",response->inBytes);
-	printf("Out Bytes: %ld\n",response->outBytes);
-	printf("Session State: %d\n",response->sessionState);
-	printf("Session Close Code: %d\n",response->sessionCloseCode);
+	printf("\n\nTime: %02d:%02d:%02d\n",
+	       tm.tm_hour, tm.tm_min, tm.tm_sec);
+	printf("Request: %s session\n", cmd);
+	printf("Session ID: %ld\n", response->sessionId);
+	printf("In Packets %ld\n", response->inPackets);
+	printf("Out Packets: %ld\n", response->outPackets);
+	printf("In Bytes: %ld\n", response->inBytes);
+	printf("Out Bytes: %ld\n", response->outBytes);
+	printf("Session State: %d\n", response->sessionState);
+	printf("Session Close Code: %d\n", response->sessionCloseCode);
 }
 
 static void display_request(sessionRequest_t *request,
 			    uint8_t *cmd)
 {
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nRequest: %s session\n", cmd);
-	printf("Session ID: %ld\n",request->sessId);
-	printf( "Inlif: %d\n",request->inlif & 0xFFFF);
-	printf( "Outlif: %d\n",request->outlif & 0xFFFF);
-	printf( "Source Port: %d\n",request->srcPort);
-	printf( "Source IP: 0x%x\n", ntohl(request->srcIP.s_addr));
-	printf( "Destination IP: 0x%x\n",ntohl(request->dstIP.s_addr));
-	printf( "Destination Port: %d\n",request->dstPort);
-	printf( "Protocol ID: %d\n",request->proto);
-	printf( "IP Version: %d\n",request->ipver);
-	printf( "Action Value: %d\n",request->actType);
+	printf("\n\nTime: %02d:%02d:%02d\n",
+	       tm.tm_hour, tm.tm_min, tm.tm_sec);
+	printf("Request: %s session\n", cmd);
+	printf("Session ID: %ld\n", request->sessId);
+	printf("Inlif: %d\n", request->inlif & 0xFFFF);
+	printf("Outlif: %d\n", request->outlif & 0xFFFF);
+	printf("Source IP: 0x%x\n",  ntohl(request->srcIP.s_addr));
+	printf("Source Port: %d\n", request->srcPort);
+	printf("Destination IP: 0x%x\n", ntohl(request->dstIP.s_addr));
+	printf("Destination Port: %d\n", request->dstPort);
+	printf("Protocol ID: %d\n", request->proto);
+	printf("IP Version: %d\n", request->ipver);
+	printf("Action Value: %d\n", request->actType);
 }
 
 static int __opof_get_session_server(unsigned long sessionId,
