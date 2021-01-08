@@ -49,8 +49,6 @@ static struct rte_flow_action end_action = {
 	0
 };
 
-static struct rte_flow_action actions[4];
-
 static struct rte_flow_attr attr;
 
 static int
@@ -147,6 +145,8 @@ int offload_flow_add(portid_t port_id,
 		     enum flow_dir dir)
 {
 #define MAX_FLOW_ITEM (6)
+#define MAX_ACTION_ITEM (6)
+	struct rte_flow_action actions[MAX_ACTION_ITEM];
 	struct eth_ntuple_filter *ntuple_filter;
 	struct rte_flow_item_vlan vlan_spec;
 	struct rte_flow_item vlan_item;
@@ -189,9 +189,7 @@ int offload_flow_add(portid_t port_id,
 	memset(&ipv4_mask, 0, sizeof(ipv4_mask));
 	ipv4_mask.hdr.next_proto_id = ntuple_filter->proto_mask;
 	ipv4_mask.hdr.src_addr = ntuple_filter->src_ip_mask;
-	ipv4_mask.hdr.src_addr = ipv4_mask.hdr.src_addr;
 	ipv4_mask.hdr.dst_addr = ntuple_filter->dst_ip_mask;
-	ipv4_mask.hdr.dst_addr = ipv4_mask.hdr.dst_addr;
 
 	if (session->timeout)
 		age.timeout = session->timeout;
