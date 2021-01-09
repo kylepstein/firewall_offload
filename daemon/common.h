@@ -88,6 +88,7 @@ enum lcore_type {
 enum {
 	/* unit sec */
 	DEFAULT_TIMEOUT		= 10,
+	MAX_TIMEOUT		= 3275
 };
 
 enum print_warning {

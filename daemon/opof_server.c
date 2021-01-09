@@ -218,7 +218,15 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	session->tuple.dst_port = parameters->dstPort;
 	session->tuple.vlan = parameters->inlif >> 16;
 
-	session->timeout = parameters->cacheTimeout;
+	if (parameters->cacheTimeout >= MAX_TIMEOUT) {
+		printf("WARNING: "
+		       "requested timeout(%u), max(%u), use default(%u)\n",
+		       parameters->cacheTimeout, MAX_TIMEOUT,
+		       DEFAULT_TIMEOUT);
+		session->timeout = DEFAULT_TIMEOUT;
+	}else {
+		session->timeout = parameters->cacheTimeout;
+	}
 
 	if ((parameters->inlif & 0xFFFF) == 1) {
 		session->port_in = INITIATOR_PORT_ID;
