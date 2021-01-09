@@ -11,6 +11,40 @@
 
 #include "common.h"
 
+static char *get_session_state(uint8_t state)
+{
+	switch(state)
+	{
+	case 0:
+		return "EST";
+	case 1:
+		return "CLS_1";
+	case 2:
+		return "CLS_2";
+	case 3:
+		return "CLOSED";
+	default:
+		return "UNKOWN";
+	}
+}
+
+static char *get_close_code(uint8_t code)
+{
+	switch(code)
+	{
+	case 0:
+		return "NA";
+	case 1:
+		return "FINACK";
+	case 2:
+		return "RST";
+	case 3:
+		return "AGE_OUT";
+	default:
+		return "UNKOWN";
+	}
+}
+
 static void display_response(sessionResponse_t *response,
 			     uint8_t *cmd)
 {
@@ -20,16 +54,23 @@ static void display_response(sessionResponse_t *response,
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nTime: %02d:%02d:%02d\n",
-	       tm.tm_hour, tm.tm_min, tm.tm_sec);
-	printf("Request: %s session\n", cmd);
-	printf("Session ID: %ld\n", response->sessionId);
-	printf("In Packets %ld\n", response->inPackets);
-	printf("Out Packets: %ld\n", response->outPackets);
-	printf("In Bytes: %ld\n", response->inBytes);
-	printf("Out Bytes: %ld\n", response->outBytes);
-	printf("Session State: %d\n", response->sessionState);
-	printf("Session Close Code: %d\n", response->sessionCloseCode);
+	printf("\n" "TIME      CMD        "
+	       "ID        "
+	       "IN_PACKETS   IN_BYTES      OUT_PACKETS  OUT_BYTES     "
+	       "STATE   " "CLOSE   " "\n");
+
+	printf("%02u:%02u:%02u  " "%-11s"
+	       "%-10lu"
+	       "%-13lu" "%-14lu" "%-13lu" "%-14lu"
+	       "%-8s" "%-8s" "\n",
+	       tm.tm_hour, tm.tm_min, tm.tm_sec, cmd,
+	       response->sessionId,
+	       response->inPackets,
+	       response->inBytes,
+	       response->outPackets,
+	       response->outBytes,
+	       get_session_state(response->sessionState),
+	       get_close_code(response->sessionCloseCode));
 }
 
 static void display_request(sessionRequest_t *request,
@@ -41,19 +82,34 @@ static void display_request(sessionRequest_t *request,
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n\nTime: %02d:%02d:%02d\n",
-	       tm.tm_hour, tm.tm_min, tm.tm_sec);
-	printf("Request: %s session\n", cmd);
-	printf("Session ID: %ld\n", request->sessId);
-	printf("Inlif: %d\n", request->inlif & 0xFFFF);
-	printf("Outlif: %d\n", request->outlif & 0xFFFF);
-	printf("Source IP: 0x%x\n",  ntohl(request->srcIP.s_addr));
-	printf("Source Port: %d\n", request->srcPort);
-	printf("Destination IP: 0x%x\n", ntohl(request->dstIP.s_addr));
-	printf("Destination Port: %d\n", request->dstPort);
-	printf("Protocol ID: %d\n", request->proto);
-	printf("IP Version: %d\n", request->ipver);
-	printf("Action Value: %d\n", request->actType);
+	printf("\n" "TIME      CMD  "
+	       "ID        IN  OUT  VLAN  "
+	       "SRC_IP           SRC_PORT  DST_IP           DST_PORT  "
+	       "PROTO  IP  ACT  AGE" "\n");
+
+	printf("%02u:%02u:%02u  " "%-5s"
+	       "%-10lu" "%-4u" "%-5u" "%-6u"
+	       "%03u.%03u.%03u.%03u  " "%-10u" "%03u.%03u.%03u.%03u  " "%-10u"
+	       "%-7s" "%-4u" "%-5s" "%-4u" "\n",
+	       tm.tm_hour, tm.tm_min, tm.tm_sec, cmd,
+	       request->sessId,
+	       request->inlif & 0xFFFF,
+	       request->outlif & 0xFFFF,
+	       request->inlif >> 16,
+	       (request->srcIP.s_addr >> 24) & 0xFF,
+	       (request->srcIP.s_addr >> 16) & 0xFF,
+	       (request->srcIP.s_addr >> 8) & 0xFF,
+	       request->srcIP.s_addr & 0xFF,
+	       request->srcPort,
+	       (request->dstIP.s_addr >> 24) & 0xFF,
+	       (request->dstIP.s_addr >> 16) & 0xFF,
+	       (request->dstIP.s_addr >> 8) & 0xFF,
+	       request->dstIP.s_addr & 0xFF,
+	       request->dstPort,
+	       request->proto == 6 ? "TCP" : "UDP",
+	       request->ipver,
+	       request->actType == 1 ? "FWD" : "DROP",
+	       request->cacheTimeout);
 }
 
 static int __opof_get_session_server(unsigned long sessionId,
@@ -113,7 +169,6 @@ int opof_del_flow(struct fw_session *session)
 		goto out;
 
 	rte_hash_del_key(ht, &session->key);
-
 
 	if (rte_ring_enqueue(off_config_g.session_fifo, session_stat))
 		printf("Err: no enough room in session session_fifo\n");
@@ -188,9 +243,10 @@ int opof_add_session_server(sessionRequest_t *parameters,
 		session->state = _ESTABLISHED;
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
 		rte_atomic32_inc(&off_config_g.stats.active);
-		offload_dbg("Session (%d) added", session->key.sess_id);
 	} else {
 		offload_flow_destroy(session->port_in, session->flow_in);
+		printf("ERR(%d): Failed to add session (%lu)\n",
+		       ret, session->key.sess_id);
 		return _INTERNAL;
 	}
 
@@ -259,7 +315,7 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 			memcpy(&responses[i], session_stats[i],
 			       sizeof(sessionResponse_t));
 
-			display_response(&responses[i], "get closed");
+			display_response(&responses[i], "get_close");
 		}
 	}
 
