@@ -238,9 +238,10 @@ void args_parse(int argc, char** argv)
 		{ "address",	0, 0, 'a'},
 		{ "port",	0, 0, 'p'},
 		{ "timeout",	0, 0, 't'},
+		{ "debug",	0, 0, 'd'},
 	};
 
-	while ((opt = getopt_long(argc, argv, "a:p:t:h",
+	while ((opt = getopt_long(argc, argv, "a:p:t:h:d",
 				  lgopts, NULL)) != EOF) {
 		switch (opt) {
 		case 'a':
@@ -253,11 +254,15 @@ void args_parse(int argc, char** argv)
 		case 't':
 			off_config_g.timeout = strtoul(optarg, &end, 10);
 			break;
+		case 'd':
+			off_config_g.verbose = 1;
+			break;
 
 		case 'h':
 			printf("\t-p, --port\tgRPC Port \n");
 			printf("\t-a, --address\tAddress of gRPC Server\n");
 			printf("\t-t, --timeout\tDefault aging time in sec\n");
+			printf("\t-d, --debug:\tPrint debug message \n\n");
 			printf("\t-h, --help:\tCommand line help \n\n");
 			rte_exit(EXIT_SUCCESS, "Displayed help\n");
 		default:
