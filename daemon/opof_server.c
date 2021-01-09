@@ -151,6 +151,7 @@ int opof_del_flow(struct fw_session *session)
 	sessionResponse_t *session_stat;
 	int ret = 0;
 
+	session->state = _CLOSED;
 	session_stat = rte_zmalloc("stats",
 				   sizeof(sessionResponse_t),
 				   RTE_CACHE_LINE_SIZE);
@@ -219,7 +220,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	session->tuple.vlan = parameters->inlif >> 16;
 
 	if (parameters->cacheTimeout >= MAX_TIMEOUT) {
-		printf("WARNING: "
+		printf("\nWARNING: "
 		       "requested timeout(%u), max(%u), use default(%u)\n",
 		       parameters->cacheTimeout, MAX_TIMEOUT,
 		       DEFAULT_TIMEOUT);
