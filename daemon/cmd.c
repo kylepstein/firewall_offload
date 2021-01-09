@@ -74,7 +74,7 @@ cmd_flow_query_parsed(void *parsed_result,
 	memset(&response, 0, sizeof(response));
 	opof_get_session_server(res->session_id, &response);
 	if(response.requestStatus == _REJECTED_SESSION_NONEXISTENT)
-		printf("No such session (%d)\n", res->session_id);
+		printf("No such session (%lu)\n", res->session_id);
 }
 
 cmdline_parse_token_string_t cmd_flow_query_tok =
@@ -113,7 +113,7 @@ cmd_flow_del_parsed(void *parsed_result,
 	memset(&response, 0, sizeof(response));
 	opof_del_session_server(res->session_id, &response);
 	if(response.requestStatus == _REJECTED_SESSION_NONEXISTENT)
-		printf("No such session (%d)\n", res->session_id);
+		printf("No such session (%lu)\n", res->session_id);
 }
 
 cmdline_parse_token_string_t cmd_flow_del_tok =

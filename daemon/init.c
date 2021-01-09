@@ -196,7 +196,7 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 
 	ret = opof_add_session_server(&request, &response);
 	if (!ret)
-		printf("Warnning: Sample flow created for session (%d)\n",
+		printf("Warnning: Sample flow created for session (%lu)\n",
 		       request.sessId);
 
 	return ret;
