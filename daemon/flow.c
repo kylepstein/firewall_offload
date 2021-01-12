@@ -298,6 +298,8 @@ int offload_flow_add(portid_t port_id,
 	else if (dir == DIR_OUT)
 		age.context = NULL;
 
+	count.id = dir;
+
 	switch(action)
 	{
 	case ACTION_FORWARD:
