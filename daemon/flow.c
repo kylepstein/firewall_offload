@@ -205,7 +205,7 @@ int offload_flow_add(portid_t port_id,
 
 	if (ntuple_filter->vlan) {
 		memset(&vlan_item, 0, sizeof(vlan_item));
-		vlan_item.type = RTE_FLOW_ITEM_TYPE_VXLAN;
+		vlan_item.type = RTE_FLOW_ITEM_TYPE_VLAN;
 		vlan_item.spec = &vlan_spec;
 		vlan_item.mask = &rte_flow_item_vlan_mask,
 
