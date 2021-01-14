@@ -13,13 +13,8 @@ static struct rte_flow_item end_item = {
 	0, 0, 0
 };
 
-struct rte_flow_action_count count = {
-	.shared = 0,
-};
-
 static struct rte_flow_action count_action = {
-	RTE_FLOW_ACTION_TYPE_COUNT,
-	&count
+	RTE_FLOW_ACTION_TYPE_COUNT, NULL
 };
 
 struct rte_flow_action_age age = {
@@ -297,8 +292,6 @@ int offload_flow_add(portid_t port_id,
 		age.context = session;
 	else if (dir == DIR_OUT)
 		age.context = NULL;
-
-	count.id = dir;
 
 	switch(action)
 	{
