@@ -287,11 +287,7 @@ int offload_flow_add(portid_t port_id,
 		return -EINVAL;
 	}
 
-	/* Aging is only done based on DIR_IN */
-	if (dir == DIR_IN)
-		age.context = session;
-	else if (dir == DIR_OUT)
-		age.context = NULL;
+	age.context = session;
 
 	switch(action)
 	{
@@ -324,6 +320,8 @@ int offload_flow_add(portid_t port_id,
 
 	if (dir == DIR_OUT)
 		session->flow_out = flow;
+
+	rte_atomic32_inc(&session->ref_count);
 
 	return 0;
 }
@@ -366,6 +364,9 @@ int offload_flow_destroy(portid_t port_id, struct rte_flow *flow)
 {
 	struct rte_flow_error error;
 	int ret = 0;
+
+	if (!flow)
+		return 0;
 
 	if (port_id_is_invalid(port_id, ENABLED_WARN) ||
 	    port_id == (portid_t)RTE_PORT_ALL)
@@ -411,10 +412,17 @@ void offload_flow_aged(portid_t port_id)
 		session = (struct fw_session*)contexts[idx];
 		if (!session)
 			continue;
-		session->close_code = _TIMEOUT;
-		ret = opof_del_flow(session);
-		if (!ret)
-			rte_atomic32_inc(&off_config_g.stats.aged);
+
+		/* Only delete flow when both directions are aged out.
+		 * This hides the bug that the counter on one of the
+		 * direction is not updating
+		 */
+		if (rte_atomic32_dec_and_test(&session->ref_count)) {
+			session->close_code = _TIMEOUT;
+			ret = opof_del_flow(session);
+			if (!ret)
+				rte_atomic32_inc(&off_config_g.stats.aged);
+		}
 	}
 	free(contexts);
 }

@@ -159,6 +159,8 @@ struct fw_session {
 	uint8_t		state;
 	uint8_t		close_code;
 	uint32_t	timeout;
+
+	rte_atomic32_t	ref_count;
 };
 
 struct offload_stats {
