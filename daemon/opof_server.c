@@ -130,10 +130,10 @@ static int __opof_get_session_server(unsigned long sessionId,
 	if (!session)
 		return _NOT_FOUND;
 
-	offload_flow_query(session->port_in, session->flow_in,
+	offload_flow_query(session->flow_in.portid, session->flow_in.flow,
 			   &response->inPackets, &response->inBytes);
 
-	offload_flow_query(session->port_out, session->flow_out,
+	offload_flow_query(session->flow_out.portid, session->flow_out.flow,
 			   &response->outPackets, &response->outBytes);
 
 	response->sessionState = session->state;
@@ -158,13 +158,14 @@ int opof_del_flow(struct fw_session *session)
 	__opof_get_session_server(session->key.sess_id,
 				  session_stat, false);
 
-	ret = offload_flow_destroy(session->port_in,session->flow_in);
+	ret = offload_flow_destroy(session->flow_in.portid,
+				   session->flow_in.flow);
 
 	if (ret)
 		goto out;
 
-	ret = offload_flow_destroy(session->port_out,
-				   session->flow_out);
+	ret = offload_flow_destroy(session->flow_out.portid,
+				   session->flow_out.flow);
 
 	if (ret)
 		goto out;
@@ -230,21 +231,21 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	}
 
 	if ((parameters->inlif & 0xFFFF) == 1) {
-		session->port_in = INITIATOR_PORT_ID;
-		session->port_out = RESPONDER_PORT_ID;
+		session->flow_in.portid = INITIATOR_PORT_ID;
+		session->flow_out.portid = RESPONDER_PORT_ID;
 	} else {
-		session->port_in = RESPONDER_PORT_ID;
-		session->port_out = INITIATOR_PORT_ID;
+		session->flow_in.portid = RESPONDER_PORT_ID;
+		session->flow_out.portid = INITIATOR_PORT_ID;
 	}
 
-	ret = offload_flow_add(session->port_in, session,
+	ret = offload_flow_add(session->flow_in.portid, session,
 			       (enum flow_action)parameters->actType,
 			       DIR_IN);
 
 	if (ret)
 		return _INTERNAL;
 
-	ret = offload_flow_add(session->port_out, session,
+	ret = offload_flow_add(session->flow_out.portid, session,
 			       (enum flow_action)parameters->actType,
 			       DIR_OUT);
 
@@ -253,7 +254,8 @@ int opof_add_session_server(sessionRequest_t *parameters,
 		rte_hash_add_key_data(ht, &session->key, (void *)session);
 		rte_atomic32_inc(&off_config_g.stats.active);
 	} else {
-		offload_flow_destroy(session->port_in, session->flow_in);
+		offload_flow_destroy(session->flow_in.portid,
+				     session->flow_in.flow);
 		printf("ERR(%d): Failed to add session (%lu)\n",
 		       ret, session->key.sess_id);
 		return _INTERNAL;

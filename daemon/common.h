@@ -147,20 +147,23 @@ struct session_key {
 	uint64_t sess_id;
 };
 
+struct offload_flow {
+	struct fw_session *session;
+	struct rte_flow *flow;
+	rte_atomic32_t ref_count;
+	portid_t portid;
+};
+
 struct fw_session {
 	struct session_key		key;
 	struct eth_ntuple_filter	tuple;
 
-	struct rte_flow *flow_in;
-	portid_t	port_in;
-	struct rte_flow *flow_out;
-	portid_t	port_out;
+	struct offload_flow		flow_in;
+	struct offload_flow		flow_out;
 
-	uint8_t		state;
-	uint8_t		close_code;
-	uint32_t	timeout;
-
-	rte_atomic32_t	ref_count;
+	uint8_t				state;
+	uint8_t				close_code;
+	uint32_t			timeout;
 };
 
 struct offload_stats {

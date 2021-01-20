@@ -17,15 +17,6 @@ static struct rte_flow_action count_action = {
 	RTE_FLOW_ACTION_TYPE_COUNT, NULL
 };
 
-struct rte_flow_action_age age = {
-	.timeout = DEFAULT_TIMEOUT,
-};
-
-static struct rte_flow_action age_action = {
-	RTE_FLOW_ACTION_TYPE_AGE,
-	&age
-};
-
 struct rte_flow_action_jump nic_rx_group = {
 	.group = NIC_RX_GROUP,
 };
@@ -161,6 +152,13 @@ int offload_flow_add(portid_t port_id,
 	uint8_t flow_index = 0;
 	int ret = -1;
 
+	struct rte_flow_action_age age = {};
+
+	struct rte_flow_action age_action = {
+		RTE_FLOW_ACTION_TYPE_AGE,
+		&age
+	};
+
 	memset(&actions, 0, sizeof(actions));
 	memset(&pattern_ipv4_5tuple, 0, sizeof(pattern_ipv4_5tuple));
 
@@ -287,23 +285,25 @@ int offload_flow_add(portid_t port_id,
 		return -EINVAL;
 	}
 
-	age.context = session;
+	if (dir == DIR_IN) {
+		age.context = &session->flow_in;
+	} else {
+		age.context = &session->flow_out;
+	}
 
 	switch(action)
 	{
 	case ACTION_FORWARD:
 		attr.priority = FDB_FWD_PRIORITY;
 		actions[i++] = jump_action;
-		if (dir == DIR_IN)
-			actions[i++] = age_action;
+		actions[i++] = age_action;
 		actions[i++] = count_action;
 		actions[i++] = end_action;
 		break;
 	case ACTION_DROP:
 		attr.priority = FDB_DROP_PRIORITY;
 		actions[i++] = drop_action;
-		if (dir == DIR_IN)
-			actions[i++] = age_action;
+		actions[i++] = age_action;
 		actions[i++] = count_action;
 		actions[i++] = end_action;
 		break;
@@ -315,13 +315,17 @@ int offload_flow_add(portid_t port_id,
 	flow = add_simple_flow(port_id, &attr, pattern_ipv4_5tuple,
 			       actions, "offload");
 
-	if (dir == DIR_IN)
-		session->flow_in = flow;
-
-	if (dir == DIR_OUT)
-		session->flow_out = flow;
-
-	rte_atomic32_inc(&session->ref_count);
+	if (dir == DIR_IN) {
+		session->flow_in.session = session;
+		session->flow_in.flow = flow;
+		session->flow_in.portid = port_id;
+		rte_atomic32_set(&session->flow_in.ref_count, 1);
+	} else {
+		session->flow_out.session = session;
+		session->flow_out.flow = flow;
+		session->flow_out.portid = port_id;
+		rte_atomic32_set(&session->flow_out.ref_count, 1);
+	}
 
 	return 0;
 }
@@ -384,6 +388,7 @@ void offload_flow_aged(portid_t port_id)
 	int nb_context, total = 0, idx;
 	struct rte_flow_error error;
 	struct fw_session *session;
+	struct offload_flow *flow;
 	void **contexts;
 	int ret;
 
@@ -409,15 +414,19 @@ void offload_flow_aged(portid_t port_id)
 	}
 
 	for (idx = 0; idx < nb_context; idx++) {
-		session = (struct fw_session*)contexts[idx];
-		if (!session)
+		flow = (struct offload_flow *)contexts[idx];
+		if (!flow)
 			continue;
+		session = flow->session;
+
+		rte_atomic32_set(&flow->ref_count, 0);
 
 		/* Only delete flow when both directions are aged out.
 		 * This hides the bug that the counter on one of the
 		 * direction is not updating
 		 */
-		if (rte_atomic32_dec_and_test(&session->ref_count)) {
+		if (!rte_atomic32_read(&session->flow_in.ref_count) &&
+		    !rte_atomic32_read(&session->flow_out.ref_count)) {
 			session->close_code = _TIMEOUT;
 			ret = opof_del_flow(session);
 			if (!ret)
