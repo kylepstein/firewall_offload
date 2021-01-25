@@ -13,10 +13,6 @@ static struct rte_flow_item end_item = {
 	0, 0, 0
 };
 
-static struct rte_flow_action count_action = {
-	RTE_FLOW_ACTION_TYPE_COUNT, NULL
-};
-
 struct rte_flow_action_jump nic_rx_group = {
 	.group = NIC_RX_GROUP,
 };
@@ -297,14 +293,12 @@ int offload_flow_add(portid_t port_id,
 		attr.priority = FDB_FWD_PRIORITY;
 		actions[i++] = jump_action;
 		actions[i++] = age_action;
-		actions[i++] = count_action;
 		actions[i++] = end_action;
 		break;
 	case ACTION_DROP:
 		attr.priority = FDB_DROP_PRIORITY;
 		actions[i++] = drop_action;
 		actions[i++] = age_action;
-		actions[i++] = count_action;
 		actions[i++] = end_action;
 		break;
 	default:
