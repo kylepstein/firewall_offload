@@ -203,7 +203,7 @@ int offload_flow_add(portid_t port_id,
 		vlan_item.mask = &rte_flow_item_vlan_mask,
 
 		memset(&vlan_spec, 0, sizeof(vlan_spec));
-		vlan_spec.tci = ntuple_filter->vlan;
+		vlan_spec.tci = htons(ntuple_filter->vlan);
 		vlan_spec.inner_type = 0;
 
 		pattern_ipv4_5tuple[flow_index++] = vlan_item;
