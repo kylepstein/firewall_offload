@@ -4,7 +4,7 @@
 # binary name
 APP = firewall_offload
 
-GRPC_DIR ?= $(HOME)/local/
+GRPC_DIR ?= /usr/local/
 LIBDIR := $(GRPC_DIR)/lib
 LIB64DIR := $(GRPC_DIR)/lib64
 
@@ -17,6 +17,7 @@ include $(RTE_SDK)/mk/rte.vars.mk
 INCLUDES += -I $(GRPC_DIR)/include \
 	    -I /usr/include/c++/4.8.5 \
 	    -I /usr/include/c++/4.8.5/aarch64-redhat-linux/ \
+	    -I /usr/include/c++/9/ \
 	    -I $(RTE_SDK)/daemon \
 	    -I $(RTE_SDK)/daemon/include
 
