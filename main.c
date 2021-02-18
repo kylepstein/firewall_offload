@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
 	lcore_init();
 
-	rte_eal_mp_remote_launch(&thread_mux, NULL, CALL_MASTER);
+	rte_eal_mp_remote_launch(&thread_mux, NULL, CALL_MAIN);
 
 	cmd_prompt();
 
