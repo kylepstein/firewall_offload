@@ -210,6 +210,7 @@ static inline void offload_dbg(const char *fmt, ...)
 
 int port_init(portid_t pid,
 	      struct rte_mempool *mbuf_pool);
+int hairpin_bind_port(portid_t pid);
 
 void lcore_init(void);
 int cmd_prompt(void);

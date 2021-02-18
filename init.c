@@ -247,7 +247,7 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 		return retval;
 
 	/* Allocate and set up 1 RX queue per Ethernet pid. */
-	for (q = 0; q < nb_rxq + nb_hpq; q++) {
+	for (q = 0; q < nb_rxq; q++) {
 		retval = rte_eth_rx_queue_setup(pid, q, nb_rxd,
 				rte_eth_dev_socket_id(pid), NULL, mbuf_pool);
 		if (retval < 0)
@@ -257,7 +257,7 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 	txconf = port->dev_info.default_txconf;
 	txconf.offloads = port_conf.txmode.offloads;
 	/* Allocate and set up 1 TX queue per Ethernet pid. */
-	for (q = 0; q < nb_txq + nb_hpq; q++) {
+	for (q = 0; q < nb_txq; q++) {
 		retval = rte_eth_tx_queue_setup(pid, q, nb_txd,
 				rte_eth_dev_socket_id(pid), &txconf);
 		if (retval < 0)
@@ -287,4 +287,31 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 err:
 	rte_flow_flush(pid, NULL);
 	return -EINVAL;
+}
+
+int hairpin_bind_port(portid_t pid)
+{
+	uint16_t peer_id;
+	int diag;
+
+	peer_id = off_config_g.peer_port[pid];
+
+	if (off_config_g.ports[pid].is_rep)
+		return 0;
+
+	diag = rte_eth_hairpin_bind(pid, peer_id);
+	if (diag) {
+		printf("Error during binding hairpin TX port %u to %u: %s\n",
+			 pid, peer_id, rte_strerror(-diag));
+		return diag;
+	}
+
+	diag = rte_eth_hairpin_bind(peer_id, pid);
+	if (diag) {
+		printf("Error during binding hairpin RX port %u to %u: %s\n",
+			 peer_id, pid, rte_strerror(-diag));
+		return diag;
+	}
+
+	return 0;
 }

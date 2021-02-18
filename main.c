@@ -146,6 +146,11 @@ int main(int argc, char *argv[])
 			rte_exit(EXIT_FAILURE,
 				 "Cannot init port %"PRIu16 "\n", portid);
 
+	RTE_ETH_FOREACH_DEV(portid)
+		if (hairpin_bind_port(portid))
+			rte_exit(EXIT_FAILURE,
+				 "Cannot bind hairpin port %"PRIu16 "\n",portid);
+
 	lcore_init();
 
 	rte_eal_mp_remote_launch(&thread_mux, NULL, CALL_MAIN);
