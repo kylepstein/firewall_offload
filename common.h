@@ -174,7 +174,6 @@ struct offload_stats {
 struct fw_offload_config {
 	struct lcore_priv	lcores[MAX_LCORES];
 	struct aging_priv	aging;
-	struct rte_hash		*mac_ht;
 	struct rte_ring		*session_fifo;
 	struct rte_hash		*session_ht;
 	struct rte_port		*ports;

@@ -10,27 +10,6 @@ queueid_t nb_rxq = NUM_REGULAR_Q;
 queueid_t nb_hpq = NUM_HP_Q;
 queueid_t hp_qi = NUM_REGULAR_Q + NUM_HP_Q - 1;
 
-static void get_port_mac(portid_t port_id)
-{
-	struct rte_port *port = &off_config_g.ports[port_id];
-	struct rte_ether_addr *port_addr = &port->eth_addr;
-
-	if (port->is_rep) {
-		rte_eth_dev_mac_addr_get(port_id, port_addr);
-		rte_hash_add_key_data(off_config_g.mac_ht,
-				      port_addr, &port_id);
-	} else {
-		rte_eth_macaddr_get(port_id, port_addr);
-	}
-
-	printf("Port(%u): MAC %02" PRIx8 " %02" PRIx8 " %02" PRIx8
-	       " %02" PRIx8 " %02" PRIx8 " %02" PRIx8 "\n",
-	       port_id,
-	       port_addr->addr_bytes[0], port_addr->addr_bytes[1],
-	       port_addr->addr_bytes[2], port_addr->addr_bytes[3],
-	       port_addr->addr_bytes[4], port_addr->addr_bytes[5]);
-}
-
 static int setup_hairpin_queues(portid_t pi, portid_t peer_pi)
 {
 	queueid_t qi;
@@ -254,8 +233,6 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 
 	if (eth_dev->data->dev_flags & RTE_ETH_DEV_REPRESENTOR)
 		port->is_rep = 1;
-
-	get_port_mac(pid);
 
 	/* Configure the Ethernet device. */
 	retval = rte_eth_dev_configure(pid, nb_rxq + nb_hpq,

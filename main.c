@@ -14,24 +14,6 @@ static uint32_t next_pow2(uint32_t x)
 	return x == 1 ? 1 : 1 << (64 - __builtin_clzl(x - 1));
 }
 
-static struct rte_hash* create_mac_hash_table(void)
-{
-	struct rte_hash_parameters params;
-	struct rte_hash *h;
-	char name[16];
-
-	memset(&params, 0, sizeof(params));
-	snprintf(name, sizeof(name), "mac_ht");
-	params.name = name;
-	params.entries = RTE_MAX_ETHPORTS;
-	params.key_len = sizeof(struct rte_ether_addr);
-	params.hash_func_init_val = 0;
-
-	h = rte_hash_create(&params);
-
-	return h;
-}
-
 static struct rte_hash* create_session_hash_table(void)
 {
 	struct rte_hash_parameters params;
@@ -57,7 +39,6 @@ void clean_up(void)
 	opof_del_all_session_server();
 
 	rte_ring_free(off_config_g.session_fifo);
-	rte_hash_free(off_config_g.mac_ht);
 	rte_hash_free(off_config_g.session_ht);
 
 	RTE_ETH_FOREACH_DEV(portid) {
@@ -110,7 +91,6 @@ static void config_init(void)
 	off_config_g.vf_port[portid_pf1] = portid_pf1_vf0;
 	off_config_g.vf_port[portid_pf1_vf0] = portid_pf1_vf0;
 
-	off_config_g.mac_ht= create_mac_hash_table();
 	off_config_g.session_ht = create_session_hash_table();
 	off_config_g.session_fifo = rte_ring_create("sess_fifo",
 						    next_pow2(MAX_SESSION), 0, 0);
