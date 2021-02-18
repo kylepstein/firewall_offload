@@ -82,7 +82,7 @@ cmdline_parse_token_string_t cmd_flow_query_tok =
 				 "flow query");
 
 cmdline_parse_token_num_t cmd_session_id =
-	TOKEN_NUM_INITIALIZER(struct cmd_flow_query_result, session_id, UINT64);
+	TOKEN_NUM_INITIALIZER(struct cmd_flow_query_result, session_id, RTE_UINT64);
 
 cmdline_parse_inst_t cmd_flow_query = {
 	.f = cmd_flow_query_parsed,
@@ -187,7 +187,7 @@ cmdline_parse_token_string_t cmd_verbose_tok =
 				 "verbose");
 
 cmdline_parse_token_num_t cmd_verbose_set =
-	TOKEN_NUM_INITIALIZER(struct cmd_verbose_result, verbose, UINT8);
+	TOKEN_NUM_INITIALIZER(struct cmd_verbose_result, verbose, RTE_UINT8);
 
 cmdline_parse_inst_t cmd_verbose = {
 	.f = cmd_verbose_parsed,
