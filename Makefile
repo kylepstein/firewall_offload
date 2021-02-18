@@ -3,26 +3,26 @@
 
 # binary name
 APP = firewall_offload
+CC=gcc
 
-GRPC_DIR ?= $(HOME)/local/
+GRPC_DIR ?= /usr/local/
 LIBDIR := $(GRPC_DIR)/lib
 LIB64DIR := $(GRPC_DIR)/lib64
 
-ifeq ($(RTE_SDK),)
-$(error "Please define RTE_SDK environment variable")
-endif
-
-include $(RTE_SDK)/mk/rte.vars.mk
-
 INCLUDES += -I $(GRPC_DIR)/include \
-	    -I /usr/include/c++/4.8.5 \
-	    -I /usr/include/c++/4.8.5/aarch64-redhat-linux/ \
-	    -I $(RTE_SDK)/daemon \
-	    -I $(RTE_SDK)/daemon/include
+	    -I /usr/include/c++/9 \
+	    -I include \
+	    -I .
+
+PKGCONF ?= pkg-config
+
+PC_FILE := $(shell $(PKGCONF) --path libdpdk 2>/dev/null)
+CFLAGS += -O3 $(shell $(PKGCONF) --cflags libdpdk)
+LDFLAGS_SHARED = $(shell $(PKGCONF) --libs libdpdk)
+LDFLAGS_STATIC = $(shell $(PKGCONF) --static --libs libdpdk)
 
 CFLAGS += $(INCLUDES)
 CFLAGS += -DALLOW_EXPERIMENTAL_API
-CFLAGS += -O3 -g
 
 GPR_LIB := $(LIBDIR)/libgpr.a
 CHANNELZ_LIB := $(LIBDIR)/libgrpcpp_channelz.a
@@ -69,13 +69,21 @@ LIBS ?= \
 	$(ABSL_TIME_LIB) \
 	$(ABSL_TIME_ZONE_LIB)
 
-
-LDLIBS += $(RTE_SDK)/daemon/lib/libopof_server.a
+LDLIBS += lib/libopof_server.a
 LDLIBS += $(LIBS)
 
-LDFLAGS = -lc -lstdc++
+LDFLAGS = -lc -lstdc++ -lm -pthread
 
 # all source are stored in SRCS-y
 SRCS-y := main.c flow.c thread.c init.c cmd.c opof_server.c
 
-include $(RTE_SDK)/mk/rte.extapp.mk
+build/$(APP): $(SRCS-y) Makefile $(PC_FILE) | build
+	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDLIBS) $(LDFLAGS_SHARED) $(LDFLAGS) 
+
+build:
+	@mkdir -p $@
+
+.PHONY: clean
+clean:
+	rm -f build/$(APP)
+	test -d build && rmdir -p build || true
