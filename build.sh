@@ -81,13 +81,30 @@ get_grpc() {
 	touch "${DEPS_DIR}/grpc_installed"
 }
 
+build_session_offload() {
+	if [ -f "${DEPS_DIR}/sessionOffload_installed" ]; then
+		echo -e "${COLOR_GREEN}sessionOffload_installed is installed ${COLOR_OFF}"
+		return
+	fi
+	export PATH=$INSTALL_DIR/bin:$PATH
+	pushd .
+	cd "$DEPS_DIR"
+	git clone -b v1beta1 https://github.com/att/sessionOffload.git
+	cd sessionOffload/openoffload/cpp/framework
+	make -j "$NCPUS" server
+	if [ 0 -ne $? ] ; then exit 1 ; fi
+	cp lib/libopof_server.a $ROOT_DIR/lib
+	touch "${DEPS_DIR}/sessionOffload_installed"
+	echo -e "${COLOR_GREEN}sessionOffload is installed ${COLOR_OFF}"
+	popd
+}
+
 build_firewall_offload() {
 	cd "$ROOT_DIR"
 	export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/mellanox/dpdk/lib/aarch64-linux-gnu/pkgconfig/
 	make -j "$NCPUS"
-	test -x ./build/firewall_offload && \
-	echo -e "${COLOR_GREEN}firewall offload is compiled ${COLOR_OFF}"; return
-	ln -s ./build/firewall_offload
+	ln -sf ./build/firewall_offload
+	if [ 0 -ne $? ] ; then exit 1 ; fi
 	echo -e "${COLOR_GREEN}firewall offload is compiled ${COLOR_OFF}"
 }
 
@@ -110,6 +127,7 @@ build_kernel() {
 }
 
 get_grpc
+build_session_offload
 build_firewall_offload
 create_hugepages
 build_kernel
