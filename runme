@@ -1,3 +1,6 @@
 #!/bin/sh
 
 env LD_LIBRARY_PATH=/opt/mellanox/dpdk/lib/aarch64-linux-gnu/ ./build/firewall_offload  -n 1 -a 0000:03:00.0,representor=[0] -a 0000:03:00.1,representor=[0] -- -a 169.254.33.51 -p 3443 -d
+
+# Reset terminal
+stty sane

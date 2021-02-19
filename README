@@ -3,23 +3,19 @@ Application to communicate with firewall via grpc, and do HW offload on Nvidia
 BlueField DPU
 
 Prerequisite
-GRPC libraries installed at /root/local/
+1. GRPC libraries installed at /root/local/
+2. Create 2 VFs for each PF on x86 side
 
 Usage
-1. Compile DPDK and daemon, make sure to run the shell properly to have ENV updated
-# cd firewall_offload
-# . build.sh
+
+1. Build
+$ export PKG_CONFIG_PATH=/opt/mellanox/dpdk/lib/aarch64-linux-gnu/pkgconfig/
+$ make
 
 2. Setup hugepages
-E.g, # ./firewall_offload/usertools/dpdk-setup.sh
-
-3. Make sure to create 1 VF for each PF on x86 side
+$ mkdir -p /dev/hugepages
+$ mountpoint -q /dev/hugepages || mount -t hugetlbfs nodev /dev/hugepages
+$ echo 2048 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
 
 4. Run app
-# cd firewall_offload/daemon
-
-If no grpc address and port is given, localhost will be used 
-# ./build/firewall_offload -n 1 -w 0000:03:00.0,representor=[0] -w 0000:03:00.1,representor=[0]
-
-If grpc address and port are given
-# ./build/firewall_offload -n 1 -w 0000:03:00.0,representor=[0] -w 0000:03:00.1,representor=[0] -- -a 10.9.150.185 -p 1234
+$ env LD_LIBRARY_PATH=/opt/mellanox/dpdk/lib/aarch64-linux-gnu/ ./build/firewall_offload  -n 1 -a 0000:03:00.0,representor=[0] -a 0000:03:00.1,representor=[0] -- -a 169.254.33.51 -p 3443 -d
