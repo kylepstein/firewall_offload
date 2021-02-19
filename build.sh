@@ -101,8 +101,9 @@ create_hugepages() {
 }
 
 build_kernel() {
-	test -x /tmp/ofa_kernel-* && \
-	echo -e "${COLOR_GREEN}driver is updated ${COLOR_OFF}"; return
+	if [ -d "/tmp/ofa_kernel-5.2" ]; then
+		echo -e "${COLOR_GREEN}driver is updated ${COLOR_OFF}"; return
+	fi
 	cd "$ROOT_DIR"/kernel
 	./install_kernel_patch.sh *.patch
 	echo -e "${COLOR_GREEN}driver is updated ${COLOR_OFF}"
