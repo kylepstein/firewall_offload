@@ -30,8 +30,8 @@ done
 
 # Validate required parameters
 if [ -z "${BUILD_DIR-}" ] ; then
-	#echo -e "${COLOR_RED}[ INFO ] Build dir is not set. So going to build into _build ${COLOR_OFF}"
-	BUILD_DIR=${ROOT_DIR}/_build
+	#echo -e "${COLOR_RED}[ INFO ] Build dir is not set. So going to build into build ${COLOR_OFF}"
+	BUILD_DIR=${ROOT_DIR}/build
 	mkdir -p "$BUILD_DIR"
 fi
 

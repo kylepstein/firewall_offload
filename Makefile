@@ -5,7 +5,7 @@
 APP = firewall_offload
 CC=gcc
 
-GRPC_DIR ?= ./_build/deps
+GRPC_DIR ?= ./build/deps
 LIBDIR := $(GRPC_DIR)/lib
 LIB64DIR := $(GRPC_DIR)/lib64
 
