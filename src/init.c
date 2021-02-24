@@ -29,8 +29,8 @@ static int setup_hairpin_queues(portid_t pi, portid_t peer_pi)
 		if (diag == 0)
 			continue;
 
-		printf("Fail to configure port %d TX hairpin "
-				"queues %u, err=%d\n", pi, i, diag);
+		log_error("Fail to configure port %d TX hairpin "
+			  "queues %u, err=%d", pi, i, diag);
 		return -1;
 	}
 
@@ -43,12 +43,12 @@ static int setup_hairpin_queues(portid_t pi, portid_t peer_pi)
 		if (diag == 0)
 			continue;
 
-		printf("Fail to configure port %d RX hairpin "
-				"queues %u\n", pi, i);
+		log_error("Fail to configure port %d RX hairpin "
+			  "queues %u", pi, i);
 		return -1;
 	}
 
-	printf("Port(%d): Set up hairpin with peer %d\n", pi, peer_pi);
+	log_info("Port(%d): Set up hairpin with peer %d", pi, peer_pi);
 
 	return 0;
 }
@@ -177,7 +177,7 @@ static int create_sample_fwd_flow(uint16_t port_id, int proto,
 
 	ret = opof_add_session_server(&request, &response);
 	if (!ret)
-		printf("Warnning: Sample flow created for session (%lu)\n",
+		log_info("Warnning: Sample flow created for session (%lu)",
 		       request.sessId);
 
 	return ret;
@@ -270,7 +270,7 @@ int port_init(portid_t pid, struct rte_mempool *mbuf_pool)
 	/* Start the Ethernet pid. */
 	retval = rte_eth_dev_start(pid);
 	if (retval < 0) {
-		printf("ERR: Can't start eth dev");
+		log_error("Can't start eth dev");
 		return retval;
 	}
 
@@ -301,14 +301,14 @@ int hairpin_bind_port(portid_t pid)
 
 	diag = rte_eth_hairpin_bind(pid, peer_id);
 	if (diag) {
-		printf("Error during binding hairpin TX port %u to %u: %s\n",
+		log_error("Failed to bind hairpin TX port %u to %u: %s",
 			 pid, peer_id, rte_strerror(-diag));
 		return diag;
 	}
 
 	diag = rte_eth_hairpin_bind(peer_id, pid);
 	if (diag) {
-		printf("Error during binding hairpin RX port %u to %u: %s\n",
+		log_error("Failed to bind hairpin RX port %u to %u: %s",
 			 peer_id, pid, rte_strerror(-diag));
 		return diag;
 	}

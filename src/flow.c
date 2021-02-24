@@ -46,7 +46,7 @@ port_id_is_invalid(portid_t port_id, enum print_warning warning)
 			return 0;
 
 	if (warning == ENABLED_WARN)
-		printf("Invalid port %d\n", port_id);
+		log_error("Invalid port %d", port_id);
 
 	return 1;
 }
@@ -82,12 +82,12 @@ static int port_flow_complain(struct rte_flow_error *error)
 	else
 		errstr = errstrlist[error->type];
 
-	printf("%s(): Caught PMD error type %d (%s): %s%s: %s\n", __func__,
-	       error->type, errstr,
-	       error->cause ? (snprintf(buf, sizeof(buf), "cause: %p, ",
-					error->cause), buf) : "",
-	       error->message ? error->message : "(no stated reason)",
-	       rte_strerror(err));
+	log_error("%s(): Caught PMD error type %d (%s): %s%s: %s", __func__,
+		  error->type, errstr,
+		  error->cause ? (snprintf(buf, sizeof(buf), "cause: %p, ",
+					   error->cause), buf) : "",
+		  error->message ? error->message : "(no stated reason)",
+		  rte_strerror(err));
 	return -err;
 }
 
@@ -108,15 +108,13 @@ add_simple_flow(uint16_t port_id,
 		flow = rte_flow_create(port_id, attr, pattern,
 				       actions, &error);
 	else
-		printf("Error: %s flow validation failed\n", flow_name);
+		log_error("%s flow validation failed", flow_name);
 
-	if (!flow) {
-		printf("Error: %s flow creation failed(0x%x): %s\n",
+	if (!flow)
+		log_error("%s flow creation failed(0x%x): %s",
 		       flow_name, error.type,
 		       error.message ? error.message :
 		       "(no stated reason)");
-		rte_exit(EXIT_FAILURE, "error in creating flow\n");
-	}
 
 	return flow;
 }
@@ -277,7 +275,7 @@ int offload_flow_add(portid_t port_id,
 
 	pattern_ipv4_5tuple[flow_index] = end_item;
 	if (flow_index >= MAX_FLOW_ITEM) {
-		printf("Offload flow: flow item overflow\n");
+		log_error("Offload flow: flow item overflow");
 		return -EINVAL;
 	}
 
@@ -302,7 +300,7 @@ int offload_flow_add(portid_t port_id,
 		actions[i++] = end_action;
 		break;
 	default:
-		printf("Offload flow: invalid action\n");
+		log_error("Offload flow: invalid action");
 		return -EOPNOTSUPP;
 	}
 

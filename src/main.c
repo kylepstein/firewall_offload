@@ -42,13 +42,11 @@ void clean_up(void)
 	rte_hash_free(off_config_g.session_ht);
 
 	RTE_ETH_FOREACH_DEV(portid) {
-		printf("Port(%u): Stopping\n", portid);
 		fflush(stdout);
 		rte_eth_dev_stop(portid);
 	}
 
 	RTE_ETH_FOREACH_DEV(portid) {
-		printf("Port(%u): Shutting down\n", portid);
 		fflush(stdout);
 		offload_flow_flush(portid);
 		//FIXME: segfault for 2nd port
@@ -56,6 +54,9 @@ void clean_up(void)
 	}
 
 	rte_free(off_config_g.ports);
+
+	log_info("Firewall offload closed");
+	nv_opof_log_close();
 }
 
 static void signal_handler(int signum)
@@ -134,6 +135,10 @@ int main(int argc, char *argv[])
 
 	if (mbuf_pool == NULL)
 		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
+
+	nv_opof_log_open();
+
+	log_info("Firewall offload started");
 
 	config_init();
 

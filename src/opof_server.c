@@ -11,7 +11,7 @@
 
 #include "common.h"
 
-static char *get_session_state(uint8_t state)
+char *get_session_state(uint8_t state)
 {
 	switch(state)
 	{
@@ -28,7 +28,7 @@ static char *get_session_state(uint8_t state)
 	}
 }
 
-static char *get_close_code(uint8_t code)
+char *get_close_code(uint8_t code)
 {
 	switch(code)
 	{
@@ -54,17 +54,14 @@ static void display_response(sessionResponse_t *response,
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n" "TIME      CMD        "
-	       "ID        "
+	log_debug("\n" "CMD        " "ID        "
 	       "IN_PACKETS   IN_BYTES      OUT_PACKETS  OUT_BYTES     "
-	       "STATE   " "CLOSE   " "\n");
-
-	printf("%02u:%02u:%02u  " "%-11s"
+	       "STATE   " "CLOSE   " "\n"
+	       "%-11s"
 	       "%-10lu"
 	       "%-13lu" "%-14lu" "%-13lu" "%-14lu"
 	       "%-8s" "%-8s" "\n",
-	       tm.tm_hour, tm.tm_min, tm.tm_sec, cmd,
-	       response->sessionId,
+	       cmd, response->sessionId,
 	       response->inPackets,
 	       response->inBytes,
 	       response->outPackets,
@@ -82,34 +79,30 @@ static void display_request(sessionRequest_t *request,
 	if (!off_config_g.verbose)
 		return;
 
-	printf("\n" "TIME      CMD  "
-	       "ID        IN  OUT  VLAN  "
-	       "SRC_IP           SRC_PORT  DST_IP           DST_PORT  "
-	       "PROTO  IP  ACT  AGE" "\n");
-
-	printf("%02u:%02u:%02u  " "%-5s"
-	       "%-10lu" "%-4u" "%-5u" "%-6u"
-	       "%03u.%03u.%03u.%03u  " "%-10u" "%03u.%03u.%03u.%03u  " "%-10u"
-	       "%-7s" "%-4u" "%-5s" "%-4u" "\n",
-	       tm.tm_hour, tm.tm_min, tm.tm_sec, cmd,
-	       request->sessId,
-	       request->inlif & 0xFFFF,
-	       request->outlif & 0xFFFF,
-	       request->inlif >> 16,
-	       (request->srcIP.s_addr >> 24) & 0xFF,
-	       (request->srcIP.s_addr >> 16) & 0xFF,
-	       (request->srcIP.s_addr >> 8) & 0xFF,
-	       request->srcIP.s_addr & 0xFF,
-	       request->srcPort,
-	       (request->dstIP.s_addr >> 24) & 0xFF,
-	       (request->dstIP.s_addr >> 16) & 0xFF,
-	       (request->dstIP.s_addr >> 8) & 0xFF,
-	       request->dstIP.s_addr & 0xFF,
-	       request->dstPort,
-	       request->proto == 6 ? "TCP" : "UDP",
-	       request->ipver,
-	       request->actType == 1 ? "FWD" : "DROP",
-	       request->cacheTimeout);
+	log_debug("\n" "CMD  " "ID        IN  OUT  VLAN  "
+		  "SRC_IP           SRC_PORT  DST_IP           DST_PORT  "
+		  "PROTO  IP  ACT  AGE" "\n"
+		  "%-5s" "%-10lu" "%-4u" "%-5u" "%-6u"
+		  "%03u.%03u.%03u.%03u  " "%-10u" "%03u.%03u.%03u.%03u  "
+		  "%-10u" "%-7s" "%-4u" "%-5s" "%-4u" "\n",
+		  cmd, request->sessId,
+		  request->inlif & 0xFFFF,
+		  request->outlif & 0xFFFF,
+		  request->inlif >> 16,
+		  (request->srcIP.s_addr >> 24) & 0xFF,
+		  (request->srcIP.s_addr >> 16) & 0xFF,
+		  (request->srcIP.s_addr >> 8) & 0xFF,
+		  request->srcIP.s_addr & 0xFF,
+		  request->srcPort,
+		  (request->dstIP.s_addr >> 24) & 0xFF,
+		  (request->dstIP.s_addr >> 16) & 0xFF,
+		  (request->dstIP.s_addr >> 8) & 0xFF,
+		  request->dstIP.s_addr & 0xFF,
+		  request->dstPort,
+		  request->proto == 6 ? "TCP" : "UDP",
+		  request->ipver,
+		  request->actType == 1 ? "FWD" : "DROP",
+		  request->cacheTimeout);
 }
 
 static int __opof_get_session_server(unsigned long sessionId,
@@ -173,7 +166,7 @@ int opof_del_flow(struct fw_session *session)
 	rte_hash_del_key(ht, &session->key);
 
 	if (rte_ring_enqueue(off_config_g.session_fifo, session_stat))
-		printf("Err: no enough room in session session_fifo\n");
+		log_error("no enough room in session session_fifo");
 
 	rte_free(session);
 
@@ -221,10 +214,10 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	session->tuple.vlan = parameters->inlif >> 16;
 
 	if (parameters->cacheTimeout >= MAX_TIMEOUT) {
-		printf("\nWARNING: "
-		       "requested timeout(%u), max(%u), use default(%u)\n",
-		       parameters->cacheTimeout, MAX_TIMEOUT,
-		       DEFAULT_TIMEOUT);
+		log_info("WARNING: "
+			 "requested timeout(%u), max(%u), use default(%u)",
+			 parameters->cacheTimeout, MAX_TIMEOUT,
+			 DEFAULT_TIMEOUT);
 		session->timeout = DEFAULT_TIMEOUT;
 	}else {
 		session->timeout = parameters->cacheTimeout;
@@ -256,7 +249,7 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	} else {
 		offload_flow_destroy(session->flow_in.portid,
 				     session->flow_in.flow);
-		printf("ERR(%d): Failed to add session (%lu)\n",
+		log_error("ERR(%d): Failed to add session (%lu)",
 		       ret, session->key.sess_id);
 		return _INTERNAL;
 	}

@@ -20,8 +20,8 @@ static void aging_thread(uint32_t lcore_id)
 	long int lwp_id;
 
 	lwp_id = syscall(SYS_gettid);
-	printf("LCORE(%u) (LWP=%ld): aging thread started\n",
-	       lcore_id, lwp_id);
+	log_info("LCORE(%u) (LWP=%ld): aging thread started",
+		 lcore_id, lwp_id);
 
 	while (1) {
 		offload_flow_aged(INITIATOR_PORT_ID);
@@ -36,10 +36,10 @@ static void grpc_thread(uint32_t lcore_id)
 	long int lwp_id;
 
 	lwp_id = syscall(SYS_gettid);
-	printf("LCORE(%u) (LWP=%ld): grpc thread started at %s\n",
-	       lcore_id, lwp_id,
-	       off_config_g.has_grpc_addr ? off_config_g.grpc_addr :
-	       default_address);
+	log_info("LCORE(%u) (LWP=%ld): grpc thread started at %s",
+		 lcore_id, lwp_id,
+		 off_config_g.has_grpc_addr ? off_config_g.grpc_addr :
+		 default_address);
 
 	opof_server(off_config_g.has_grpc_addr ? off_config_g.grpc_addr :
 		    default_address,
@@ -88,7 +88,8 @@ int thread_mux(void *data __rte_unused)
 	return ret;
 
 err:
-	printf("Thread type %d LCORE %u failed", (int)lcore->type, lcore_id);
+	log_error("Thread type %d LCORE %u failed",
+		  (int)lcore->type, lcore_id);
 	fflush(stdout);
 	fflush(stderr);
 	exit(EXIT_FAILURE);

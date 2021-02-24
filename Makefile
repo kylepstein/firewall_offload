@@ -75,7 +75,7 @@ LDLIBS += $(LIBS)
 LDFLAGS = -lc -lstdc++ -lm -pthread
 
 # all source are stored in SRCS-y
-SRCS-y := src/main.c src/flow.c src/thread.c src/init.c src/cmd.c src/opof_server.c
+SRCS-y := src/main.c src/flow.c src/thread.c src/init.c src/cmd.c src/opof_server.c src/util.c
 
 build/$(APP): $(SRCS-y) Makefile $(PC_FILE) | build
 	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDLIBS) $(LDFLAGS_SHARED) $(LDFLAGS) 
