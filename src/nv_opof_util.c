@@ -19,6 +19,7 @@
 
 #include "nv_opof.h"
 #include "nv_opof_util.h"
+#include "nv_opof_rpc.h"
 
 static int nv_opof_log_level = NV_OPOF_LOG_DEFAULT;
 static FILE *fp = NULL;
@@ -185,41 +186,58 @@ void nv_opof_signal_handler_uninstall(void)
 	}
 }
 
-void args_parse(int argc, char** argv)
+int nv_opof_config_load(const char *file_path)
 {
-	char *end;
-	int opt;
+	char *buffer = NULL;
+	FILE *fp = NULL;
+	long lSize = 0;
+	int ret = 0;
 
-	static struct option lgopts[] = {
-		{ "help",	0, 0, 'h'},
-		{ "address",	0, 0, 'a'},
-		{ "port",	0, 0, 'p'},
-		{ "timeout",	0, 0, 't'},
-	};
-
-	while ((opt = getopt_long(argc, argv, "a:p:t:h:d",
-				  lgopts, NULL)) != EOF) {
-		switch (opt) {
-		case 'a':
-			strncpy(off_config_g.grpc_addr, optarg, 32);
-			off_config_g.has_grpc_addr = 1;
-			break;
-		case 'p':
-			off_config_g.grpc_port = strtoul(optarg, &end, 10);
-			break;
-		case 't':
-			off_config_g.timeout = strtoul(optarg, &end, 10);
-			break;
-		case 'h':
-			printf("\t-p, --port\tgRPC Port \n");
-			printf("\t-a, --address\tAddress of gRPC Server\n");
-			printf("\t-t, --timeout\tDefault aging time in sec\n");
-			printf("\t-h, --help:\tCommand line help \n\n");
-			rte_exit(EXIT_SUCCESS, "Displayed help\n");
-		default:
-			printf("Invalid option: %s\n", argv[optind]);
-			rte_exit(EXIT_FAILURE,
-				 "Command line is incomplete or incorrect\n");
-		}
+	fp = fopen(file_path, "rb");
+	if (!fp) {
+		log_info("No config file found, use default values");
+		goto out;
 	}
+
+	fseek(fp, 0L, SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	/* allocate memory for entire content */
+	buffer = calloc(1, lSize + 1);
+	if (!buffer) {
+		ret = ENOMEM;
+		log_debug("Memory allocation failed");
+		goto out_close;
+	}
+
+	/* copy the file into the buffer */
+	if (1 != fread(buffer, lSize, 1, fp)) {
+		ret = errno;
+		log_debug("Read config file failed");
+		goto out_free;
+	}
+
+	cJSON *jsoncfg = cJSON_Parse(buffer);
+	if (!jsoncfg) {
+		ret = EINVAL;
+		log_error("Wrong config format");
+		goto out_free;
+	}
+
+	cJSON *grpc_addr = cJSON_GetObjectItem(jsoncfg, "grpc_addr");
+	cJSON *grpc_port = cJSON_GetObjectItem(jsoncfg, "grpc_port");
+	if (grpc_addr && grpc_port) {
+		snprintf(off_config_g.grpc_addr, GRPC_ADDR_SIZE, "%s",
+			 grpc_addr->valuestring);
+		off_config_g.grpc_port = grpc_port->valueint;
+	}
+
+out_free:
+	free(buffer);
+out_close:
+	fclose(fp);
+out:
+	return ret;
 }
+

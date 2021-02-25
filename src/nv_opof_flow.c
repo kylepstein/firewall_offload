@@ -183,8 +183,6 @@ int offload_flow_add(portid_t port_id,
 
 	if (session->timeout)
 		age.timeout = session->timeout;
-	else if (off_config_g.timeout)
-		age.timeout = off_config_g.timeout;
 	else
 		age.timeout = DEFAULT_TIMEOUT;
 

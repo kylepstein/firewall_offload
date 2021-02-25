@@ -57,6 +57,10 @@ extern "C" {
 #define SAMPLE_SESSION_FWD	(MAX_SESSION - 1)
 #define SAMPLE_SESSION_DROP	(MAX_SESSION - 2)
 
+#define GRPC_ADDR_SIZE		(32)
+#define DEFAULT_GRPC_ADDR	"169.254.33.51"
+#define DEFAULT_GRPC_PORT	3443
+
 typedef uint16_t queueid_t;
 typedef uint16_t portid_t;
 
@@ -193,10 +197,8 @@ struct fw_offload_config {
 	portid_t peer_port[MAX_DPDK_PORT];
 	portid_t vf_port[MAX_DPDK_PORT];
 
-	uint8_t has_grpc_addr;
-	char grpc_addr[32];
+	char grpc_addr[GRPC_ADDR_SIZE];
 	uint16_t grpc_port;
-	uint32_t timeout;
 };
 
 int port_init(portid_t pid,
@@ -204,18 +206,16 @@ int port_init(portid_t pid,
 int hairpin_bind_port(portid_t pid);
 
 void lcore_init(void);
-void args_parse(int argc, char** argv);
-
 void clean_up(void);
 void force_quit(void);
 int thread_mux(void *data __rte_unused);
 
 struct rte_flow *
 add_simple_flow(uint16_t port_id,
-		 struct rte_flow_attr *attr,
-		 struct rte_flow_item pattern[],
-		 struct rte_flow_action actions[],
-		 const char *flow_name);
+		struct rte_flow_attr *attr,
+		struct rte_flow_item pattern[],
+		struct rte_flow_action actions[],
+		const char *flow_name);
 
 int offload_flow_add(portid_t port_id,
 		     struct fw_session * session,

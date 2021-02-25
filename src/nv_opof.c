@@ -37,6 +37,9 @@ static void config_init(void)
 {
 	memset(&off_config_g, 0, sizeof(struct fw_offload_config));
 
+	strcpy(off_config_g.grpc_addr, DEFAULT_GRPC_ADDR);
+	off_config_g.grpc_port = DEFAULT_GRPC_PORT;
+
 	off_config_g.phy_port[portid_pf0] = portid_pf0;
 	off_config_g.phy_port[portid_pf0_vf0] = portid_pf0;
 	off_config_g.phy_port[portid_pf1] = portid_pf1;
@@ -105,9 +108,6 @@ int main(int argc, char *argv[])
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Error with EAL initialization\n");
 
-	argc -= ret;
-	argv += ret;
-
 	/* Check that there is an even number of ports to send/receive on. */
 	nb_ports = rte_eth_dev_count_avail();
 	if (nb_ports < 4)
@@ -125,11 +125,11 @@ int main(int argc, char *argv[])
 	nv_opof_log_open();
 
 	log_info("nv_opof started");
+	ret = nv_opof_config_load(CONFIG_FILE);
+	if (ret)
+		rte_exit(EXIT_FAILURE, "Cannot load config file\n");
 
 	config_init();
-
-	if (argc > 1)
-		args_parse(argc, argv);
 
 	/* Initialize all ports. */
 	RTE_ETH_FOREACH_DEV(portid)
