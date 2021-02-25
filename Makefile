@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: BSD-3-Clause
-# Copyright(c) 2010-2014 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
+#Copyright 2021 Nvidia
 
 # binary name
 APP = firewall_offload
@@ -12,6 +12,7 @@ LIB64DIR := $(GRPC_DIR)/lib64
 INCLUDES += -I $(GRPC_DIR)/include \
 	    -I /usr/include/c++/9 \
 	    -I include \
+	    -I src/jsonrpc \
 	    -I src
 
 PKGCONF ?= pkg-config
@@ -72,10 +73,19 @@ LIBS ?= \
 LDLIBS += lib/libopof_server.a
 LDLIBS += $(LIBS)
 
-LDFLAGS = -lc -lstdc++ -lm -pthread
+LDFLAGS = -lc -lstdc++ -lm -pthread -lev
 
 # all source are stored in SRCS-y
-SRCS-y := src/main.c src/flow.c src/thread.c src/init.c src/cmd.c src/opof_server.c src/util.c
+SRCS-y := src/main.c \
+		  src/flow.c \
+		  src/thread.c \
+		  src/init.c \
+		  src/cmd.c \
+		  src/opof_server.c \
+		  src/util.c \
+		  src/rpc.c \
+		  src/jsonrpc/jsonrpc-c.c \
+		  src/jsonrpc/cJSON.c
 
 build/$(APP): $(SRCS-y) Makefile $(PC_FILE) | build
 	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDLIBS) $(LDFLAGS_SHARED) $(LDFLAGS) 

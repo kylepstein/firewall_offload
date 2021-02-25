@@ -105,9 +105,8 @@ static void display_request(sessionRequest_t *request,
 		  request->cacheTimeout);
 }
 
-static int __opof_get_session_server(unsigned long sessionId,
-				     sessionResponse_t *response,
-				     bool display)
+int opof_get_session_server(unsigned long sessionId,
+			    sessionResponse_t *response)
 {
 	struct rte_hash *ht = off_config_g.session_ht;
 	struct fw_session *session = NULL;
@@ -132,9 +131,6 @@ static int __opof_get_session_server(unsigned long sessionId,
 	response->sessionState = session->state;
 	response->sessionCloseCode = session->close_code;
 
-	if (display)
-		display_response(response, "get");
-
 	return _OK;
 }
 
@@ -148,8 +144,8 @@ int opof_del_flow(struct fw_session *session)
 	session_stat = rte_zmalloc("stats",
 				   sizeof(sessionResponse_t),
 				   RTE_CACHE_LINE_SIZE);
-	__opof_get_session_server(session->key.sess_id,
-				  session_stat, false);
+	opof_get_session_server(session->key.sess_id,
+				session_stat);
 
 	ret = offload_flow_destroy(session->flow_in.portid,
 				   session->flow_in.flow);
@@ -255,12 +251,6 @@ int opof_add_session_server(sessionRequest_t *parameters,
 	}
 
 	return _OK;
-}
-
-int opof_get_session_server(unsigned long sessionId,
-			    sessionResponse_t *response)
-{
-	return __opof_get_session_server(sessionId, response, true);
 }
 
 int opof_del_session_server(unsigned long sessionId,

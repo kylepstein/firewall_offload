@@ -1,12 +1,14 @@
 /* SPDX-License-Identifier: BSD-3-Clause
- * Copyright 2020 Nvidia
+ * Copyright 2021 Nvidia
  */
-#include "common.h"
 #include <signal.h>
+#include "common.h"
+#include "rpc.h"
 
 #define NUM_MBUFS 8191
 #define MBUF_CACHE_SIZE 250
 
+static struct nv_opof_rpc_context rpc_ctx = {};
 struct fw_offload_config off_config_g;
 
 static uint32_t next_pow2(uint32_t x)
@@ -35,6 +37,8 @@ static struct rte_hash* create_session_hash_table(void)
 void clean_up(void)
 {
 	portid_t portid;
+
+	nv_opof_rpc_stop(&rpc_ctx);
 
 	opof_del_all_session_server();
 
@@ -111,12 +115,13 @@ int main(int argc, char *argv[])
 	struct rte_mempool *mbuf_pool;
 	unsigned nb_ports;
 	uint16_t portid;
+	int ret;
 
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
 
 	/* Initialize the Environment Abstraction Layer (EAL). */
-	int ret = rte_eal_init(argc, argv);
+	ret = rte_eal_init(argc, argv);
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Error with EAL initialization\n");
 
@@ -159,6 +164,10 @@ int main(int argc, char *argv[])
 	lcore_init();
 
 	rte_eal_mp_remote_launch(&thread_mux, NULL, CALL_MAIN);
+
+	ret = nv_opof_rpc_start(&rpc_ctx);
+	if (ret)
+		rte_exit(EXIT_FAILURE, "Cannot enable rpc interface\n");
 
 	cmd_prompt();
 

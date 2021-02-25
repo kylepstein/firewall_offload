@@ -275,3 +275,6 @@ int nv_opof_log_open(void);
 void nv_opof_log_close(void);
 void nv_opof_set_log_level(int level);
 int nv_opof_log(int level, const char *fmt, ...);
+
+char *get_session_state(uint8_t state);
+char *get_close_code(uint8_t code);
