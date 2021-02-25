@@ -22,7 +22,7 @@
 #include <cmdline.h>
 #include <wait.h>
 #include <signal.h>
-#include "common.h"
+#include "nv_opof.h"
 
 static struct cmdline *fw_offload_cl;
 

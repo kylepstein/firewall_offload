@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2020 Nvidia
  */
-#include "common.h"
+#include "nv_opof.h"
 
 static struct rte_flow_item eth_item = {
 	RTE_FLOW_ITEM_TYPE_ETH,

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2020 Nvidia
  */
-#include "common.h"
+#include "nv_opof.h"
 
 uint16_t nb_rxd = RX_RING_SIZE;
 uint16_t nb_txd = TX_RING_SIZE;

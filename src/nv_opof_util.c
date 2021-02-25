@@ -1,7 +1,21 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2020 Nvidia
  */
-#include "common.h"
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <inttypes.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <errno.h>
+#include <ctype.h>
+#include <time.h>
+#include <sys/stat.h>
+
+#include "nv_opof_util.h"
 
 static int nv_opof_log_level = NV_OPOF_LOG_DEFAULT;
 static FILE *fp = NULL;

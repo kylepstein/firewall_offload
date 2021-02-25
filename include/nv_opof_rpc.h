@@ -2,8 +2,8 @@
  * Copyright 2021 Nvidia
  */
 
-#ifndef nv_opof_RPC_H
-#define nv_opof_RPC_H
+#ifndef NV_OPOF_RPC_H
+#define NV_OPOF_RPC_H
 
 #include "jsonrpc-c.h"
 

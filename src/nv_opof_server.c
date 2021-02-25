@@ -9,7 +9,7 @@
 #include "opof_serverlib.h"
 #include "opof_test_util.h"
 
-#include "common.h"
+#include "nv_opof.h"
 
 char *get_session_state(uint8_t state)
 {

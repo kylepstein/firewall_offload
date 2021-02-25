@@ -2,7 +2,7 @@
 #Copyright 2021 Nvidia
 
 # binary name
-APP = firewall_offload
+APP = nv_opof
 CC=gcc
 
 GRPC_DIR ?= ./build/deps
@@ -12,8 +12,7 @@ LIB64DIR := $(GRPC_DIR)/lib64
 INCLUDES += -I $(GRPC_DIR)/include \
 	    -I /usr/include/c++/9 \
 	    -I include \
-	    -I src/jsonrpc \
-	    -I src
+	    -I src/jsonrpc
 
 PKGCONF ?= pkg-config
 
@@ -76,16 +75,16 @@ LDLIBS += $(LIBS)
 LDFLAGS = -lc -lstdc++ -lm -pthread -lev
 
 # all source are stored in SRCS-y
-SRCS-y := src/main.c \
-		  src/flow.c \
-		  src/thread.c \
-		  src/init.c \
-		  src/cmd.c \
-		  src/opof_server.c \
-		  src/util.c \
-		  src/rpc.c \
-		  src/jsonrpc/jsonrpc-c.c \
-		  src/jsonrpc/cJSON.c
+SRCS-y := src/nv_opof.c \
+	  src/nv_opof_flow.c \
+	  src/nv_opof_thread.c \
+	  src/nv_opof_init.c \
+	  src/nv_opof_cmd.c \
+	  src/nv_opof_server.c \
+	  src/nv_opof_util.c \
+	  src/nv_opof_rpc.c \
+	  src/jsonrpc/jsonrpc-c.c \
+	  src/jsonrpc/cJSON.c
 
 build/$(APP): $(SRCS-y) Makefile $(PC_FILE) | build
 	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDLIBS) $(LDFLAGS_SHARED) $(LDFLAGS) 

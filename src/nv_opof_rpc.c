@@ -14,9 +14,10 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "common.h"
+
+#include "nv_opof_rpc.h"
+#include "nv_opof.h"
 #include "opof.h"
-#include "rpc.h"
 
 #define MAX_STRING_LEN		(20)
 /* For string conversion */

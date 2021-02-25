@@ -2,8 +2,8 @@
  * Copyright 2021 Nvidia
  */
 #include <signal.h>
-#include "common.h"
-#include "rpc.h"
+#include "nv_opof.h"
+#include "nv_opof_rpc.h"
 
 #define NUM_MBUFS 8191
 #define MBUF_CACHE_SIZE 250
