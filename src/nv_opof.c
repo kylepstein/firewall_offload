@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  * Copyright 2021 Nvidia
  */
-#include <signal.h>
 #include "nv_opof.h"
 #include "nv_opof_rpc.h"
 
@@ -32,49 +31,6 @@ static struct rte_hash* create_session_hash_table(void)
 	h = rte_hash_create(&params);
 
 	return h;
-}
-
-void clean_up(void)
-{
-	portid_t portid;
-
-	nv_opof_rpc_stop(&rpc_ctx);
-
-	opof_del_all_session_server();
-
-	rte_ring_free(off_config_g.session_fifo);
-	rte_hash_free(off_config_g.session_ht);
-
-	RTE_ETH_FOREACH_DEV(portid) {
-		fflush(stdout);
-		rte_eth_dev_stop(portid);
-	}
-
-	RTE_ETH_FOREACH_DEV(portid) {
-		fflush(stdout);
-		offload_flow_flush(portid);
-		//FIXME: segfault for 2nd port
-		//rte_eth_dev_close(portid);
-	}
-
-	rte_free(off_config_g.ports);
-
-	log_info("Firewall offload closed");
-	nv_opof_log_close();
-}
-
-static void signal_handler(int signum)
-{
-	if (signum == SIGINT || signum == SIGTERM) {
-		printf("\nExiting...\n");
-
-		force_quit();
-
-		printf("Done\n");
-		/* exit with the expected status */
-		signal(signum, SIG_DFL);
-		kill(getpid(), signum);
-	}
 }
 
 static void config_init(void)
@@ -110,15 +66,39 @@ static void config_init(void)
 			 RTE_MAX_ETHPORTS);
 }
 
+static void config_destroy(void)
+{
+	rte_free(off_config_g.ports);
+	rte_ring_free(off_config_g.session_fifo);
+	rte_hash_free(off_config_g.session_ht);
+}
+
+void clean_up(void)
+{
+	portid_t portid;
+
+	nv_opof_rpc_stop(&rpc_ctx);
+	opof_del_all_session_server();
+	config_destroy();
+
+	RTE_ETH_FOREACH_DEV(portid) {
+		rte_eth_dev_stop(portid);
+		offload_flow_flush(portid);
+		//FIXME: segfault for 2nd port
+		//rte_eth_dev_close(portid);
+	}
+
+	log_info("nv_opof closed");
+	nv_opof_log_close();
+	nv_opof_signal_handler_uninstall();
+}
+
 int main(int argc, char *argv[])
 {
 	struct rte_mempool *mbuf_pool;
 	unsigned nb_ports;
 	uint16_t portid;
 	int ret;
-
-	signal(SIGINT, signal_handler);
-	signal(SIGTERM, signal_handler);
 
 	/* Initialize the Environment Abstraction Layer (EAL). */
 	ret = rte_eal_init(argc, argv);
@@ -141,9 +121,10 @@ int main(int argc, char *argv[])
 	if (mbuf_pool == NULL)
 		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
 
+	nv_opof_signal_handler_install();
 	nv_opof_log_open();
 
-	log_info("Firewall offload started");
+	log_info("nv_opof started");
 
 	config_init();
 
@@ -168,8 +149,6 @@ int main(int argc, char *argv[])
 	ret = nv_opof_rpc_start(&rpc_ctx);
 	if (ret)
 		rte_exit(EXIT_FAILURE, "Cannot enable rpc interface\n");
-
-	cmd_prompt();
 
 	rte_eal_mp_wait_lcore();
 

@@ -79,7 +79,6 @@ SRCS-y := src/nv_opof.c \
 	  src/nv_opof_flow.c \
 	  src/nv_opof_thread.c \
 	  src/nv_opof_init.c \
-	  src/nv_opof_cmd.c \
 	  src/nv_opof_server.c \
 	  src/nv_opof_util.c \
 	  src/nv_opof_rpc.c \

@@ -37,6 +37,9 @@ extern "C" {
                     __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 
 
+void nv_opof_signal_handler_install(void);
+void nv_opof_signal_handler_uninstall(void);
+
 int nv_opof_log_open(void);
 void nv_opof_log_close(void);
 void nv_opof_set_log_level(int level);

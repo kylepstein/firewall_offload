@@ -51,9 +51,6 @@ static void display_response(sessionResponse_t *response,
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 
-	if (!off_config_g.verbose)
-		return;
-
 	log_debug("\n" "CMD        " "ID        "
 	       "IN_PACKETS   IN_BYTES      OUT_PACKETS  OUT_BYTES     "
 	       "STATE   " "CLOSE   " "\n"
@@ -75,9 +72,6 @@ static void display_request(sessionRequest_t *request,
 {
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
-
-	if (!off_config_g.verbose)
-		return;
 
 	log_debug("\n" "CMD  " "ID        IN  OUT  VLAN  "
 		  "SRC_IP           SRC_PORT  DST_IP           DST_PORT  "
@@ -191,8 +185,8 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	ret = rte_hash_lookup_data(ht, &key, (void **)&session);
 	if (session) {
-		offload_dbg("Session (%d) already exists",
-			    session->key.sess_id);
+		log_debug("Session (%d) already exists",
+			  session->key.sess_id);
 		return _ALREADY_EXISTS;
 	}
 
