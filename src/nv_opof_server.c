@@ -303,6 +303,14 @@ int opof_get_closed_sessions_server(statisticsRequestArgs_t *request,
 			memcpy(&responses[i], session_stats[i],
 			       sizeof(sessionResponse_t));
 
+			if (!responses[i].inPackets)
+				rte_atomic32_inc(&off_config_g.stats.zero_in);
+			if (!responses[i].outPackets)
+				rte_atomic32_inc(&off_config_g.stats.zero_out);
+			if (!responses[i].inPackets &&
+			    !responses[i].outPackets)
+				rte_atomic32_inc(&off_config_g.stats.zero_io);
+
 			display_response(&responses[i], "get_close");
 		}
 	}

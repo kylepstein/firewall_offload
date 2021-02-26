@@ -101,6 +101,12 @@ cJSON *stats(jrpc_context *ctx, cJSON *params, cJSON *id)
 			    rte_atomic32_read(&off_config_g.stats.active));
 	JSON_STR_NUM_TO_OBJ(result, "Aged Sessions", "%d",
 			    rte_atomic32_read(&off_config_g.stats.aged));
+	JSON_STR_NUM_TO_OBJ(result, "Zero In Sessions", "%d",
+			    rte_atomic32_read(&off_config_g.stats.zero_in));
+	JSON_STR_NUM_TO_OBJ(result, "Zero Out Sessions", "%d",
+			    rte_atomic32_read(&off_config_g.stats.zero_out));
+	JSON_STR_NUM_TO_OBJ(result, "Zero In&Out Sessions", "%d",
+			    rte_atomic32_read(&off_config_g.stats.zero_io));
 	pthread_mutex_unlock(&rpc_ctx->rpc_lock);
 
 	return result;

@@ -183,6 +183,9 @@ struct fw_session {
 struct offload_stats {
 	rte_atomic32_t active;
 	rte_atomic32_t aged;
+	rte_atomic32_t zero_in;
+	rte_atomic32_t zero_out;
+	rte_atomic32_t zero_io;
 };
 
 struct fw_offload_config {
