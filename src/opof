@@ -113,10 +113,6 @@ def execute_script(parser, client, fd):
             print(ex.message)
             exit(1)
 
-def stop(args):
-    result = args.client.call('stop')
-    print(json.dumps(result, indent=2))
-
 def stats(args):
     result = args.client.call('stats')
     print(json.dumps(result, indent=2))
@@ -160,11 +156,6 @@ def main():
                         default=60.0, type=float)
     subparsers = parser.add_subparsers(help='** Use -h for sub-command usage',
                                        dest='called_rpc_name')
-
-    # Stop
-    p = subparsers.add_parser('stop', help='Peacefully stop firewall '
-                              'offload service')
-    p.set_defaults(func=stop)
 
     # Stats
     p = subparsers.add_parser('stats', help='offload stats')

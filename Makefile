@@ -91,6 +91,13 @@ build/$(APP): $(SRCS-y) Makefile $(PC_FILE) | build
 build:
 	@mkdir -p $@
 
+install:
+	cp build/$(APP) /usr/sbin
+	cp scripts/nv-opof.service /etc/systemd/system
+	cp scripts/nv_opof_check /usr/sbin
+	cp src/opof /usr/sbin
+	systemctl daemon-reload
+
 .PHONY: clean
 clean:
 	rm -f build/$(APP)
