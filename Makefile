@@ -92,7 +92,7 @@ build:
 	@mkdir -p $@
 
 install:
-	systemctl stop nv-opof.service
+	if systemctl --all --type service | grep -q "nv-opof.service"; then systemctl stop nv-opof.service; fi
 	cp build/$(APP) /usr/sbin
 	cp scripts/nv-opof.service /etc/systemd/system
 	cp scripts/nv_opof_check /usr/sbin
