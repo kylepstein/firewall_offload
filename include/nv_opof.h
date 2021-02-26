@@ -141,19 +141,12 @@ struct rte_port {
 	portid_t		id;
 };
 
-struct eth_ntuple_filter {
-	uint16_t flags;          /**< Flags from RTE_NTUPLE_FLAGS_* */
-	uint32_t dst_ip;         /**< Destination IP address in big endian. */
-	uint32_t dst_ip_mask;    /**< Mask of destination IP address. */
-	uint32_t src_ip;         /**< Source IP address in big endian. */
-	uint32_t src_ip_mask;    /**< Mask of destination IP address. */
-	uint16_t dst_port;       /**< Destination port in big endian. */
-	uint16_t dst_port_mask;  /**< Mask of destination port. */
+struct session_info {
+	uint32_t dst_ip;         /**< Dest IPv4 address in big endian. */
+	uint32_t src_ip;         /**< Source IPv4 address in big endian. */
+	uint16_t dst_port;       /**< Dest port in big endian. */
 	uint16_t src_port;       /**< Source Port in big endian. */
-	uint16_t src_port_mask;  /**< Mask of source port. */
-	uint8_t proto;           /**< L4 protocol. */
-	uint8_t proto_mask;      /**< Mask of L4 protocol. */
-	uint8_t tcp_flags;
+	uint8_t proto;           /**< L4 Protocol. */
 	uint8_t vlan;
 };
 
@@ -170,7 +163,7 @@ struct offload_flow {
 
 struct fw_session {
 	struct session_key		key;
-	struct eth_ntuple_filter	tuple;
+	struct session_info		info;
 
 	struct offload_flow		flow_in;
 	struct offload_flow		flow_out;

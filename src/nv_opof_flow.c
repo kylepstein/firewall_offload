@@ -126,100 +126,92 @@ int offload_flow_add(portid_t port_id,
 {
 #define MAX_FLOW_ITEM (6)
 #define MAX_ACTION_ITEM (6)
+	struct rte_flow_item flow_pattern[MAX_FLOW_ITEM];
 	struct rte_flow_action actions[MAX_ACTION_ITEM];
-	struct eth_ntuple_filter *ntuple_filter;
+	struct rte_flow_action_age age = {};
 	struct rte_flow_item_vlan vlan_spec;
 	struct rte_flow_item vlan_item;
 	struct rte_flow_item_ipv4 ipv4_spec;
 	struct rte_flow_item_ipv4 ipv4_mask;
-	struct rte_flow_item ipv4_udp_item;
-	struct rte_flow_item ipv4_tcp_item;
+	struct rte_flow_item ip_item;
 	struct rte_flow_item_udp udp_spec;
 	struct rte_flow_item_udp udp_mask;
 	struct rte_flow_item udp_item;
 	struct rte_flow_item_tcp tcp_spec;
 	struct rte_flow_item_tcp tcp_mask;
 	struct rte_flow_item tcp_item;
-	struct rte_flow_item pattern_ipv4_5tuple[MAX_FLOW_ITEM];
+	enum rte_flow_item_type ip_type;
+	void *ip_spec, *ip_mask;
 	struct rte_flow *flow = NULL;
-	uint8_t ipv4_proto, i = 0;
-	uint8_t flow_index = 0;
+	uint8_t i = 0, flow_index = 0;
 	int ret = -1;
-
-	struct rte_flow_action_age age = {};
 
 	struct rte_flow_action age_action = {
 		RTE_FLOW_ACTION_TYPE_AGE,
 		&age
 	};
 
-	memset(&actions, 0, sizeof(actions));
-	memset(&pattern_ipv4_5tuple, 0, sizeof(pattern_ipv4_5tuple));
+	memset(&flow_pattern, 0, sizeof(flow_pattern));
 
-	ntuple_filter = &session->tuple;
+	/* Eth item*/
+	flow_pattern[flow_index++] = eth_item;
 
-	ntuple_filter->dst_ip_mask = 0xffffffff;
-	ntuple_filter->src_ip_mask = 0xffffffff;
-	ntuple_filter->dst_port_mask = 0xffff;
-	ntuple_filter->src_port_mask = 0xffff;
-	ntuple_filter->proto_mask = 0xff;
-
-	/* set up parameters for validate and add */
-	memset(&ipv4_spec, 0, sizeof(ipv4_spec));
-	ipv4_spec.hdr.next_proto_id = ntuple_filter->proto;
-	if (dir == DIR_IN) {
-		ipv4_spec.hdr.src_addr = htonl(ntuple_filter->src_ip);
-		ipv4_spec.hdr.dst_addr = htonl(ntuple_filter->dst_ip);
-	} else if (dir == DIR_OUT) {
-		ipv4_spec.hdr.src_addr = htonl(ntuple_filter->dst_ip);
-		ipv4_spec.hdr.dst_addr = htonl(ntuple_filter->src_ip);
-	}
-	ipv4_proto = ipv4_spec.hdr.next_proto_id;
-
-	memset(&ipv4_mask, 0, sizeof(ipv4_mask));
-	ipv4_mask.hdr.next_proto_id = ntuple_filter->proto_mask;
-	ipv4_mask.hdr.src_addr = ntuple_filter->src_ip_mask;
-	ipv4_mask.hdr.dst_addr = ntuple_filter->dst_ip_mask;
-
-	if (session->timeout)
-		age.timeout = session->timeout;
-	else
-		age.timeout = DEFAULT_TIMEOUT;
-
-	pattern_ipv4_5tuple[flow_index++] = eth_item;
-
-	if (ntuple_filter->vlan) {
+	/* Vlan item */
+	if (session->info.vlan) {
 		memset(&vlan_item, 0, sizeof(vlan_item));
 		vlan_item.type = RTE_FLOW_ITEM_TYPE_VLAN;
 		vlan_item.spec = &vlan_spec;
 		vlan_item.mask = &rte_flow_item_vlan_mask,
 
 		memset(&vlan_spec, 0, sizeof(vlan_spec));
-		vlan_spec.tci = htons(ntuple_filter->vlan);
+		vlan_spec.tci = htons(session->info.vlan);
 		vlan_spec.inner_type = 0;
 
-		pattern_ipv4_5tuple[flow_index++] = vlan_item;
+		flow_pattern[flow_index++] = vlan_item;
 	}
 
-	switch (ipv4_proto) {
-	case IPPROTO_UDP:
-		ipv4_udp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
-		ipv4_udp_item.spec = &ipv4_spec;
-		ipv4_udp_item.mask = &ipv4_mask;
-		ipv4_udp_item.last = NULL;
+	/* IPv4 item */
+	ip_type = RTE_FLOW_ITEM_TYPE_IPV4;
 
+	memset(&ipv4_spec, 0, sizeof(ipv4_spec));
+	ipv4_spec.hdr.next_proto_id = session->info.proto;
+	if (dir == DIR_IN) {
+		ipv4_spec.hdr.src_addr = htonl(session->info.src_ip);
+		ipv4_spec.hdr.dst_addr = htonl(session->info.dst_ip);
+	} else if (dir == DIR_OUT) {
+		ipv4_spec.hdr.src_addr = htonl(session->info.dst_ip);
+		ipv4_spec.hdr.dst_addr = htonl(session->info.src_ip);
+	}
+	ip_spec = &ipv4_spec;
+
+	memset(&ipv4_mask, 0, sizeof(ipv4_mask));
+	ipv4_mask.hdr.next_proto_id = 0xFF;
+	ipv4_mask.hdr.src_addr = 0xFFFFFFFF;
+	ipv4_mask.hdr.dst_addr = 0xFFFFFFFF;
+	ip_mask = &ipv4_mask;
+
+	ip_item.type = ip_type;
+	ip_item.spec = ip_spec;
+	ip_item.mask = ip_mask;
+	ip_item.last = NULL;
+
+	flow_pattern[flow_index++] = ip_item;
+
+	/* L4 proto item */
+	switch (session->info.proto) {
+	case IPPROTO_UDP:
 		if (dir == DIR_IN) {
-			udp_spec.hdr.src_port = htons(ntuple_filter->src_port);
-			udp_spec.hdr.dst_port = htons(ntuple_filter->dst_port);
+			udp_spec.hdr.src_port = htons(session->info.src_port);
+			udp_spec.hdr.dst_port = htons(session->info.dst_port);
 		} else if (dir == DIR_OUT) {
-			udp_spec.hdr.src_port = htons(ntuple_filter->dst_port);
-			udp_spec.hdr.dst_port = htons(ntuple_filter->src_port);
+			udp_spec.hdr.src_port = htons(session->info.dst_port);
+			udp_spec.hdr.dst_port = htons(session->info.src_port);
 		}
 		udp_spec.hdr.dgram_len = 0;
 		udp_spec.hdr.dgram_cksum = 0;
 
-		udp_mask.hdr.src_port = ntuple_filter->src_port_mask;
-		udp_mask.hdr.dst_port = ntuple_filter->dst_port_mask;
+		udp_mask.hdr.src_port = 0xFFFF;
+		udp_mask.hdr.dst_port = 0xFFFF;
 		udp_mask.hdr.dgram_len = 0;
 		udp_mask.hdr.dgram_cksum = 0;
 
@@ -228,30 +220,24 @@ int offload_flow_add(portid_t port_id,
 		udp_item.mask = &udp_mask;
 		udp_item.last = NULL;
 
-		pattern_ipv4_5tuple[flow_index++] = ipv4_udp_item;
-		pattern_ipv4_5tuple[flow_index++] = udp_item;
+		flow_pattern[flow_index++] = udp_item;
 		break;
 	case IPPROTO_TCP:
-		ipv4_tcp_item.type = RTE_FLOW_ITEM_TYPE_IPV4;
-		ipv4_tcp_item.spec = &ipv4_spec;
-		ipv4_tcp_item.mask = &ipv4_mask;
-		ipv4_tcp_item.last = NULL;
-
 		memset(&tcp_spec, 0, sizeof(tcp_spec));
 
 		if (dir == DIR_IN) {
-			tcp_spec.hdr.src_port = htons(ntuple_filter->src_port);
-			tcp_spec.hdr.dst_port = htons(ntuple_filter->dst_port);
+			tcp_spec.hdr.src_port = htons(session->info.src_port);
+			tcp_spec.hdr.dst_port = htons(session->info.dst_port);
 		} else if (dir == DIR_OUT) {
-			tcp_spec.hdr.src_port = htons(ntuple_filter->dst_port);
-			tcp_spec.hdr.dst_port = htons(ntuple_filter->src_port);
+			tcp_spec.hdr.src_port = htons(session->info.dst_port);
+			tcp_spec.hdr.dst_port = htons(session->info.src_port);
 		}
 
 		tcp_spec.hdr.tcp_flags = 0;
 
 		memset(&tcp_mask, 0, sizeof(tcp_mask));
-		tcp_mask.hdr.src_port = ntuple_filter->src_port_mask;
-		tcp_mask.hdr.dst_port = ntuple_filter->dst_port_mask;
+		tcp_mask.hdr.src_port = 0xFFFF;
+		tcp_mask.hdr.dst_port = 0xFFFF;
 		tcp_mask.hdr.tcp_flags = RTE_TCP_FIN_FLAG |
 					 RTE_TCP_SYN_FLAG |
 					 RTE_TCP_RST_FLAG;
@@ -261,21 +247,25 @@ int offload_flow_add(portid_t port_id,
 		tcp_item.mask = &tcp_mask;
 		tcp_item.last = NULL;
 
-		pattern_ipv4_5tuple[flow_index++] = ipv4_tcp_item;
-		pattern_ipv4_5tuple[flow_index++] = tcp_item;
+		flow_pattern[flow_index++] = tcp_item;
 		break;
 	default:
 		return -EPROTONOSUPPORT;
 	}
 
-	attr.ingress = 1;
-	attr.transfer = 1;
-
-	pattern_ipv4_5tuple[flow_index] = end_item;
+	flow_pattern[flow_index] = end_item;
 	if (flow_index >= MAX_FLOW_ITEM) {
 		log_error("Offload flow: flow item overflow");
 		return -EINVAL;
 	}
+
+	attr.ingress = 1;
+	attr.transfer = 1;
+
+	if (session->timeout)
+		age.timeout = session->timeout;
+	else
+		age.timeout = DEFAULT_TIMEOUT;
 
 	if (dir == DIR_IN) {
 		age.context = &session->flow_in;
@@ -283,6 +273,8 @@ int offload_flow_add(portid_t port_id,
 		age.context = &session->flow_out;
 	}
 
+	/* Fill actions */
+	memset(&actions, 0, sizeof(actions));
 	switch(action)
 	{
 	case ACTION_FORWARD:
@@ -302,7 +294,7 @@ int offload_flow_add(portid_t port_id,
 		return -EOPNOTSUPP;
 	}
 
-	flow = add_simple_flow(port_id, &attr, pattern_ipv4_5tuple,
+	flow = add_simple_flow(port_id, &attr, flow_pattern,
 			       actions, "offload");
 
 	if (dir == DIR_IN) {

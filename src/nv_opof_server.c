@@ -94,7 +94,7 @@ static void display_request(sessionRequest_t *request,
 		  request->dstIP.s_addr & 0xFF,
 		  request->dstPort,
 		  request->proto == 6 ? "TCP" : "UDP",
-		  request->ipver,
+		  request->ipver == _IPV4 ? 4 : 6,
 		  request->actType == 1 ? "FWD" : "DROP",
 		  request->cacheTimeout);
 }
@@ -196,12 +196,12 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	session->key.sess_id = parameters->sessId;
 
-	session->tuple.src_ip = parameters->srcIP.s_addr;
-	session->tuple.dst_ip = parameters->dstIP.s_addr;
-	session->tuple.proto = parameters->proto;
-	session->tuple.src_port = parameters->srcPort;
-	session->tuple.dst_port = parameters->dstPort;
-	session->tuple.vlan = parameters->inlif >> 16;
+	session->info.src_ip = parameters->srcIP.s_addr;
+	session->info.dst_ip = parameters->dstIP.s_addr;
+	session->info.proto = parameters->proto;
+	session->info.src_port = parameters->srcPort;
+	session->info.dst_port = parameters->dstPort;
+	session->info.vlan = parameters->inlif >> 16;
 
 	if (parameters->cacheTimeout >= MAX_TIMEOUT) {
 		log_info("WARNING: "
