@@ -73,8 +73,13 @@ static void display_request(sessionRequest_t *request,
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 
+	if (request->ipver == _IPV6) {
+		request->srcIP.s_addr = 0;
+		request->dstIP.s_addr = 0;
+	}
+
 	log_debug("\n" "CMD  " "ID        IN  OUT  VLAN  "
-		  "SRC_IP           SRC_PORT  DST_IP           DST_PORT  "
+		  "SRC_IPv4         SRC_PORT  DST_IPv4         DST_PORT  "
 		  "PROTO  IP  ACT  AGE" "\n"
 		  "%-5s" "%-10lu" "%-4u" "%-5u" "%-6u"
 		  "%03u.%03u.%03u.%03u  " "%-10u" "%03u.%03u.%03u.%03u  "
@@ -97,6 +102,45 @@ static void display_request(sessionRequest_t *request,
 		  request->ipver == _IPV4 ? 4 : 6,
 		  request->actType == 1 ? "FWD" : "DROP",
 		  request->cacheTimeout);
+
+	if (request->ipver == _IPV6)
+		log_debug("\n"
+			  "srcIPv6: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:"
+			  "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x "
+			  "dstIPv6: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:"
+			  "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+			  request->srcIPV6.s6_addr[0],
+			  request->srcIPV6.s6_addr[1],
+			  request->srcIPV6.s6_addr[2],
+			  request->srcIPV6.s6_addr[3],
+			  request->srcIPV6.s6_addr[4],
+			  request->srcIPV6.s6_addr[5],
+			  request->srcIPV6.s6_addr[6],
+			  request->srcIPV6.s6_addr[7],
+			  request->srcIPV6.s6_addr[8],
+			  request->srcIPV6.s6_addr[9],
+			  request->srcIPV6.s6_addr[10],
+			  request->srcIPV6.s6_addr[11],
+			  request->srcIPV6.s6_addr[12],
+			  request->srcIPV6.s6_addr[13],
+			  request->srcIPV6.s6_addr[14],
+			  request->srcIPV6.s6_addr[15],
+			  request->dstIPV6.s6_addr[0],
+			  request->dstIPV6.s6_addr[1],
+			  request->dstIPV6.s6_addr[2],
+			  request->dstIPV6.s6_addr[3],
+			  request->dstIPV6.s6_addr[4],
+			  request->dstIPV6.s6_addr[5],
+			  request->dstIPV6.s6_addr[6],
+			  request->dstIPV6.s6_addr[7],
+			  request->dstIPV6.s6_addr[8],
+			  request->dstIPV6.s6_addr[9],
+			  request->dstIPV6.s6_addr[10],
+			  request->dstIPV6.s6_addr[11],
+			  request->dstIPV6.s6_addr[12],
+			  request->dstIPV6.s6_addr[13],
+			  request->dstIPV6.s6_addr[14],
+			  request->dstIPV6.s6_addr[15]);
 }
 
 int opof_get_session_server(unsigned long sessionId,
@@ -198,9 +242,15 @@ int opof_add_session_server(sessionRequest_t *parameters,
 
 	session->info.src_ip = parameters->srcIP.s_addr;
 	session->info.dst_ip = parameters->dstIP.s_addr;
-	session->info.proto = parameters->proto;
+	memcpy(&session->info.src_ipv6, &parameters->srcIPV6.s6_addr,
+	       sizeof(struct in6_addr));
+	memcpy(&session->info.dst_ipv6, &parameters->dstIPV6.s6_addr,
+	       sizeof(struct in6_addr));
 	session->info.src_port = parameters->srcPort;
 	session->info.dst_port = parameters->dstPort;
+	session->info.ip_ver = parameters->ipver == _IPV4 ?
+			       IPPROTO_IP : IPPROTO_IPV6;
+	session->info.proto = parameters->proto;
 	session->info.vlan = parameters->inlif >> 16;
 
 	if (parameters->cacheTimeout >= MAX_TIMEOUT) {

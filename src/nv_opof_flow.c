@@ -133,6 +133,8 @@ int offload_flow_add(portid_t port_id,
 	struct rte_flow_item vlan_item;
 	struct rte_flow_item_ipv4 ipv4_spec;
 	struct rte_flow_item_ipv4 ipv4_mask;
+	struct rte_flow_item_ipv6 ipv6_spec;
+	struct rte_flow_item_ipv6 ipv6_mask;
 	struct rte_flow_item ip_item;
 	struct rte_flow_item_udp udp_spec;
 	struct rte_flow_item_udp udp_mask;
@@ -170,25 +172,58 @@ int offload_flow_add(portid_t port_id,
 		flow_pattern[flow_index++] = vlan_item;
 	}
 
-	/* IPv4 item */
-	ip_type = RTE_FLOW_ITEM_TYPE_IPV4;
+	/* IP item */
+	switch (session->info.ip_ver) {
+	case IPPROTO_IP:
+		ip_type = RTE_FLOW_ITEM_TYPE_IPV4;
 
-	memset(&ipv4_spec, 0, sizeof(ipv4_spec));
-	ipv4_spec.hdr.next_proto_id = session->info.proto;
-	if (dir == DIR_IN) {
-		ipv4_spec.hdr.src_addr = htonl(session->info.src_ip);
-		ipv4_spec.hdr.dst_addr = htonl(session->info.dst_ip);
-	} else if (dir == DIR_OUT) {
-		ipv4_spec.hdr.src_addr = htonl(session->info.dst_ip);
-		ipv4_spec.hdr.dst_addr = htonl(session->info.src_ip);
+		memset(&ipv4_spec, 0, sizeof(ipv4_spec));
+		ipv4_spec.hdr.next_proto_id = session->info.proto;
+		if (dir == DIR_IN) {
+			ipv4_spec.hdr.src_addr = htonl(session->info.src_ip);
+			ipv4_spec.hdr.dst_addr = htonl(session->info.dst_ip);
+		} else if (dir == DIR_OUT) {
+			ipv4_spec.hdr.src_addr = htonl(session->info.dst_ip);
+			ipv4_spec.hdr.dst_addr = htonl(session->info.src_ip);
+		}
+		ip_spec = &ipv4_spec;
+
+		memset(&ipv4_mask, 0, sizeof(ipv4_mask));
+		ipv4_mask.hdr.next_proto_id = 0xFF;
+		ipv4_mask.hdr.src_addr = 0xFFFFFFFF;
+		ipv4_mask.hdr.dst_addr = 0xFFFFFFFF;
+		ip_mask = &ipv4_mask;
+		break;
+	case IPPROTO_IPV6:
+		ip_type = RTE_FLOW_ITEM_TYPE_IPV6;
+
+		memset(&ipv6_spec, 0, sizeof(ipv6_spec));
+		ipv6_spec.hdr.proto = session->info.proto;
+
+		if (dir == DIR_IN) {
+			memcpy(&ipv6_spec.hdr.src_addr,
+			       &session->info.src_ipv6,
+			       sizeof(struct in6_addr));
+			memcpy(&ipv6_spec.hdr.dst_addr,
+			       &session->info.dst_ipv6,
+			       sizeof(struct in6_addr));
+		} else if (dir == DIR_OUT) {
+			memcpy(&ipv6_spec.hdr.src_addr,
+			       &session->info.dst_ipv6,
+			       sizeof(struct in6_addr));
+			memcpy(&ipv6_spec.hdr.dst_addr,
+			       &session->info.src_ipv6,
+			       sizeof(struct in6_addr));
+		}
+		ip_spec = &ipv6_spec;
+
+		memset(&ipv6_mask, 0, sizeof(ipv6_mask));
+		ipv6_mask.hdr.proto = 0xFF;
+		memset(&ipv6_mask.hdr.src_addr, 1, sizeof(struct in6_addr));
+		memset(&ipv6_mask.hdr.dst_addr, 1, sizeof(struct in6_addr));
+		ip_mask = &ipv6_mask;
+		break;
 	}
-	ip_spec = &ipv4_spec;
-
-	memset(&ipv4_mask, 0, sizeof(ipv4_mask));
-	ipv4_mask.hdr.next_proto_id = 0xFF;
-	ipv4_mask.hdr.src_addr = 0xFFFFFFFF;
-	ipv4_mask.hdr.dst_addr = 0xFFFFFFFF;
-	ip_mask = &ipv4_mask;
 
 	ip_item.type = ip_type;
 	ip_item.spec = ip_spec;

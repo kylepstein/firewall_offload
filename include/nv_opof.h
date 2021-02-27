@@ -144,8 +144,11 @@ struct rte_port {
 struct session_info {
 	uint32_t dst_ip;         /**< Dest IPv4 address in big endian. */
 	uint32_t src_ip;         /**< Source IPv4 address in big endian. */
+	uint8_t dst_ipv6[16];    /**< Dest IPv6 address in big endian. */
+	uint8_t src_ipv6[16];    /**< Source IPv6 address in big endian. */
 	uint16_t dst_port;       /**< Dest port in big endian. */
 	uint16_t src_port;       /**< Source Port in big endian. */
+	uint8_t ip_ver;          /**< IP version. */
 	uint8_t proto;           /**< L4 Protocol. */
 	uint8_t vlan;
 };
