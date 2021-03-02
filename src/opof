@@ -182,8 +182,8 @@ def main():
 
     # Log
     p = subparsers.add_parser('log', help='set log level')
-    p.add_argument('-l', '--level', help="log level: 0: LOG_ERR, 1: LOG_INFO, "
-                   "2: LOG_DEBUG(default)", required=True, type=int)
+    p.add_argument('-l', '--level', help="log level: info/err/debug",
+                   required=True, type=str, choices=['info', 'err', 'debug'])
     p.set_defaults(func=log_level)
 
     args = parser.parse_args()

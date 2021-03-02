@@ -44,7 +44,7 @@ communicate with the service.
 
 * Service: nv-opof.service
 * User Interface: opof
-* Log File: /opt/mellanox/nv_ofof/nv_opof.log
+* Log: __journalctl -u nv-opof -f__
 
 ## SystemD Service
 

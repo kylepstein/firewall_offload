@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <syslog.h>
 #include <sys/wait.h>
 #include <signal.h>
 
@@ -155,8 +156,17 @@ unlock:
 cJSON *log_level(jrpc_context *ctx, cJSON *params, cJSON *id)
 {
 	cJSON *level = cJSON_GetObjectItem(params, "level");
-	if (level)
-		nv_opof_set_log_level(level->valueint);
+	int val = 0;
+
+	if (!strcmp("info", level->valuestring))
+		val = LOG_INFO;
+	else if (!strcmp("err", level->valuestring))
+		val = LOG_ERR;
+	else if (!strcmp("debug", level->valuestring))
+		val = LOG_DEBUG;
+	log_info("Set log level to %s", level->valuestring);
+
+	nv_opof_set_log_level(val);
 
 	return cJSON_CreateString("SUCCEED");
 }
