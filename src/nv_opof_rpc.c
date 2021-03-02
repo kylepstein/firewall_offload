@@ -90,6 +90,15 @@ cJSON *stats(jrpc_context *ctx, cJSON *params, cJSON *id)
 	struct nv_opof_rpc_context *rpc_ctx;
 	sessionResponse_t response;
 
+	cJSON *clear = cJSON_GetObjectItem(params, "clear");
+
+	if (clear->valueint) {
+		rte_atomic32_clear(&off_config_g.stats.zero_in);
+		rte_atomic32_clear(&off_config_g.stats.zero_out);
+		rte_atomic32_clear(&off_config_g.stats.zero_io);
+		return cJSON_CreateString("SUCCEED");
+	}
+
 	rpc_ctx = (struct nv_opof_rpc_context *)ctx->data;
 
 	memset(&response, 0, sizeof(response));

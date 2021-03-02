@@ -114,7 +114,11 @@ def execute_script(parser, client, fd):
             exit(1)
 
 def stats(args):
-    result = args.client.call('stats')
+    params = {}
+    if args.clear != None:
+        params['clear'] = args.clear
+
+    result = args.client.call('stats', params)
     print(json.dumps(result, indent=2))
     
 def query(args):
@@ -159,6 +163,9 @@ def main():
 
     # Stats
     p = subparsers.add_parser('stats', help='offload stats')
+    p.add_argument('-c', '--clear', help="clear counters: all aging "
+                   " coutners", required=False, action="store_const",
+                   const=1, default=0)
     p.set_defaults(func=stats)
     
     # Query
