@@ -45,7 +45,7 @@ void nv_opof_log_close(void)
 
 void nv_opof_set_log_level(int level)
 {
-	setlogmask(level);
+	setlogmask(LOG_UPTO(level));
 }
 
 static void
