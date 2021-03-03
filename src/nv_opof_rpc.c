@@ -94,6 +94,8 @@ cJSON *stats(jrpc_context *ctx, cJSON *params, cJSON *id)
 	cJSON *clear = cJSON_GetObjectItem(params, "clear");
 
 	if (clear->valueint) {
+		rte_atomic32_clear(&off_config_g.stats.active);
+		rte_atomic32_clear(&off_config_g.stats.aged);
 		rte_atomic32_clear(&off_config_g.stats.zero_in);
 		rte_atomic32_clear(&off_config_g.stats.zero_out);
 		rte_atomic32_clear(&off_config_g.stats.zero_io);
