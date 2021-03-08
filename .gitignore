@@ -2,7 +2,7 @@
 .*
 
 # ignore generated documentation tables
-firewall_offload
+nv_opof
 
 # ignore generated ctags/cscope files
 cscope.out.po
