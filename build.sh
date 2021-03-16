@@ -127,7 +127,7 @@ build_kernel() {
 }
 
 get_grpc
-build_session_offload
+#build_session_offload
 build_firewall_offload
 create_hugepages
 build_kernel
