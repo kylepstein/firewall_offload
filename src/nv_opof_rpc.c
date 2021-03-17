@@ -101,6 +101,12 @@ cJSON *stats(jrpc_context *ctx, cJSON *params, cJSON *id)
 		rte_atomic32_clear(&off_config_g.stats.zero_io);
 		rte_atomic32_clear(&off_config_g.stats.client_del);
 		rte_atomic32_clear(&off_config_g.stats.age_thread_hb);
+		rte_atomic32_clear(&off_config_g.stats.flows_in);
+		rte_atomic32_clear(&off_config_g.stats.flows_del);
+		rte_atomic64_clear(&off_config_g.stats.flows_in_maxtsc);
+		rte_atomic64_clear(&off_config_g.stats.flows_in_tottsc);
+		rte_atomic64_clear(&off_config_g.stats.flows_del_maxtsc);
+		rte_atomic64_clear(&off_config_g.stats.flows_del_tottsc);
 		return cJSON_CreateString("SUCCEED");
 	}
 
@@ -125,6 +131,16 @@ cJSON *stats(jrpc_context *ctx, cJSON *params, cJSON *id)
 			    rte_atomic32_read(&off_config_g.stats.client_del));
 	JSON_STR_NUM_TO_OBJ(result, "Aging Thread Heartbeat", "%u",
 			    rte_atomic32_read(&off_config_g.stats.age_thread_hb));
+        JSON_STR_NUM_TO_OBJ(result, "Insertion Average(us)", "%lu",
+                            rte_atomic64_read(&off_config_g.stats.flows_in_tottsc) /
+                            rte_atomic32_read(&off_config_g.stats.flows_in));
+        JSON_STR_NUM_TO_OBJ(result, "Insertion Maximum(us)", "%lu",
+                            rte_atomic64_read(&off_config_g.stats.flows_in_maxtsc));
+        JSON_STR_NUM_TO_OBJ(result, "Deletion Average(us)", "%lu",
+                            rte_atomic64_read(&off_config_g.stats.flows_del_tottsc) /
+                            rte_atomic32_read(&off_config_g.stats.flows_del));
+        JSON_STR_NUM_TO_OBJ(result, "Deletion Maximum(us)", "%lu",
+                            rte_atomic64_read(&off_config_g.stats.flows_del_maxtsc));
 	pthread_mutex_unlock(&rpc_ctx->rpc_lock);
 
 	return result;
